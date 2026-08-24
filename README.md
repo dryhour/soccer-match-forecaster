@@ -1,84 +1,86 @@
 # Soccer Match Forecasting
 
-A data-driven soccer forecasting system that predicts **match outcomes, scores, and player performances** using team statistics, player data, historical results, squad availability, and matchup-specific factors.
+A data-driven soccer forecasting system that predicts **match outcomes, scores, and player performances** using historical data, team statistics, player statistics, squad availability, and matchup-specific factors.
 
-## About
+## Overview
 
-This project is designed to answer three main questions:
+The project uses a **Bronze / Silver / Gold data architecture** to transform raw soccer data into forecasting-ready features.
 
-* **What will the result be?**
-* **What will the score be?**
-* **Which players are likely to perform well?**
+```text
+Bronze
+  ↓
+Silver
+  ↓
+Gold
+  ↓
+Forecasting Model
+  ↓
+Prediction
+  ↓
+Evaluation
+```
 
-The system combines historical and current data from both teams, including form, player performance, injuries, expected lineups, tactical matchups, home/away performance, and other relevant factors.
-
-Predictions are saved and compared against actual results to measure accuracy and improve future predictions.
+The goal is to build a forecasting system that is **accurate, explainable, reproducible, and continuously improvable**.
 
 ## Features
 
-### Match Predictions
-
-* Predicted score
+* Match score predictions
 * Win / draw / loss probabilities
 * Expected goals
 * Prediction confidence
-* Historical prediction accuracy
-
-### Player Predictions
-
-* Predicted player ratings
+* Player performance predictions
+* Player ratings
 * Goal and assist probabilities
-* Player form
-* Player vs. opponent performance
-* Expected contributions
+* Team form analysis
+* Player form analysis
+* Home / away performance
+* Head-to-head analysis
+* Tactical matchup analysis
+* Injury and squad analysis
+* Prediction history
+* Model accuracy tracking
 
-### Team & Match Analysis
+## Data Architecture
 
-* Recent form
-* Home vs. away performance
-* Goals scored and conceded
-* xG / xGA
-* Head-to-head results
-* Performance against different formations
-* Performance against similar opponents
-* Current and previous season performance
+### Bronze
 
-### Squad Information
-
-* Injuries
-* Suspensions
-* Expected starting XI
-* Confirmed starting XI
-* Players returning from injury
-* Rotation and expected minutes
-
-## Methodology
-
-The general pipeline is:
+Raw data collected from external sources.
 
 ```text
-Match Data
-    ↓
-Team Analysis
-    ↓
-Player Analysis
-    ↓
-Squad Availability
-    ↓
-Tactical Matchup
-    ↓
-Feature Engineering
-    ↓
-Forecasting Model
-    ↓
-Prediction
-    ↓
-Actual Result
-    ↓
-Accuracy & Model Evaluation
+Raw Matches
+Raw Players
+Raw Teams
+Raw Lineups
+Raw Injuries
+Raw League Data
 ```
 
-The project will experiment with multiple statistical and machine learning approaches, including:
+### Silver
+
+Cleaned and standardized data.
+
+```text
+Cleaned Matches
+Cleaned Players
+Cleaned Teams
+Cleaned Lineups
+Cleaned Injuries
+```
+
+### Gold
+
+Model-ready datasets containing engineered features.
+
+```text
+Match Features
+Team Features
+Player Features
+Prediction Features
+```
+
+## Forecasting
+
+The project will experiment with statistical and machine learning models such as:
 
 * Poisson Regression
 * Logistic Regression
@@ -88,94 +90,54 @@ The project will experiment with multiple statistical and machine learning appro
 * Neural Networks
 * Ensemble Models
 
+Models will be evaluated against historical results to determine what approaches perform best.
+
 ## Prediction Tracking
 
-Every prediction is stored and compared with the actual result.
+Predictions will be saved and compared with actual results.
 
-The system will track:
+Metrics will include:
 
 * Match outcome accuracy
 * Exact score accuracy
 * Goal prediction error
 * Player prediction accuracy
+* Probability calibration
 * Accuracy by league
 * Accuracy by team
-* Model performance over time
+* Performance over time
 
-This allows the model to be continuously evaluated and improved.
+## Methodology
 
-## Supported Leagues
+Predictions may consider:
 
-The system is designed to support multiple leagues, including:
+* Team strength
+* Recent form
+* xG / xGA
+* Home advantage
+* Player performance
+* Injuries
+* Suspensions
+* Expected lineups
+* Tactical matchups
+* Opponent strength
+* Historical performance
 
-* Premier League
-* La Liga
-* Bundesliga
-* Serie A
-* Ligue 1
-* Champions League
-* MLS
-* Other leagues as data becomes available
-
-## Data
-
-The project prioritizes **free and publicly available data**.
-
-Potential sources include:
-
-* Public datasets
-* Kaggle
-* Free APIs
-* GitHub datasets
-* Public soccer statistics
-
-Data collection and updates will be automated where possible.
-
-## Reproducibility
-
-Everything will be documented so the project can be rebuilt and updated in the future.
-
-Documentation will cover:
-
-* Data sources
-* Data collection
-* Data cleaning
-* Feature engineering
-* Model training
-* Model evaluation
-* Prediction generation
-* Data updates
-* Model versions
+The methodology will be documented so predictions can be understood and reproduced.
 
 ## Goals
 
-* Build an accurate soccer forecasting system
-* Identify the factors that matter most
-* Track predictions over time
+* Build an accurate soccer forecasting model
+* Understand which factors influence predictions
+* Track performance over time
 * Compare different models
-* Explain why predictions are made
-* Automatically update with new data
+* Make predictions explainable
+* Automate data updates
 * Keep the project free
 * Make the system reproducible
 
-## Future Features
-
-* Interactive prediction dashboard
-* Automated predictions
-* Team strength ratings
-* Player form ratings
-* Injury impact scores
-* Tactical matchup analysis
-* Upset probability
-* Over/under predictions
-* Both-teams-to-score predictions
-* Player goal/assist probabilities
-* Backtesting
-* Automated model retraining
-* Model comparison
-
 ## Status
 
-🚧 **In Development**
+**In Development**
 
-This project is actively being developed. The methodology, data sources, and models will evolve as the system is tested and evaluated.
+The data pipeline, features, models, and forecasting methodology will evolve as the project is tested and evaluated.
