@@ -1,0 +1,75 @@
+# =============================================================================
+# soccer-forecasting :: config.yaml
+# Central configuration. Change values here rather than hardcoding in scripts.
+# =============================================================================
+
+project:
+  name: "soccer-forecasting"
+  timezone: "UTC"
+  random_seed: 42
+
+# -----------------------------------------------------------------------------
+# Data sources
+# -----------------------------------------------------------------------------
+# football-data.co.uk is free, requires no API key/signup, and provides
+# historical + current-season CSVs (results, odds, basic match stats) for
+# most major European leagues going back 20+ years.
+# URL pattern: https://www.football-data.co.uk/mmz4281/{season}/{code}.csv
+#   season example: 2425  -> 2024/25 season
+#   code example:   E0    -> English Premier League
+data_sources:
+  football_data_co_uk:
+    base_url: "https://www.football-data.co.uk/mmz4281"
+    leagues:
+      E0: "Premier League (England)"
+      E1: "Championship (England)"
+      SP1: "La Liga (Spain)"
+      D1: "Bundesliga (Germany)"
+      I1: "Serie A (Italy)"
+      F1: "Ligue 1 (France)"
+
+# Which leagues/seasons this project is currently tracking.
+# Extend this list as you add leagues. Seasons use football-data.co.uk format.
+active:
+  leagues: ["E0"]
+  seasons: ["2223", "2324", "2425", "2526"]   # 2022/23 .. 2025/26
+
+# -----------------------------------------------------------------------------
+# Paths (all relative to project root)
+# -----------------------------------------------------------------------------
+paths:
+  bronze_matches: "data/bronze/matches"
+  bronze_players: "data/bronze/players"
+  bronze_teams: "data/bronze/teams"
+  bronze_lineups: "data/bronze/lineups"
+  bronze_injuries: "data/bronze/injuries"
+  bronze_leagues: "data/bronze/leagues"
+
+  silver_matches: "data/silver/matches_clean"
+  silver_players: "data/silver/players_clean"
+  silver_teams: "data/silver/teams_clean"
+  silver_lineups: "data/silver/lineups_clean"
+  silver_injuries: "data/silver/injuries_clean"
+
+  gold_match_features: "data/gold/match_features"
+  gold_player_features: "data/gold/player_features"
+  gold_team_features: "data/gold/team_features"
+  gold_prediction_features: "data/gold/prediction_features"
+
+  models_dir: "models"
+  predictions_dir: "data/gold/prediction_features"
+
+# -----------------------------------------------------------------------------
+# Feature engineering
+# -----------------------------------------------------------------------------
+features:
+  form_windows: [5, 10]        # rolling windows (# of matches) for "current form"
+  min_matches_for_form: 3      # minimum matches before a form stat is considered reliable
+
+# -----------------------------------------------------------------------------
+# Modeling
+# -----------------------------------------------------------------------------
+model:
+  baseline: "poisson"
+  candidates: ["poisson", "logistic", "random_forest", "xgboost"]
+  max_goals_simulated: 10      # cap for Poisson scoreline probability grid
