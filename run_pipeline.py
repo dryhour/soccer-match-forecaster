@@ -13,10 +13,10 @@ import subprocess
 import sys
 
 STAGES = [
-    ("Ingestion  (Bronze)", ["python", "-m", "src.ingestion.football_data_co_uk"]),
-    ("Cleaning   (Silver)", ["python", "-m", "src.cleaning.clean_matches"]),
-    ("Features   (Gold)", ["python", "-m", "src.features.build_match_features"]),
-    ("Model      (train)", ["python", "-m", "src.models.poisson_model"]),
+    ("Ingestion  (Bronze)", [sys.executable, "-m", "src.ingestion.football_data_co_uk"]),
+    ("Cleaning   (Silver)", [sys.executable, "-m", "src.cleaning.clean_matches"]),
+    ("Features   (Gold)", [sys.executable, "-m", "src.features.build_match_features"]),
+    ("Model      (train)", [sys.executable, "-m", "src.models.poisson_model"]),
 ]
 
 
