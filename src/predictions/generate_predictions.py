@@ -23,7 +23,7 @@ from pathlib import Path
 import pandas as pd
 import yaml
 
-from src.models.poisson_model import PoissonMatchModel, build_feature_lists
+from src.models.poisson_model import PoissonMatchModel, predict_matchup
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 CONFIG_PATH = PROJECT_ROOT / "config" / "config.yaml"
@@ -34,29 +34,9 @@ def load_config() -> dict:
         return yaml.safe_load(f)
 
 
-def latest_team_row(team_history: pd.DataFrame, team: str) -> pd.Series:
-    """Most recent rolling-form snapshot available for a team (their form
-    entering their NEXT match, i.e. computed as of their last played game)."""
-    rows = team_history[team_history["team"] == team].sort_values("date")
-    if rows.empty:
-        raise ValueError(f"No history found for team '{team}'. Check spelling / team_aliases.")
-    return rows.iloc[-1]
-
-
 def build_prediction_row(model: PoissonMatchModel, team_history: pd.DataFrame,
                           home_team: str, away_team: str, match_date: str) -> dict:
-    home_hist = latest_team_row(team_history, home_team)
-    away_hist = latest_team_row(team_history, away_team)
-
-    w = int(model.feature_cols_home[0].split("last")[1])
-    combined = pd.Series({
-        f"home_avg_goals_for_last{w}": home_hist[f"avg_goals_for_last{w}"],
-        f"away_avg_goals_against_last{w}": away_hist[f"avg_goals_against_last{w}"],
-        f"away_avg_goals_for_last{w}": away_hist[f"avg_goals_for_last{w}"],
-        f"home_avg_goals_against_last{w}": home_hist[f"avg_goals_against_last{w}"],
-    })
-
-    pred = model.predict_match(combined)
+    pred = predict_matchup(model, team_history, home_team, away_team)
     pred.update({
         "prediction_id": str(uuid.uuid4())[:8],
         "generated_at": datetime.now(timezone.utc).isoformat(),

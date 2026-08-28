@@ -114,6 +114,36 @@ def build_feature_lists(windows: list):
     return home_features, away_features
 
 
+def latest_team_row(team_history: pd.DataFrame, team: str) -> pd.Series:
+    """Most recent rolling-form snapshot available for a team (their form
+    entering their NEXT match, i.e. computed as of their last played game)."""
+    rows = team_history[team_history["team"] == team].sort_values("date")
+    if rows.empty:
+        raise ValueError(f"No history found for team '{team}'. Check spelling / team_aliases.")
+    return rows.iloc[-1]
+
+
+def predict_from_rows(model: "PoissonMatchModel", home_row: pd.Series, away_row: pd.Series) -> dict:
+    """Predict a match given each side's rolling-form row (as returned by
+    latest_team_row, or a team_match_history row for a specific past match)."""
+    w = int(model.feature_cols_home[0].split("last")[1])
+    combined = pd.Series({
+        f"home_avg_goals_for_last{w}": home_row[f"avg_goals_for_last{w}"],
+        f"away_avg_goals_against_last{w}": away_row[f"avg_goals_against_last{w}"],
+        f"away_avg_goals_for_last{w}": away_row[f"avg_goals_for_last{w}"],
+        f"home_avg_goals_against_last{w}": home_row[f"avg_goals_against_last{w}"],
+    })
+    return model.predict_match(combined)
+
+
+def predict_matchup(model: "PoissonMatchModel", team_history: pd.DataFrame,
+                     home_team: str, away_team: str) -> dict:
+    """Predict a hypothetical match using each team's most recent form."""
+    home_hist = latest_team_row(team_history, home_team)
+    away_hist = latest_team_row(team_history, away_team)
+    return predict_from_rows(model, home_hist, away_hist)
+
+
 def main():
     parser = argparse.ArgumentParser(description="Train (or query) the baseline Poisson model.")
     parser.add_argument("--predict", nargs=2, metavar=("HOME", "AWAY"),
@@ -123,9 +153,32 @@ def main():
     cfg = load_config()
     windows = cfg["features"]["form_windows"]
     match_feat_path = PROJECT_ROOT / cfg["paths"]["gold_match_features"] / "match_features.csv"
+    team_hist_path = PROJECT_ROOT / cfg["paths"]["gold_team_features"] / "team_match_history.csv"
     models_dir = PROJECT_ROOT / cfg["paths"]["models_dir"]
     models_dir.mkdir(parents=True, exist_ok=True)
     model_path = models_dir / "poisson_baseline.pkl"
+
+    if args.predict:
+        if not model_path.exists():
+            print(f"No trained model at {model_path.relative_to(PROJECT_ROOT)}. "
+                  f"Run: python -m src.models.poisson_model")
+            return
+        if not team_hist_path.exists():
+            print(f"Missing {team_hist_path.relative_to(PROJECT_ROOT)}. "
+                  f"Run: python -m src.features.build_match_features")
+            return
+
+        model = PoissonMatchModel.load(model_path)
+        team_history = pd.read_csv(team_hist_path, parse_dates=["date"])
+        home_team, away_team = args.predict
+        try:
+            pred = predict_matchup(model, team_history, home_team, away_team)
+        except ValueError as e:
+            print(f"  [error] {e}")
+            return
+        print(f"{home_team} {pred['predicted_score'].replace('-', ' - ')} {away_team}  "
+              f"(H {pred['home_win_prob']:.0%} / D {pred['draw_prob']:.0%} / A {pred['away_win_prob']:.0%})")
+        return
 
     if not match_feat_path.exists():
         print(f"Missing {match_feat_path.relative_to(PROJECT_ROOT)}. "
@@ -135,18 +188,6 @@ def main():
     df = pd.read_csv(match_feat_path, parse_dates=["date"])
     home_features, away_features = build_feature_lists(windows)
     train_df = df.dropna(subset=home_features + away_features)
-
-    if args.predict:
-        if not model_path.exists():
-            print("No trained model found -- training first...")
-        else:
-            model = PoissonMatchModel.load(model_path)
-            home_team, away_team = args.predict
-            print(f"Model loaded. To predict {home_team} vs {away_team}, "
-                  f"pull each team's latest feature row from "
-                  f"data/gold/team_features/team_match_history.csv and call "
-                  f"model.predict_match(row). See README for a full example.")
-            return
 
     print(f"Training on {len(train_df)} matches with complete rolling-form features "
           f"(window={windows[0]})...")

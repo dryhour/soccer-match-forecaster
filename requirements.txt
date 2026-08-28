@@ -8,3 +8,4 @@ PyYAML>=6.0
 jupyter>=1.0
 matplotlib>=3.7
 pytest>=7.4
+streamlit>=1.32
