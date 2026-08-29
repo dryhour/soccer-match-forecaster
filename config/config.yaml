@@ -20,6 +20,11 @@ project:
 data_sources:
   football_data_co_uk:
     base_url: "https://www.football-data.co.uk/mmz4281"
+    # A single combined file of near-term scheduled fixtures (all leagues,
+    # no season split) -- separate from the per-season historical results
+    # above. Refreshed by the source periodically; typically covers the next
+    # matchweek or two, not the full season in advance.
+    fixtures_url: "https://www.football-data.co.uk/fixtures.csv"
     leagues:
       E0: "Premier League (England)"
       E1: "Championship (England)"
@@ -39,6 +44,7 @@ active:
 # -----------------------------------------------------------------------------
 paths:
   bronze_matches: "data/bronze/matches"
+  bronze_fixtures: "data/bronze/fixtures"
   bronze_players: "data/bronze/players"
   bronze_teams: "data/bronze/teams"
   bronze_lineups: "data/bronze/lineups"
@@ -46,6 +52,7 @@ paths:
   bronze_leagues: "data/bronze/leagues"
 
   silver_matches: "data/silver/matches_clean"
+  silver_fixtures: "data/silver/fixtures_clean"
   silver_players: "data/silver/players_clean"
   silver_teams: "data/silver/teams_clean"
   silver_lineups: "data/silver/lineups_clean"

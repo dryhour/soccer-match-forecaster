@@ -15,6 +15,37 @@ Configured leagues/seasons live in `config/config.yaml` under
 `active.leagues` / `active.seasons`. Extending coverage = adding entries
 there and re-running `run_pipeline.py`.
 
+## Data source: player stats
+
+[Wikipedia club-season articles](https://en.wikipedia.org) (e.g. "2025-26
+Arsenal F.C. season"), fetched via the MediaWiki API (`action=parse`) rather
+than scraping rendered pages -- a documented, stable contract. Two free
+alternatives were evaluated and rejected: FBref sits behind a Cloudflare JS
+challenge (unreachable via a plain request), and Understat no longer inlines
+its player data in the page source (loads it dynamically after page load).
+Wikipedia was the only source that's both free and reliably scrapable with a
+plain HTTP client.
+
+Provides per-player, per-season Premier League appearances (starts + sub
+appearances) and goals -- real performance data, not video-game ratings.
+Article formatting isn't fully standardized across ~100 club-season articles
+written by different editors: some use separate "Appearances"/"Goals"
+tables, others one combined "Appearances and goals" table with a two-level
+header. Both are handled (see `src/cleaning/clean_player_stats.py`); a file
+matching neither layout is skipped with a logged message rather than
+crashing the run. Not every (team, season) will resolve -- a club playing
+outside the Premier League that season has no "Premier League" column and is
+correctly skipped, not a bug.
+
+This is currently **ingestion + display only**: player stats show in the
+app's per-team squad view, but don't yet feed into the forecasting model.
+Feeding them in (e.g. squad-quality or injury-adjusted team strength) is
+future work, not yet started.
+
+Wikipedia's anonymous API has a modest rate limit; ingestion sleeps between
+requests and backs off on HTTP 429, and skips files that already exist so
+re-runs only fetch what's missing.
+
 ## Data layers
 
 - **Bronze**: raw CSVs, byte-for-byte as downloaded. Never edited in place.

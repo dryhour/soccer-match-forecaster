@@ -106,6 +106,22 @@ def load_team_history(cfg: dict) -> pd.DataFrame:
     return pd.read_csv(path, parse_dates=["date"])
 
 
+@st.cache_data
+def load_fixtures(cfg: dict) -> pd.DataFrame:
+    path = PROJECT_ROOT / cfg["paths"]["silver_fixtures"] / "fixtures.csv"
+    if not path.exists():
+        return pd.DataFrame(columns=["date", "home_team", "away_team"])
+    return pd.read_csv(path, parse_dates=["date"])
+
+
+@st.cache_data
+def load_player_stats(cfg: dict) -> pd.DataFrame:
+    path = PROJECT_ROOT / cfg["paths"]["silver_players"] / "player_stats.csv"
+    if not path.exists():
+        return pd.DataFrame(columns=["team", "season", "player", "position", "league_apps", "league_goals"])
+    return pd.read_csv(path, dtype={"season": str})
+
+
 @st.cache_resource
 def load_model(cfg: dict) -> PoissonMatchModel:
     path = PROJECT_ROOT / cfg["paths"]["models_dir"] / "poisson_baseline.pkl"
@@ -165,20 +181,28 @@ def team_form_row(team_history: pd.DataFrame, team: str, match_id):
 
 
 @st.cache_data
-def build_search_options(matches: pd.DataFrame, current_teams: list) -> dict:
-    """key -> display label, for a single searchable dropdown covering both
-    past results and hypothetical "upcoming" pairings of current teams."""
+def build_search_options(matches: pd.DataFrame, fixtures: pd.DataFrame, current_teams: list) -> dict:
+    """key -> display label, for a single searchable dropdown covering past
+    results, real scheduled fixtures (from football-data.co.uk's fixtures
+    feed), and hypothetical pairings of current teams that aren't
+    scheduled."""
     options = {}
     for row in matches.sort_values("date", ascending=False).itertuples():
         key = f"MATCH::{row.match_id}"
         options[key] = f"{row.home_team} vs {row.away_team} — {row.date.date()} — {format_score(row.home_goals, row.away_goals)}"
 
+    scheduled_pairs = set()
+    for row in fixtures.sort_values("date").itertuples():
+        key = f"FIXTURE::{row.home_team}::{row.away_team}::{row.date.date()}"
+        options[key] = f"{row.home_team} vs {row.away_team} — {row.date.date()} — -"
+        scheduled_pairs.add((row.home_team, row.away_team))
+
     for home in current_teams:
         for away in current_teams:
-            if home == away:
+            if home == away or (home, away) in scheduled_pairs:
                 continue
-            key = f"UPCOMING::{home}::{away}"
-            options[key] = f"{home} vs {away} — Upcoming — -"
+            key = f"HYPOTHETICAL::{home}::{away}"
+            options[key] = f"{home} vs {away} — Hypothetical — -"
 
     return options
 
@@ -220,6 +244,26 @@ def render_team_card(column, team: str, form_row, side: str):
             f"</div>",
             unsafe_allow_html=True,
         )
+
+
+def render_squad(column, player_stats: pd.DataFrame, team: str, season: str, side: str):
+    with column:
+        squad = player_stats[(player_stats["team"] == team) & (player_stats["season"] == season)]
+        label = f"👥 Squad — {season_label(season)} appearances & goals"
+        with st.expander(label):
+            if squad.empty:
+                st.write(
+                    "No player data for this team/season yet. Run: "
+                    "`python -m src.ingestion.wikipedia_player_stats` then "
+                    "`python -m src.cleaning.clean_player_stats`."
+                )
+                return
+            display = squad.sort_values("league_apps", ascending=False)[
+                ["player", "position", "league_apps", "league_goals"]
+            ].rename(columns={
+                "player": "Player", "position": "Pos", "league_apps": "Apps", "league_goals": "Goals",
+            })
+            st.dataframe(display, hide_index=True, use_container_width=True, height=350)
 
 
 def render_dev_view(model: PoissonMatchModel, home_form, away_form, match_row: pd.Series):
@@ -328,6 +372,8 @@ def main():
     cfg = load_config()
     matches = load_matches(cfg)
     team_history = load_team_history(cfg)
+    player_stats = load_player_stats(cfg)
+    fixtures = load_fixtures(cfg)
     model = load_model(cfg)
 
     render_accuracy_bar(cfg, model)
@@ -338,9 +384,12 @@ def main():
         set(matches.loc[matches["season"] == season_codes[-1], "home_team"])
         | set(matches.loc[matches["season"] == season_codes[-1], "away_team"])
     )
-    options = build_search_options(matches, current_teams)
+    options = build_search_options(matches, fixtures, current_teams)
     keys = list(options.keys())
-    default_key = keys[0]  # most recent played match
+    # Default to the soonest real scheduled fixture if there is one, else the
+    # most recent played match.
+    fixture_keys = [k for k in keys if k.startswith("FIXTURE::")]
+    default_key = fixture_keys[0] if fixture_keys else keys[0]
 
     selected_key = st.selectbox(
         "Search matches (upcoming or past)",
@@ -349,17 +398,22 @@ def main():
         format_func=lambda k: options[k],
     )
 
+    fixture_date = None
     if selected_key.startswith("MATCH::"):
         match_id = selected_key.split("::", 1)[1]
         match_row = matches[matches["match_id"] == match_id].iloc[0]
         home_team, away_team = match_row["home_team"], match_row["away_team"]
-    else:
+    elif selected_key.startswith("FIXTURE::"):
+        _, home_team, away_team, fixture_date = selected_key.split("::")
+        match_row = None
+    else:  # HYPOTHETICAL::
         _, home_team, away_team = selected_key.split("::")
         match_row = None
 
     match_id = match_row["match_id"] if match_row is not None else None
     home_form = team_form_row(team_history, home_team, match_id)
     away_form = team_form_row(team_history, away_team, match_id)
+    squad_season = match_row["season"] if match_row is not None else season_codes[-1]
 
     st.subheader(f"{home_team} vs {away_team}")
     col_home_stats, col_center, col_away_stats = st.columns([1, 1.1, 1])
@@ -367,11 +421,18 @@ def main():
 
     if match_row is not None:
         render_actual_result(col_center, model, match_row, home_team, away_team, home_form, away_form)
+    elif fixture_date is not None:
+        note = f"Scheduled for {fixture_date} -- not yet played. Prediction uses each team's most recent form."
+        render_prediction(col_center, model, team_history, home_team, away_team, note)
     else:
-        note = "Hypothetical matchup -- prediction uses each team's most recent form."
+        note = "Hypothetical matchup (not on the schedule) -- prediction uses each team's most recent form."
         render_prediction(col_center, model, team_history, home_team, away_team, note)
 
     render_team_card(col_away_stats, away_team, away_form, "away")
+
+    col_home_squad, _, col_away_squad = st.columns([1, 1.1, 1])
+    render_squad(col_home_squad, player_stats, home_team, squad_season, "home")
+    render_squad(col_away_squad, player_stats, away_team, squad_season, "away")
 
 
 if __name__ == "__main__":
