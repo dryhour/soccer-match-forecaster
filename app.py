@@ -16,9 +16,12 @@ Usage:
 
 from pathlib import Path
 
+import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import streamlit as st
 import yaml
+from scipy.stats import poisson as poisson_dist
 
 from src.evaluation.evaluate_predictions import compute_metrics
 from src.models.poisson_model import PoissonMatchModel, build_feature_lists, predict_from_rows, predict_matchup
@@ -39,8 +42,10 @@ PRIMARY_STATS = [
 SECONDARY_STATS = [
     ("avg_points_last5", "Form (pts/game, last 5)"),
     ("avg_goals_for_last5", "Scoring, last 5"),
-    ("avg_goals_against_last5", "Defense, last 5"),
 ]
+
+MODEL_COLOR = "#2563eb"
+R_MODEL_COLOR = "#059669"
 
 MATCH_STAT_PAIRS = [
     ("Shots", "home_shots", "away_shots"),
@@ -126,6 +131,32 @@ def load_player_stats(cfg: dict) -> pd.DataFrame:
 def load_model(cfg: dict) -> PoissonMatchModel:
     path = PROJECT_ROOT / cfg["paths"]["models_dir"] / "poisson_baseline.pkl"
     return PoissonMatchModel.load(path)
+
+
+@st.cache_data
+def load_dixon_coles_matchups(cfg: dict) -> pd.DataFrame:
+    """Predictions for every current-team pairing from the R model (see
+    src/models/dixon_coles_model.R) -- empty if that script hasn't been run."""
+    path = PROJECT_ROOT / cfg["paths"]["gold_prediction_features"] / "dixon_coles_matchups.csv"
+    if not path.exists():
+        return pd.DataFrame()
+    return pd.read_csv(path)
+
+
+@st.cache_data
+def load_dixon_coles_historical(cfg: dict) -> pd.DataFrame:
+    path = PROJECT_ROOT / cfg["paths"]["gold_prediction_features"] / "dixon_coles_historical.csv"
+    if not path.exists():
+        return pd.DataFrame()
+    return pd.read_csv(path)
+
+
+@st.cache_data
+def dixon_coles_accuracy(cfg: dict) -> dict:
+    historical = load_dixon_coles_historical(cfg)
+    if historical.empty:
+        return {}
+    return compute_metrics(historical)
 
 
 @st.cache_data
@@ -246,6 +277,52 @@ def render_team_card(column, team: str, form_row, side: str):
         )
 
 
+def r_matchup_row(dc_matchups: pd.DataFrame, home: str, away: str):
+    if dc_matchups.empty:
+        return None
+    rows = dc_matchups[(dc_matchups["home_team"] == home) & (dc_matchups["away_team"] == away)]
+    return rows.iloc[0] if not rows.empty else None
+
+
+def r_historical_row(dc_historical: pd.DataFrame, match_id: str):
+    if dc_historical.empty:
+        return None
+    rows = dc_historical[dc_historical["match_id"] == match_id]
+    return rows.iloc[0] if not rows.empty else None
+
+
+def render_ci_charts(lam_home: float, lam_away: float, home_team: str, away_team: str, r_row):
+    fig, axes = plt.subplots(1, 2, figsize=(9, 3.2))
+    for ax, lam, team, color, r_lam in [
+        (axes[0], lam_home, home_team, HOME_COLOR, r_row["expected_home_goals"] if r_row is not None else None),
+        (axes[1], lam_away, away_team, AWAY_COLOR, r_row["expected_away_goals"] if r_row is not None else None),
+    ]:
+        k = np.arange(0, 8)
+        pmf = poisson_dist.pmf(k, lam)
+        ci95_low, ci95_high = poisson_dist.interval(0.95, lam)
+        ci80_low, ci80_high = poisson_dist.interval(0.80, lam)
+        bar_colors = [color if ci95_low <= x <= ci95_high else "#e2e8f0" for x in k]
+        ax.bar(k, pmf, color=bar_colors, width=0.7, zorder=2)
+        ax.axvspan(ci80_low - 0.5, ci80_high + 0.5, color=color, alpha=0.18, zorder=1)
+        if r_lam is not None:
+            ax.axvline(r_lam, color=R_MODEL_COLOR, linestyle="--", linewidth=1.5, zorder=3)
+        ax.set_title(f"{team} — expected {lam:.2f}", fontsize=10)
+        ax.set_xlabel("Goals")
+        ax.set_xticks(k)
+        ax.set_ylabel("Probability")
+        ax.set_xlim(-0.5, 7.5)
+
+    fig.tight_layout()
+    st.pyplot(fig)
+    caption = (
+        "Shaded band = 80% confidence interval; bars outside the lighter gray fall outside the 95% "
+        "interval (both from the Python model's Poisson distribution)."
+    )
+    if r_row is not None:
+        caption += " Dashed green line = R model's expected goals."
+    st.caption(caption)
+
+
 def render_squad(column, player_stats: pd.DataFrame, team: str, season: str, side: str):
     with column:
         squad = player_stats[(player_stats["team"] == team) & (player_stats["season"] == season)]
@@ -266,35 +343,7 @@ def render_squad(column, player_stats: pd.DataFrame, team: str, season: str, sid
             st.dataframe(display, hide_index=True, use_container_width=True, height=350)
 
 
-def render_dev_view(model: PoissonMatchModel, home_form, away_form, match_row: pd.Series):
-    with st.expander("🛠️ Dev View — model's prediction vs. actual"):
-        if home_form is None or away_form is None:
-            st.write("Not enough pre-match history to compute a prediction for this fixture.")
-            return
-        pred = predict_from_rows(model, home_form, away_form)
-        probs = {"H": pred["home_win_prob"], "D": pred["draw_prob"], "A": pred["away_win_prob"]}
-        predicted_result = max(probs, key=probs.get)
-        correct = predicted_result == match_row["result"]
-
-        st.markdown(
-            f"**Model predicted (using form entering this match):** "
-            f"{pred['predicted_score'].replace('-', ' - ')}  "
-            f"(H {pred['home_win_prob']:.0%} / D {pred['draw_prob']:.0%} / A {pred['away_win_prob']:.0%})"
-        )
-        st.markdown(
-            f"**Actual result:** {int(match_row['home_goals'])} - {int(match_row['away_goals'])} "
-            f"({match_row['result_label']})"
-        )
-        st.markdown("✅ Correct winner" if correct else "❌ Incorrect winner")
-        st.caption(
-            "Uses each team's rolling form as it stood right before this match, not hindsight -- "
-            "but the model was also trained on this match, so treat this as a sanity check, not a "
-            "true out-of-sample test."
-        )
-
-
-def render_actual_result(column, model: PoissonMatchModel, match_row: pd.Series,
-                          home: str, away: str, home_form, away_form):
+def render_actual_result(column, match_row: pd.Series):
     with column:
         with st.container(border=True):
             outcome_color = {"Home Win": HOME_COLOR, "Away Win": AWAY_COLOR, "Draw": DRAW_COLOR}
@@ -307,22 +356,11 @@ def render_actual_result(column, model: PoissonMatchModel, match_row: pd.Series,
                 unsafe_allow_html=True,
             )
             st.caption(f"Played {match_row['date'].date()} · Referee: {match_row.get('referee', 'n/a')}")
-            st.divider()
-            stat_table = pd.DataFrame(
-                {
-                    home: [match_row[h] for _, h, _ in MATCH_STAT_PAIRS],
-                    away: [match_row[a] for _, _, a in MATCH_STAT_PAIRS],
-                },
-                index=[label for label, _, _ in MATCH_STAT_PAIRS],
-            )
-            st.table(stat_table)
-        render_dev_view(model, home_form, away_form, match_row)
 
 
-def render_prediction(column, model: PoissonMatchModel, team_history: pd.DataFrame, home: str, away: str, note: str):
+def render_prediction(column, pred: dict, note: str):
     with column:
         with st.container(border=True):
-            pred = predict_matchup(model, team_history, home, away)
             home_rounded = round(pred["expected_home_goals"])
             away_rounded = round(pred["expected_away_goals"])
 
@@ -339,10 +377,6 @@ def render_prediction(column, model: PoissonMatchModel, team_history: pd.DataFra
                 unsafe_allow_html=True,
             )
             st.caption(note)
-            st.divider()
-            st.markdown(
-                f"Expected goals (unrounded): **{pred['expected_home_goals']}** — **{pred['expected_away_goals']}**"
-            )
             st.write("Home win")
             st.progress(pred["home_win_prob"], text=f"{pred['home_win_prob']:.0%}")
             st.write("Draw")
@@ -351,17 +385,112 @@ def render_prediction(column, model: PoissonMatchModel, team_history: pd.DataFra
             st.progress(pred["away_win_prob"], text=f"{pred['away_win_prob']:.0%}")
 
 
-def render_accuracy_bar(cfg: dict, model: PoissonMatchModel):
-    metrics = backtest_accuracy(model, cfg)
-    cols = st.columns(4)
-    cols[0].metric("Winner accuracy", f"{metrics['winner_accuracy']:.0%}")
-    cols[1].metric("Exact score accuracy", f"{metrics['exact_score_accuracy']:.0%}")
-    cols[2].metric("Brier score (lower = better)", f"{metrics['brier_score']:.3f}")
-    cols[3].metric("Matches evaluated", f"{metrics['n_evaluated']:,}")
-    st.caption(
-        "Baseline Poisson model, evaluated on every match with complete pre-match form. "
-        "This is an in-sample check (the model trained on these same matches), not a held-out backtest."
-    )
+def render_model_details(model: PoissonMatchModel, team_history: pd.DataFrame, dc_matchups: pd.DataFrame,
+                          dc_historical: pd.DataFrame, home_team: str, away_team: str, home_form, away_form, match_row):
+    with st.expander("🔬 Prediction details & model comparison"):
+        if match_row is not None:
+            st.markdown("**Match stats**")
+            stat_table = pd.DataFrame(
+                {
+                    home_team: [match_row[h] for _, h, _ in MATCH_STAT_PAIRS],
+                    away_team: [match_row[a] for _, _, a in MATCH_STAT_PAIRS],
+                },
+                index=[label for label, _, _ in MATCH_STAT_PAIRS],
+            )
+            st.table(stat_table)
+            st.divider()
+
+            st.markdown("**Python vs R: what each model predicted beforehand**")
+            if home_form is None or away_form is None:
+                st.write("Not enough pre-match history to compute a Python prediction for this fixture.")
+            else:
+                py_pred = predict_from_rows(model, home_form, away_form)
+                py_probs = {"H": py_pred["home_win_prob"], "D": py_pred["draw_prob"], "A": py_pred["away_win_prob"]}
+                py_result = max(py_probs, key=py_probs.get)
+                py_correct = "✅" if py_result == match_row["result"] else "❌"
+                st.markdown(
+                    f"- **Python** (form entering this match): {py_pred['predicted_score'].replace('-', ' - ')} "
+                    f"(H {py_pred['home_win_prob']:.0%} / D {py_pred['draw_prob']:.0%} / A {py_pred['away_win_prob']:.0%}) {py_correct}"
+                )
+            r_row = r_historical_row(dc_historical, match_row["match_id"])
+            if r_row is not None:
+                r_probs = {"H": r_row["home_win_prob"], "D": r_row["draw_prob"], "A": r_row["away_win_prob"]}
+                r_result = max(r_probs, key=r_probs.get)
+                r_correct = "✅" if r_result == match_row["result"] else "❌"
+                st.markdown(
+                    f"- **R Dixon-Coles** (team strength, full dataset): {r_row['predicted_score'].replace('-', ' - ')} "
+                    f"(H {r_row['home_win_prob']:.0%} / D {r_row['draw_prob']:.0%} / A {r_row['away_win_prob']:.0%}) {r_correct}"
+                )
+            else:
+                st.write("R model prediction not available -- run `Rscript src/models/dixon_coles_model.R`.")
+            st.caption(
+                "Neither is a true out-of-sample test: Python used only this team's pre-match rolling "
+                "form, but was trained on this match; R was trained on the full match history including "
+                "this game. Treat both as sanity checks, not held-out accuracy."
+            )
+        else:
+            py_pred = predict_matchup(model, team_history, home_team, away_team)
+            r_row = r_matchup_row(dc_matchups, home_team, away_team)
+
+            st.markdown("**Prediction distribution (Python model)**")
+            render_ci_charts(py_pred["expected_home_goals"], py_pred["expected_away_goals"], home_team, away_team, r_row)
+            st.divider()
+
+            st.markdown("**Python vs R comparison**")
+            comparison = {
+                "Expected goals": {
+                    "Python": f"{py_pred['expected_home_goals']} — {py_pred['expected_away_goals']}",
+                    "R Dixon-Coles": f"{r_row['expected_home_goals']} — {r_row['expected_away_goals']}" if r_row is not None else "—",
+                },
+                "Predicted score": {
+                    "Python": py_pred["predicted_score"].replace("-", " - "),
+                    "R Dixon-Coles": r_row["predicted_score"].replace("-", " - ") if r_row is not None else "—",
+                },
+                "Home / Draw / Away": {
+                    "Python": f"{py_pred['home_win_prob']:.0%} / {py_pred['draw_prob']:.0%} / {py_pred['away_win_prob']:.0%}",
+                    "R Dixon-Coles": (
+                        f"{r_row['home_win_prob']:.0%} / {r_row['draw_prob']:.0%} / {r_row['away_win_prob']:.0%}"
+                        if r_row is not None else "—"
+                    ),
+                },
+            }
+            st.dataframe(pd.DataFrame(comparison).T, use_container_width=True)
+            if r_row is None:
+                st.caption("R model prediction not available -- run `Rscript src/models/dixon_coles_model.R`.")
+            else:
+                st.caption(
+                    "Python uses each team's recent rolling form; R uses fixed team-strength ratings fit "
+                    "on the full match history -- different philosophies, so disagreement between them is "
+                    "expected, not a bug."
+                )
+
+
+def render_accuracy_expander(cfg: dict, model: PoissonMatchModel):
+    py_metrics = backtest_accuracy(model, cfg)
+    r_metrics = dixon_coles_accuracy(cfg)
+
+    with st.expander("📈 Model accuracy (Python vs R)"):
+        rows = {
+            "Winner accuracy": ("winner_accuracy", "{:.0%}"),
+            "Exact score accuracy": ("exact_score_accuracy", "{:.0%}"),
+            "Brier score (lower = better)": ("brier_score", "{:.3f}"),
+            "Matches evaluated": ("n_evaluated", "{:,}"),
+        }
+        table = {
+            label: {
+                "Python (rolling form)": fmt.format(py_metrics[key]),
+                "R Dixon-Coles (team strength)": fmt.format(r_metrics[key]) if r_metrics else "—",
+            }
+            for label, (key, fmt) in rows.items()
+        }
+        st.dataframe(pd.DataFrame(table).T, use_container_width=True)
+        st.caption(
+            "Both evaluated in-sample (each trained on the data it's scored against), not a true "
+            "held-out backtest -- and the R model is even more optimistic here, since it's fit on the "
+            "FULL match history rather than each match's own pre-match form only, so it effectively "
+            "already 'knows' each team's future results too. Treat this as a rough comparison of "
+            "modeling approaches, not a real accuracy claim."
+        )
 
 
 def main():
@@ -375,8 +504,10 @@ def main():
     player_stats = load_player_stats(cfg)
     fixtures = load_fixtures(cfg)
     model = load_model(cfg)
+    dc_matchups = load_dixon_coles_matchups(cfg)
+    dc_historical = load_dixon_coles_historical(cfg)
 
-    render_accuracy_bar(cfg, model)
+    render_accuracy_expander(cfg, model)
     st.divider()
 
     season_codes = sorted(matches["season"].unique())
@@ -420,15 +551,19 @@ def main():
     render_team_card(col_home_stats, home_team, home_form, "home")
 
     if match_row is not None:
-        render_actual_result(col_center, model, match_row, home_team, away_team, home_form, away_form)
-    elif fixture_date is not None:
-        note = f"Scheduled for {fixture_date} -- not yet played. Prediction uses each team's most recent form."
-        render_prediction(col_center, model, team_history, home_team, away_team, note)
+        render_actual_result(col_center, match_row)
     else:
-        note = "Hypothetical matchup (not on the schedule) -- prediction uses each team's most recent form."
-        render_prediction(col_center, model, team_history, home_team, away_team, note)
+        if fixture_date is not None:
+            note = f"Scheduled for {fixture_date} -- not yet played. Prediction uses each team's most recent form."
+        else:
+            note = "Hypothetical matchup (not on the schedule) -- prediction uses each team's most recent form."
+        py_pred = predict_matchup(model, team_history, home_team, away_team)
+        render_prediction(col_center, py_pred, note)
 
     render_team_card(col_away_stats, away_team, away_form, "away")
+
+    render_model_details(model, team_history, dc_matchups, dc_historical,
+                          home_team, away_team, home_form, away_form, match_row)
 
     col_home_squad, _, col_away_squad = st.columns([1, 1.1, 1])
     render_squad(col_home_squad, player_stats, home_team, squad_season, "home")

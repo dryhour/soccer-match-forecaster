@@ -92,6 +92,16 @@ The project will experiment with statistical and machine learning models such as
 
 Models will be evaluated against historical results to determine what approaches perform best.
 
+Alongside the Python baseline, `src/models/dixon_coles_model.R` fits a
+genuinely different model in R -- team-specific attack/defense strength
+parameters, the classic Dixon-Coles GLM parameterization -- rather than a
+port of the Python approach. See [docs/METHODOLOGY.md](docs/METHODOLOGY.md)
+for details. Requires R (`brew install r` on macOS); run with:
+
+```bash
+Rscript src/models/dixon_coles_model.R
+```
+
 ## Prediction Tracking
 
 Predictions will be saved and compared with actual results.

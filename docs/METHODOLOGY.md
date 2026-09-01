@@ -83,6 +83,42 @@ bar that more complex models (logistic regression, random forest, XGBoost)
 must clear on held-out data before being adopted — per the project's
 explicit "don't assume more complex = better" principle.
 
+## Alternative model: R Dixon-Coles-style GLM
+
+`src/models/dixon_coles_model.R` (base R only, no CRAN packages) fits a
+genuinely different model rather than reimplementing the Python one: a
+Poisson GLM with **fixed team-specific attack/defense parameters**, the
+standard Dixon & Coles (1997) parameterization --
+
+```
+goals ~ home_advantage + attack(team) + defense(opponent)
+```
+
+fit on a long reshape of the full match history (two rows per match: each
+side's scoring performance contributes to its own attack coefficient and its
+opponent's defense coefficient). Where the Python model asks "how has this
+team played in its last 5 matches," the R model asks "how strong is this
+team across the whole dataset" -- a different signal, so disagreement
+between the two is expected, not a bug.
+
+Run it with `Rscript src/models/dixon_coles_model.R` (needs R; on macOS,
+`brew install r`). It writes:
+
+- `models/dixon_coles.rds` -- the fitted model.
+- `data/gold/prediction_features/dixon_coles_historical.csv` -- a prediction
+  for every historical match, shaped so `evaluate_predictions.compute_metrics()`
+  can score it directly, the same as the Python model.
+- `data/gold/prediction_features/dixon_coles_matchups.csv` -- a prediction
+  for every pairing of current-season teams, including 80%/95% Poisson
+  confidence intervals, which the app reads to show both models side by side.
+
+This is not currently wired into `run_pipeline.py` -- it's an optional,
+separately-run comparison, the same way Wikipedia player-stats ingestion is.
+Not yet implemented: the low-score correlation (`tau`/`rho`) adjustment from
+the original Dixon-Coles paper, which corrects for the independence
+assumption below on 0-0/1-0/0-1/1-1 scorelines specifically -- the team
+attack/defense parameterization is the part that's done.
+
 ## Known limitations (current stage)
 
 - No player-level information yet — a team missing key attackers/defenders
@@ -94,8 +130,9 @@ explicit "don't assume more complex = better" principle.
   features.form_windows`) — this is a reasonable starting point, not a
   validated optimum. Should be swept as part of model comparison.
 - Independence assumption between home and away goals is a simplification;
-  real matches have some correlation (e.g. game state effects). A
-  bivariate-Poisson or Dixon-Coles adjustment is a natural next step.
+  real matches have some correlation (e.g. game state effects). The R model
+  adds team-specific attack/defense parameters but not yet the Dixon-Coles
+  low-score correlation adjustment itself -- still a natural next step.
 - Evaluation currently only covers match outcome/score, not player
   predictions (no player layer yet).
 
