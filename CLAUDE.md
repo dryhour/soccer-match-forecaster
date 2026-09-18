@@ -11,7 +11,7 @@ context lives in three docs — read them, don't duplicate them here:
 This file is the fast-orientation summary: current state, active plan, and
 working conventions.
 
-## Architecture (Bronze → Silver → Gold → Model → Prediction → Evaluation)
+##  Architecture (Bronze → Silver → Gold → Model → Prediction → Evaluation)
 
 ```
 Bronze (raw)  →  Silver (cleaned)  →  Gold (features)  →  Model  →  Prediction  →  Evaluation
