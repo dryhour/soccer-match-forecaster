@@ -44,9 +44,10 @@ collapsed into expanders.
 python run_pipeline.py                                   # ingest -> clean -> features -> train (Python model only)
 python -m src.predictions.generate_predictions --fixtures fixtures.csv
 python -m src.evaluation.evaluate_predictions
-Rscript src/models/dixon_coles_model.R                    # separate, manual — not in run_pipeline.py
+python -m src.evaluation.backtest                         # real held-out backtest, Python model (see below)
+Rscript src/models/dixon_coles_model.R                    # also runs its own held-out backtest — separate, manual, not in run_pipeline.py
 streamlit run app.py
-pytest                                                    # 21 tests as of last count
+pytest                                                    # 41 tests as of last count
 ```
 
 ## Current state (see docs/PROGRESS.md for full detail)
@@ -55,8 +56,23 @@ Working end-to-end: ingestion → cleaning → features → two competing
 forecasting models → evaluation loop → Streamlit app. Player stats are
 scraped and displayed (squad view) but **do not yet feed either model**.
 
+**Held-out backtest results** (season 2526 held out entirely from training —
+see `src/evaluation/backtest.py` and the holdout section of
+`src/models/dixon_coles_model.R`; both write their held-out predictions to
+`data/gold/prediction_features/*_holdout_backtest.csv`):
+
+| model | n | winner acc. | exact score | MAE (H/A) | Brier |
+|---|---|---|---|---|---|
+| Python Poisson | 377 | 43.8% | 12.5% | 1.00 / 0.89 | 0.646 |
+| R Dixon-Coles | 342 (38 skipped — newly promoted teams never seen in training) | 47.7% | 12.0% | 0.94 / 0.86 | 0.618 |
+
+R currently edges out Python on winner accuracy and Brier score even
+out-of-sample — smaller gap than the old in-sample numbers (55% vs 46%)
+suggested, but the whole-history signal still looks real. This is now the
+number every future feature/model change must beat. Re-run both backtests
+after each change and update this table.
+
 **Known gaps**
-- No true held-out backtest for either model — both scored in-sample (R more so).
 - R model missing the Dixon-Coles `tau`/`rho` low-score correlation adjustment.
 - 24/81 team-seasons of Wikipedia player data still fail to parse (a 4th, unhandled table layout).
 - No injury/lineup data at all — `data/bronze/injuries/` and `data/silver/injuries_clean/` are empty placeholders; no ingestion source identified yet (free real-time injury data is harder to source than match results — most options are paywalled or JS-rendered).
@@ -82,10 +98,10 @@ baseline just by existing if the input features are the same). Build and
 evaluate one item at a time against the held-out split, not in a batch —
 otherwise you can't tell which change actually helped.
 
-**Do first (blocks everything else):**
-- [ ] **Real chronological train/test split** for both models, per METHODOLOGY.md's comparison protocol. Nothing below this line can be trusted without it — right now "improvements" are unfalsifiable.
+**Done:**
+- [x] **Real chronological train/test split** for both models (2026-09-20) — `src/evaluation/backtest.py` (Python) and the holdout section of `src/models/dixon_coles_model.R`, both holding out season 2526. Baseline numbers are in the table above. Every item below is now falsifiable against those numbers.
 
-**High-impact, buildable now (existing data, no new sources needed):**
+**High-impact, buildable now (existing data, no new sources needed) — do next:**
 - [ ] Team average goals scored / conceded, with explicit home vs. away splits (current model only has blended 5-match rolling form).
 - [ ] Strength-of-schedule adjustment — a good recent record against weak teams shouldn't score the same as against strong teams.
 - [ ] Team attacking/defensive strength features (rolling goals, shots, shots on target as a bundle, not goals alone).

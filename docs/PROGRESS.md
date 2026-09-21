@@ -81,6 +81,30 @@ and models actually work, see [METHODOLOGY.md](METHODOLOGY.md).
 - Audited tracked files and full git history for secrets/credentials/PII —
   none found.
 
+**8. Real chronological train/test backtest** (2026-09-20)
+- Added `evaluation.holdout_season: 2526` to `config/config.yaml` — the most
+  recent complete season, held out entirely from training for both models.
+- `src/evaluation/backtest.py`: refits the Python Poisson model on the
+  non-holdout seasons only and scores it on the holdout season, reusing
+  `evaluate_predictions.compute_metrics()` so numbers are directly
+  comparable to live prediction-log evaluation. Writes
+  `data/gold/prediction_features/poisson_holdout_backtest.csv`.
+- Added an equivalent held-out section to `src/models/dixon_coles_model.R`:
+  refits the GLM on train seasons only, predicts the holdout season, and
+  prints/saves the same metrics
+  (`dixon_coles_holdout_backtest.csv`). Matches involving a team with zero
+  training-season appearances (newly promoted for the holdout season) are
+  skipped rather than guessed at — a real limitation of the whole-history
+  parameterization, not a bug.
+- Real (out-of-sample) results: Python 43.8% winner accuracy / 0.646 Brier;
+  R 47.7% winner accuracy / 0.618 Brier (on 342 matches, 38 skipped for
+  unseen teams). R still edges out Python, but the gap is much smaller than
+  the old in-sample comparison (55% vs 46%) suggested — that comparison was
+  optimistic for R specifically, since it trained on the full history
+  including the seasons it was being scored on.
+- Added `tests/test_backtest.py` (2 tests: holdout-only scoring, empty-split
+  error) — 41 tests pass as of this session.
+
 ## Current state / known gaps
 
 - **Player-stats coverage**: 24/81 team-seasons still unparsed (a 4th
@@ -89,9 +113,10 @@ and models actually work, see [METHODOLOGY.md](METHODOLOGY.md).
 - **R model**: doesn't yet include the Dixon-Coles low-score correlation
   (`tau`/`rho`) adjustment from the original paper — just the team
   attack/defense parameterization.
-- **No true held-out backtest** for either model — both are scored
-  in-sample (R more so, since it's trained on the full history rather than
-  each match's own pre-match state).
+- **Held-out backtest now exists** (season 2526) — see item 8 above for real
+  out-of-sample numbers. Both models still trained/evaluated only once (no
+  cross-validation across multiple holdout seasons), and R still can't score
+  newly promoted teams it has zero training history for.
 - **Fixtures feed** only covers the next matchweek or two (a limitation of
   the free source, not something this project controls).
 - **Player stats are display-only** — not feeding into either forecasting
@@ -99,13 +124,11 @@ and models actually work, see [METHODOLOGY.md](METHODOLOGY.md).
 - `run_pipeline.py` covers only the original match pipeline (ingest → clean
   → features → train). Wikipedia ingestion and the R model are separate,
   manually-run steps, not wired in.
-- The `.gitignore`/`.gitattributes` additions are staged but **not
-  committed** — nothing in this project has been committed automatically;
-  ask before committing per the user's standing preference.
+- Nothing in this project is committed automatically — ask before
+  committing per the user's standing preference.
 
 ## Suggested next steps
 
-- Decide on and commit the pending git cleanup.
 - Extend `clean_player_stats.py` to handle the 4th Wikipedia layout (the
   remaining 24 team-seasons).
 - Feed player/squad-availability data into the forecasting models

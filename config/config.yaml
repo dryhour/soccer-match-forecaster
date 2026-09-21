@@ -80,3 +80,12 @@ model:
   baseline: "poisson"
   candidates: ["poisson", "logistic", "random_forest", "xgboost"]
   max_goals_simulated: 10      # cap for Poisson scoreline probability grid
+
+# -----------------------------------------------------------------------------
+# Evaluation
+# -----------------------------------------------------------------------------
+# Chronological train/test split: the most recent complete season is held out
+# entirely from training and used only for scoring. Never a random split --
+# this is time-series data and shuffling would leak the future into training.
+evaluation:
+  holdout_season: 2526
