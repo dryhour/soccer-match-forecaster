@@ -77,13 +77,47 @@ def add_rolling_form(long_df: pd.DataFrame, windows: list, min_matches: int) -> 
             lambda s: s.shift(1).rolling(w, min_periods=min_matches).mean()
         )
 
-    # Season-to-date home/away splits (expanding mean, shifted).
+    # Season-to-date average, blended across home and away matches
+    # (expanding mean, shifted).
     long_df["season_avg_goals_for"] = grouped["goals_for"].apply(
         lambda s: s.shift(1).expanding(min_periods=min_matches).mean()
     )
     long_df["season_avg_goals_against"] = grouped["goals_against"].apply(
         lambda s: s.shift(1).expanding(min_periods=min_matches).mean()
     )
+
+    return long_df
+
+
+def add_venue_split_averages(long_df: pd.DataFrame, min_matches: int) -> pd.DataFrame:
+    """
+    Season-to-date average goals scored/conceded computed ONLY from a
+    team's past matches at the SAME venue (home or away) as this row's own
+    match -- e.g. a team's value here on a home-match row is its average
+    scoring/conceding rate across its own past home matches only, never
+    blended with its away record. This is a different signal from
+    season_avg_goals_for/against above (which blends both venues), since
+    a team's home and away performance often differ a lot.
+
+    Shifted by 1 WITHIN each venue-specific sequence (not within the
+    team's full match sequence) so a match's own result never leaks into
+    its own feature, and so a team's 3rd home game of the season looks back
+    at its first 2 home games only -- not at away games played in between.
+    """
+    long_df = long_df.copy()
+    long_df["avg_goals_for_by_venue"] = float("nan")
+    long_df["avg_goals_against_by_venue"] = float("nan")
+
+    for is_home_flag in (1, 0):
+        mask = long_df["is_home"] == is_home_flag
+        subset = long_df.loc[mask].sort_values(["team", "date"])
+        grouped = subset.groupby("team", group_keys=False)
+        long_df.loc[mask, "avg_goals_for_by_venue"] = grouped["goals_for"].apply(
+            lambda s: s.shift(1).expanding(min_periods=min_matches).mean()
+        )
+        long_df.loc[mask, "avg_goals_against_by_venue"] = grouped["goals_against"].apply(
+            lambda s: s.shift(1).expanding(min_periods=min_matches).mean()
+        )
 
     return long_df
 
@@ -128,6 +162,7 @@ def main():
 
     long_df = to_team_long(matches)
     team_form = add_rolling_form(long_df, windows, min_matches)
+    team_form = add_venue_split_averages(team_form, min_matches)
 
     team_out_path = team_out_dir / "team_match_history.csv"
     team_form.to_csv(team_out_path, index=False)

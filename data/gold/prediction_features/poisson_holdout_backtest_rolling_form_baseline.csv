@@ -30,7 +30,6 @@ match_date,home_team,away_team,expected_home_goals,expected_away_goals,predicted
 2025-09-13,West Ham United,Tottenham Hotspur,1.65,1.4,1-1,0.4345,0.239,0.3265,0.1096,0,3,A
 2025-09-13,Newcastle United,Wolverhampton Wanderers,1.57,1.27,1-1,0.4441,0.2477,0.3083,0.1166,1,0,H
 2025-09-13,Fulham,Leeds,1.65,1.28,1-1,0.461,0.2417,0.2974,0.1128,1,0,H
-2025-09-13,Crystal Palace,Sunderland,1.64,1.32,1-1,0.4497,0.2417,0.3086,0.1124,0,0,D
 2025-09-13,Bournemouth,Brighton,1.61,1.41,1-1,0.424,0.2407,0.3353,0.1107,2,1,H
 2025-09-13,Arsenal,Nottingham Forest,1.68,1.24,1-1,0.4783,0.2403,0.2815,0.1124,3,0,H
 2025-09-13,Everton,Aston Villa,1.62,1.18,1-1,0.4779,0.2456,0.2764,0.1161,0,0,D
@@ -44,9 +43,7 @@ match_date,home_team,away_team,expected_home_goals,expected_away_goals,predicted
 2025-09-20,Manchester United,Chelsea,1.5,1.41,1-1,0.3961,0.2472,0.3568,0.1153,2,1,H
 2025-09-20,Liverpool,Everton,1.63,1.29,1-1,0.4541,0.243,0.3029,0.1135,2,1,H
 2025-09-21,Bournemouth,Newcastle United,1.58,1.23,1-1,0.4558,0.2478,0.2964,0.1169,0,0,D
-2025-09-21,Sunderland,Aston Villa,1.57,1.15,1-1,0.469,0.2509,0.2801,0.1191,1,1,D
 2025-09-21,Arsenal,Manchester City,1.69,1.32,1-1,0.4616,0.2385,0.2999,0.1103,1,1,D
-2025-09-27,Nottingham Forest,Sunderland,1.49,1.36,1-1,0.4032,0.2499,0.3469,0.1174,0,1,A
 2025-09-27,Manchester City,Burnley,1.7,1.27,1-1,0.4764,0.2381,0.2854,0.1107,5,1,H
 2025-09-27,Leeds,Bournemouth,1.47,1.32,1-1,0.408,0.2521,0.3399,0.1189,2,2,D
 2025-09-27,Tottenham Hotspur,Wolverhampton Wanderers,1.83,1.2,1-1,0.5232,0.2288,0.2481,0.106,1,1,D

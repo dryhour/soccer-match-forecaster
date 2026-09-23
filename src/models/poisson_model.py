@@ -108,9 +108,27 @@ class PoissonMatchModel:
 
 
 def build_feature_lists(windows: list):
+    """Baseline feature set: blended (home+away) rolling N-match form."""
     w = windows[0]
     home_features = [f"home_avg_goals_for_last{w}", f"away_avg_goals_against_last{w}"]
     away_features = [f"away_avg_goals_for_last{w}", f"home_avg_goals_against_last{w}"]
+    return home_features, away_features
+
+
+def build_team_level_feature_lists():
+    """
+    Challenger feature set (2026-09-26 experiment): season-to-date average
+    goals scored/conceded, computed ONLY from each team's past matches at
+    the SAME venue as this match -- the home team's own home-match record,
+    the away team's own away-match record. See
+    src/features/build_match_features.py's add_venue_split_averages().
+
+    Tests whether venue-specific team-level history beats the blended
+    5-match rolling-form baseline (build_feature_lists) -- compared
+    head-to-head on the same held-out season in src/evaluation/backtest.py.
+    """
+    home_features = ["home_avg_goals_for_by_venue", "away_avg_goals_against_by_venue"]
+    away_features = ["away_avg_goals_for_by_venue", "home_avg_goals_against_by_venue"]
     return home_features, away_features
 
 

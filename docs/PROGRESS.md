@@ -105,6 +105,42 @@ and models actually work, see [METHODOLOGY.md](METHODOLOGY.md).
 - Added `tests/test_backtest.py` (2 tests: holdout-only scoring, empty-split
   error) — 41 tests pass as of this session.
 
+**9. Team-level venue-split features (2026-09-26 research milestone)**
+- Research question: does better team-level information improve
+  predictions over the rolling-form baseline? Also the first milestone of
+  the reframed research plan (see `CLAUDE.md` — this project is now scoped
+  around two specific research questions with weekly deadlines through
+  2026-10-24, not an open-ended feature backlog).
+- The blended season-to-date averages (`season_avg_goals_for/against`)
+  already existed. What was missing was the **home/away split**: a team's
+  average goals scored/conceded computed ONLY from its own past matches at
+  the same venue. Added `add_venue_split_averages()` to
+  `src/features/build_match_features.py` — new columns
+  `avg_goals_for_by_venue` / `avg_goals_against_by_venue`, expanding-mean
+  shifted by 1 *within each venue-specific subsequence* (a team's 3rd home
+  game looks back at its first 2 home games only, not at away games played
+  in between).
+- Verified no leakage by hand (Arsenal's 4th home match's feature value
+  exactly equals the mean of its prior 3 home goals) and with two new unit
+  tests in `tests/test_features.py`.
+- Added `build_team_level_feature_lists()` to `src/models/poisson_model.py`
+  as a named alternative to the existing `build_feature_lists()` (rolling
+  form) — both still exist side by side, nothing deleted.
+- Extended `src/evaluation/backtest.py` to run named feature sets
+  head-to-head and print a comparison table. Also fixed a fairness issue:
+  the two feature sets drop slightly different rows to NaN, so evaluation
+  is now restricted to the intersection of valid holdout-season matches
+  across all feature sets (374 matches for both, not 377 vs. 374).
+- **Result: yes, modestly.** Team-level venue-split beat rolling-form on
+  winner accuracy (45.7% vs. 44.1%) and Brier score (0.640 vs. 0.645) on
+  the identical 374-match held-out sample; exact-score accuracy tied,
+  goal MAE mixed (home slightly better, away slightly worse). This is now
+  the Python baseline to beat going forward.
+- R wasn't changed this round and its numbers are unchanged (reconfirmed by
+  rerunning) — its fixed-effects design already encodes team-level
+  attack/defense strength by construction, so "rolling-form vs. team-level"
+  isn't a natural experiment on the R side the way it is for Python.
+
 ## Current state / known gaps
 
 - **Player-stats coverage**: 24/81 team-seasons still unparsed (a 4th
