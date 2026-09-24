@@ -235,13 +235,13 @@ The project is currently in development. The target is to complete the main rese
 
 Complete:
 
-- [ ] Average goals scored
-- [ ] Average goals conceded
-- [ ] Home goals scored/conceded
-- [ ] Away goals scored/conceded
-- [ ] Verify no future information is used
-- [ ] Re-run both models
-- [ ] Compare results against the current baseline
+- [x] Average goals scored
+- [x] Average goals conceded
+- [x] Home goals scored/conceded
+- [x] Away goals scored/conceded
+- [x] Verify no future information is used
+- [x] Re-run both models
+- [x] Compare results against the current baseline
 
 **Research question:**
 
