@@ -63,7 +63,7 @@ python -m src.evaluation.evaluate_predictions
 python -m src.evaluation.backtest                         # real held-out backtest, Python model (see below)
 Rscript src/models/dixon_coles_model.R                    # also runs its own held-out backtest — separate, manual, not in run_pipeline.py
 streamlit run app.py
-pytest                                                    # 43 tests as of last count
+pytest                                                    # 46 tests as of last count
 ```
 
 ## Current state (see docs/PROGRESS.md for full detail)
@@ -80,15 +80,18 @@ see `src/evaluation/backtest.py` and the holdout section of
 | model / feature set | n | winner acc. | exact score | MAE (H/A) | Brier |
 |---|---|---|---|---|---|
 | Python Poisson — rolling 5-match form (original baseline) | 374 | 44.1% | 12.3% | 1.00 / 0.89 | 0.645 |
-| Python Poisson — **team-level venue-split** (2026-09-26) | 374 | **45.7%** | 12.3% | 0.98 / 0.91 | **0.640** |
+| Python Poisson — team-level venue-split (2026-09-26) | 374 | 45.7% | 12.3% | 0.98 / 0.91 | 0.640 |
 | R Dixon-Coles (whole-history team fixed effects) | 342 (38 skipped — newly promoted teams never seen in training) | 47.7% | 12.0% | 0.94 / 0.86 | 0.618 |
 
 R still leads on all metrics — smaller gap than the old in-sample numbers
 (55% vs 46%) suggested, but the whole-history signal still looks real.
-Python's venue-split team-level features (see 2026-09-26 below) beat its
-own rolling-form baseline on winner accuracy and Brier, on an identical
-374-match held-out sample — a real, if modest, improvement, and now the
-new Python baseline every later feature must beat. R wasn't re-engineered
+Python's venue-split team-level features (see 2026-09-26 below) score
+slightly better than its rolling-form baseline on an identical 374-match
+held-out sample (Brier −0.0051, 95% CI [−0.0104, +0.0003]; accuracy +6
+matches, 95% CI [−0.8, +4.0] pts), but both intervals include zero — one
+season is not enough to distinguish it from noise. Treat it as a leading
+candidate, not an established improvement; keep both as reference points
+until a multi-season/walk-forward check or a larger effect settles it. R wasn't re-engineered
 this round: its fixed-effects design already encodes team-level strength
 by construction, so this specific experiment (rolling-form vs. team-level)
 doesn't have a natural R-side counterpart; R's numbers above are simply
@@ -112,13 +115,14 @@ the held-out backtest (`src/evaluation/backtest.py` / the R holdout
 section) — never a batch — so each change's effect is attributable.
 
 - [x] **Chronological train/test split** (done 2026-09-20) — see results table above.
-- [x] **2026-09-26 — team-level features** (done 2026-09-26). Research question: *does better team-level information improve predictions over the current rolling-form baseline?* Answer: **yes, modestly.**
+- [x] **2026-09-26 — team-level features** (done 2026-09-26). Research question: *does better team-level information improve predictions over the current rolling-form baseline?* Answer: **suggestive but not established** — venue-split scored slightly better, but a paired bootstrap on the single 374-match holdout gives 95% intervals that include zero for both Brier and accuracy.
   - [x] Average goals scored (blended) — already existed (`season_avg_goals_for`), unchanged.
   - [x] Average goals conceded (blended) — already existed (`season_avg_goals_against`), unchanged.
   - [x] Home goals scored/conceded — new `avg_goals_for_by_venue` / `avg_goals_against_by_venue`, computed only from a team's own past HOME matches (`src/features/build_match_features.py`'s `add_venue_split_averages`).
   - [x] Away goals scored/conceded — same function, away-only subset.
   - [x] Verified no future-information leakage — by hand (Arsenal's 4th home match's feature = mean of exactly its prior 3 home goals, not including its own result) and by unit test (`tests/test_features.py::test_venue_split_no_leakage_of_current_match`, `test_venue_split_ignores_other_venue_matches`).
   - [x] Re-ran both models — Python via `src/evaluation/backtest.py` (now compares named feature sets head-to-head on an identical held-out sample); R via `Rscript src/models/dixon_coles_model.R` (numbers unchanged, as expected — see note below the table).
+  - [x] Added a paired bootstrap (`paired_bootstrap` in `src/evaluation/backtest.py`) so every feature comparison reports a noise estimate, not just point differences — use it for all later milestones.
   - [x] Compared against baseline — see table above. `build_team_level_feature_lists()` in `src/models/poisson_model.py` is the new candidate; `build_feature_lists()` (rolling form) remains the old baseline, both still available for comparison, not one deleted in favor of the other.
 - [ ] **2026-10-03** — strength-of-schedule adjustment; compare 3/5/10-match form windows against each other. Record Brier score, log loss, and accuracy for each variant (log loss isn't computed anywhere yet — add it alongside Brier in `evaluate_predictions.compute_metrics`).
 - [ ] **2026-10-10** — squad-quality feature from existing Wikipedia player data, aggregated to team level; guard against low-appearance players dominating the metric (e.g. minimum-minutes/appearances floor before a player's per-90 rate counts, per `config.yaml`'s existing `min_matches_for_form` pattern). Test whether it actually moves the backtest numbers — a negative result here is a valid, reportable finding, not a failure.

@@ -131,11 +131,19 @@ and models actually work, see [METHODOLOGY.md](METHODOLOGY.md).
   the two feature sets drop slightly different rows to NaN, so evaluation
   is now restricted to the intersection of valid holdout-season matches
   across all feature sets (374 matches for both, not 377 vs. 374).
-- **Result: yes, modestly.** Team-level venue-split beat rolling-form on
-  winner accuracy (45.7% vs. 44.1%) and Brier score (0.640 vs. 0.645) on
-  the identical 374-match held-out sample; exact-score accuracy tied,
-  goal MAE mixed (home slightly better, away slightly worse). This is now
-  the Python baseline to beat going forward.
+- **Result: suggestive, not established.** Team-level venue-split scored
+  higher on winner accuracy (45.7% vs. 44.1%) and lower on Brier (0.640 vs.
+  0.645) on the identical 374-match held-out sample; exact-score accuracy
+  tied, goal MAE mixed. (First written up as "yes, modestly" — corrected
+  after testing the gap for noise.)
+- Added `paired_bootstrap()` to `src/evaluation/backtest.py` (paired
+  resampling over matches, 10,000 draws) and print it after every
+  comparison. Brier difference −0.0051, 95% CI [−0.0104, +0.0003];
+  accuracy difference +1.6 pts (6 matches: 13 gained, 7 lost), 95% CI
+  [−0.8, +4.0] pts. Both include zero, so one season can't separate this
+  from noise. Keep both feature sets as reference points; a multi-season
+  walk-forward check is the natural way to settle it. 3 tests added
+  (46 pass).
 - R wasn't changed this round and its numbers are unchanged (reconfirmed by
   rerunning) — its fixed-effects design already encodes team-level
   attack/defense strength by construction, so "rolling-form vs. team-level"

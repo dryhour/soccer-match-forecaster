@@ -20,6 +20,7 @@ Usage:
 
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 import yaml
 
@@ -79,6 +80,50 @@ def run_poisson_backtest(df: pd.DataFrame, home_features: list, away_features: l
     return pd.DataFrame(rows)
 
 
+def per_match_brier(df: pd.DataFrame) -> np.ndarray:
+    onehot = pd.get_dummies(df["actual_result"]).reindex(columns=["H", "D", "A"], fill_value=0).values.astype(float)
+    probs = df[["home_win_prob", "draw_prob", "away_win_prob"]].values
+    return ((probs - onehot) ** 2).sum(axis=1)
+
+
+def per_match_correct(df: pd.DataFrame) -> np.ndarray:
+    label = {"home_win_prob": "H", "draw_prob": "D", "away_win_prob": "A"}
+    predicted = df[["home_win_prob", "draw_prob", "away_win_prob"]].idxmax(axis=1).map(label)
+    return (predicted == df["actual_result"]).astype(float).values
+
+
+def paired_bootstrap(baseline_df: pd.DataFrame, challenger_df: pd.DataFrame,
+                      n_boot: int = 10000, seed: int = 0) -> dict:
+    """
+    Paired bootstrap over matches for (challenger - baseline) differences in
+    Brier score and winner accuracy. Both frames must cover the identical
+    matches in the same order. With one holdout season a gap of a percentage
+    point or two is often noise; the 95% interval says whether it is.
+    """
+    keys = ["match_date", "home_team", "away_team"]
+    if not baseline_df[keys].reset_index(drop=True).equals(challenger_df[keys].reset_index(drop=True)):
+        raise ValueError("Paired bootstrap needs both frames to hold the identical matches in the same order.")
+
+    diffs = {
+        "brier_diff": per_match_brier(challenger_df) - per_match_brier(baseline_df),
+        "accuracy_diff": per_match_correct(challenger_df) - per_match_correct(baseline_df),
+    }
+    rng = np.random.default_rng(seed)
+    n = len(baseline_df)
+    idx = rng.integers(0, n, size=(n_boot, n))
+
+    out = {"n": n}
+    for name, d in diffs.items():
+        boot_means = d[idx].mean(axis=1)
+        low, high = np.percentile(boot_means, [2.5, 97.5])
+        out[name] = {
+            "mean": round(float(d.mean()), 4),
+            "ci95": (round(float(low), 4), round(float(high), 4)),
+            "excludes_zero": bool(low > 0 or high < 0),
+        }
+    return out
+
+
 def main():
     cfg = load_config()
     holdout_season = cfg["evaluation"]["holdout_season"]
@@ -114,6 +159,7 @@ def main():
 
     out_dir.mkdir(parents=True, exist_ok=True)
     results = {}
+    backtest_frames = {}
     for name, (home_features, away_features) in feature_sets.items():
         backtest_df = run_poisson_backtest(df, home_features, away_features, holdout_season, max_goals,
                                             eval_match_ids=common_eval_ids)
@@ -121,6 +167,7 @@ def main():
         backtest_df.to_csv(out_path, index=False)
         print(f"Saved {len(backtest_df)} held-out prediction(s) -> {out_path.relative_to(PROJECT_ROOT)}")
         results[name] = compute_metrics(backtest_df)
+        backtest_frames[name] = backtest_df
 
     print(f"\nPython Poisson -- held-out backtest comparison (season {holdout_season} never seen in training):")
     metric_keys = ["n_evaluated", "winner_accuracy", "exact_score_accuracy",
@@ -130,6 +177,19 @@ def main():
     for key in metric_keys:
         row = f"  {key:<22}" + "".join(f"{results[name].get(key, 'n/a'):>26}" for name in results)
         print(row)
+
+    baseline_name = next(iter(feature_sets))
+    print(f"\nPaired bootstrap vs. '{baseline_name}' (challenger - baseline; 95% CI over matches, "
+          f"10,000 resamples). Brier: negative = better. Accuracy: positive = better.")
+    for name in feature_sets:
+        if name == baseline_name:
+            continue
+        boot = paired_bootstrap(backtest_frames[baseline_name], backtest_frames[name])
+        print(f"  {name} (n={boot['n']})")
+        for key in ("brier_diff", "accuracy_diff"):
+            b = boot[key]
+            verdict = "interval excludes 0" if b["excludes_zero"] else "interval includes 0 -> not distinguishable from noise"
+            print(f"    {key:<14} mean {b['mean']:+.4f}  95% CI [{b['ci95'][0]:+.4f}, {b['ci95'][1]:+.4f}]  ({verdict})")
 
     print("\nCompare against src/models/dixon_coles_model.R's holdout output "
           "(same season, same schema) for a like-for-like model comparison.")
