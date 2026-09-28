@@ -24,7 +24,7 @@ import numpy as np
 import pandas as pd
 import yaml
 
-from src.evaluation.evaluate_predictions import compute_metrics
+from src.evaluation.evaluate_predictions import compute_metrics, per_match_log_loss
 from src.models.poisson_model import PoissonMatchModel, build_feature_lists, build_team_level_feature_lists
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -96,7 +96,7 @@ def paired_bootstrap(baseline_df: pd.DataFrame, challenger_df: pd.DataFrame,
                       n_boot: int = 10000, seed: int = 0) -> dict:
     """
     Paired bootstrap over matches for (challenger - baseline) differences in
-    Brier score and winner accuracy. Both frames must cover the identical
+    Brier score, log loss, and winner accuracy. Both frames must cover the identical
     matches in the same order. With one holdout season a gap of a percentage
     point or two is often noise; the 95% interval says whether it is.
     """
@@ -106,6 +106,7 @@ def paired_bootstrap(baseline_df: pd.DataFrame, challenger_df: pd.DataFrame,
 
     diffs = {
         "brier_diff": per_match_brier(challenger_df) - per_match_brier(baseline_df),
+        "log_loss_diff": per_match_log_loss(challenger_df) - per_match_log_loss(baseline_df),
         "accuracy_diff": per_match_correct(challenger_df) - per_match_correct(baseline_df),
     }
     rng = np.random.default_rng(seed)
@@ -171,7 +172,7 @@ def main():
 
     print(f"\nPython Poisson -- held-out backtest comparison (season {holdout_season} never seen in training):")
     metric_keys = ["n_evaluated", "winner_accuracy", "exact_score_accuracy",
-                    "mae_home_goals", "mae_away_goals", "brier_score"]
+                    "mae_home_goals", "mae_away_goals", "brier_score", "log_loss"]
     header = f"  {'metric':<22}" + "".join(f"{name:>26}" for name in results)
     print(header)
     for key in metric_keys:
@@ -180,13 +181,13 @@ def main():
 
     baseline_name = next(iter(feature_sets))
     print(f"\nPaired bootstrap vs. '{baseline_name}' (challenger - baseline; 95% CI over matches, "
-          f"10,000 resamples). Brier: negative = better. Accuracy: positive = better.")
+          f"10,000 resamples). Brier/log loss: negative = better. Accuracy: positive = better.")
     for name in feature_sets:
         if name == baseline_name:
             continue
         boot = paired_bootstrap(backtest_frames[baseline_name], backtest_frames[name])
         print(f"  {name} (n={boot['n']})")
-        for key in ("brier_diff", "accuracy_diff"):
+        for key in ("brier_diff", "log_loss_diff", "accuracy_diff"):
             b = boot[key]
             verdict = "interval excludes 0" if b["excludes_zero"] else "interval includes 0 -> not distinguishable from noise"
             print(f"    {key:<14} mean {b['mean']:+.4f}  95% CI [{b['ci95'][0]:+.4f}, {b['ci95'][1]:+.4f}]  ({verdict})")

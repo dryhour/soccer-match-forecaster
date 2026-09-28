@@ -89,3 +89,12 @@ def test_paired_bootstrap_rejects_misaligned_matches():
     b["home_team"] = "Z"
     with pytest.raises(ValueError):
         paired_bootstrap(a, b, n_boot=50)
+
+
+def test_paired_bootstrap_reports_log_loss_diff():
+    actual = ["H"] * 60
+    good = _preds([0.9] * 60, actual)
+    bad = _preds([0.4] * 60, actual)
+    out = paired_bootstrap(bad, good, n_boot=200)
+    assert out["log_loss_diff"]["mean"] < 0
+    assert out["log_loss_diff"]["excludes_zero"]

@@ -63,7 +63,7 @@ python -m src.evaluation.evaluate_predictions
 python -m src.evaluation.backtest                         # real held-out backtest, Python model (see below)
 Rscript src/models/dixon_coles_model.R                    # also runs its own held-out backtest — separate, manual, not in run_pipeline.py
 streamlit run app.py
-pytest                                                    # 46 tests as of last count
+pytest                                                    # 49 tests as of last count
 ```
 
 ## Current state (see docs/PROGRESS.md for full detail)
@@ -77,12 +77,13 @@ see `src/evaluation/backtest.py` and the holdout section of
 `src/models/dixon_coles_model.R`; both write their held-out predictions to
 `data/gold/prediction_features/*_holdout_backtest.csv`):
 
-| model / feature set | n | winner acc. | exact score | MAE (H/A) | Brier |
-|---|---|---|---|---|---|
-| Python Poisson — rolling 5-match form (original baseline) | 374 | 44.1% | 12.3% | 1.00 / 0.89 | 0.645 |
-| Python Poisson — team-level venue-split (2026-09-26) | 374 | 45.7% | 12.3% | 0.98 / 0.91 | 0.640 |
-| R Dixon-Coles (whole-history team fixed effects) | 342 (38 skipped — newly promoted teams never seen in training) | 47.7% | 12.0% | 0.94 / 0.86 | 0.618 |
+| model / feature set | n | winner acc. | exact score | MAE (H/A) | Brier | log loss |
+|---|---|---|---|---|---|---|
+| Python Poisson — rolling 5-match form (original baseline) | 374 | 44.1% | 12.3% | 1.00 / 0.89 | 0.645 | 1.068 |
+| Python Poisson — team-level venue-split (2026-09-26) | 374 | 45.7% | 12.3% | 0.98 / 0.91 | 0.640 | 1.062 |
+| R Dixon-Coles (whole-history team fixed effects) | 342 (38 skipped — newly promoted teams never seen in training) | 47.7% | 12.0% | 0.94 / 0.86 | 0.618 | 1.028 |
 
+Log loss reference point: a uniform 1/3-1/3-1/3 guess scores ln 3 ≈ 1.099.
 R still leads on all metrics — smaller gap than the old in-sample numbers
 (55% vs 46%) suggested, but the whole-history signal still looks real.
 Python's venue-split team-level features (see 2026-09-26 below) score
@@ -124,7 +125,10 @@ section) — never a batch — so each change's effect is attributable.
   - [x] Re-ran both models — Python via `src/evaluation/backtest.py` (now compares named feature sets head-to-head on an identical held-out sample); R via `Rscript src/models/dixon_coles_model.R` (numbers unchanged, as expected — see note below the table).
   - [x] Added a paired bootstrap (`paired_bootstrap` in `src/evaluation/backtest.py`) so every feature comparison reports a noise estimate, not just point differences — use it for all later milestones.
   - [x] Compared against baseline — see table above. `build_team_level_feature_lists()` in `src/models/poisson_model.py` is the new candidate; `build_feature_lists()` (rolling form) remains the old baseline, both still available for comparison, not one deleted in favor of the other.
-- [ ] **2026-10-03** — strength-of-schedule adjustment; compare 3/5/10-match form windows against each other. Record Brier score, log loss, and accuracy for each variant (log loss isn't computed anywhere yet — add it alongside Brier in `evaluate_predictions.compute_metrics`).
+- [ ] **2026-10-03** — strength-of-schedule adjustment; compare 3/5/10-match form windows against each other. Record Brier score, log loss, and accuracy for each variant.
+  - [x] Log loss added (2026-09-28) — `per_match_log_loss` in `evaluate_predictions.py`, reported by `compute_metrics`, the backtest table, and `paired_bootstrap` (`log_loss_diff`). Measurement only; no feature or model changed.
+  - [ ] Strength-of-schedule-adjusted rolling form (window 5) vs. raw baseline.
+  - [ ] 3/5/10-match window comparison.
 - [ ] **2026-10-10** — squad-quality feature from existing Wikipedia player data, aggregated to team level; guard against low-appearance players dominating the metric (e.g. minimum-minutes/appearances floor before a player's per-90 rate counts, per `config.yaml`'s existing `min_matches_for_form` pattern). Test whether it actually moves the backtest numbers — a negative result here is a valid, reportable finding, not a failure.
 - [ ] **2026-10-17** — derby/rivalry research: define derby matches **using EPL pairings only** (e.g. Man Utd–Man City, Arsenal–Tottenham, Liverpool–Everton) — the user's example derbies (Milan–Inter, Real Madrid–Atlético) aren't in this dataset, which is EPL-only (`config.yaml -> active.leagues: ["E0"]`); expanding leagues is a separate scope decision, not assumed here. Compare derby vs. non-derby calibration/accuracy, analyze home advantage, test stability, and explicitly document the small-sample caveat (each derby pairing has at most ~8 meetings across the 4 seasons of data).
 - [ ] **2026-10-24** — freeze feature set, final backtest, final model comparison, final derby analysis, graphs/tables, updated README + METHODOLOGY, reproducible/clean repo.

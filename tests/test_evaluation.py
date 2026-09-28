@@ -3,14 +3,16 @@ Unit tests for prediction evaluation.
 Run with: pytest tests/
 """
 
+import math
 import sys
 from pathlib import Path
 
 import pandas as pd
+import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from src.evaluation.evaluate_predictions import update_actuals, compute_metrics
+from src.evaluation.evaluate_predictions import update_actuals, compute_metrics, per_match_log_loss
 
 
 def make_pred_log():
@@ -67,3 +69,22 @@ def test_compute_metrics_with_no_resolved_predictions():
     pred_log = make_pred_log()
     metrics = compute_metrics(pred_log)
     assert "note" in metrics
+
+
+def test_compute_metrics_log_loss_matches_hand_calculation():
+    # Arsenal-Chelsea resolves to "H", predicted with home_win_prob 0.5.
+    updated = update_actuals(make_pred_log(), make_matches())
+    metrics = compute_metrics(updated)
+    assert metrics["log_loss"] == round(-math.log(0.5), 4)
+
+
+def test_per_match_log_loss_picks_actual_outcome_and_clips_zero():
+    df = pd.DataFrame({
+        "home_win_prob": [0.2, 0.0],
+        "draw_prob": [0.3, 0.5],
+        "away_win_prob": [0.5, 0.5],
+        "actual_result": ["D", "H"],
+    })
+    ll = per_match_log_loss(df)
+    assert ll[0] == pytest.approx(-math.log(0.3))
+    assert math.isfinite(ll[1]) and ll[1] > 30  # clipped at 1e-15, not inf

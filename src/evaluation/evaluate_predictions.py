@@ -10,6 +10,8 @@ Two-step workflow:
        - Exact scoreline accuracy
        - Mean absolute goal error (home & away)
        - Brier score (probability calibration, lower is better)
+       - Log loss (mean negative log-probability of the actual outcome,
+         lower is better -- punishes confident misses far harder than Brier)
        - Breakdown by team and by month
 
 Usage:
@@ -57,6 +59,19 @@ def update_actuals(pred_log: pd.DataFrame, matches: pd.DataFrame) -> pd.DataFram
     return pred_log
 
 
+def per_match_log_loss(df: pd.DataFrame, eps: float = 1e-15) -> np.ndarray:
+    """
+    Negative natural-log probability the model assigned to the outcome that
+    actually happened (H/D/A), one value per match. Probabilities are
+    clipped to [eps, 1] so a stored 0.0 (predictions are rounded to 4 dp)
+    gives a large finite penalty instead of infinity.
+    """
+    probs = df[["home_win_prob", "draw_prob", "away_win_prob"]].to_numpy(dtype=float)
+    col_idx = df["actual_result"].map({"H": 0, "D": 1, "A": 2}).to_numpy()
+    p_actual = probs[np.arange(len(df)), col_idx]
+    return -np.log(np.clip(p_actual, eps, 1.0))
+
+
 def compute_metrics(df: pd.DataFrame) -> dict:
     scored = df.dropna(subset=["actual_result"]).copy()
     if scored.empty:
@@ -82,6 +97,7 @@ def compute_metrics(df: pd.DataFrame) -> dict:
     outcome_onehot = pd.get_dummies(scored["actual_result"]).reindex(columns=["H", "D", "A"], fill_value=0)
     prob_cols = scored[["home_win_prob", "draw_prob", "away_win_prob"]].values
     brier = np.mean(np.sum((prob_cols - outcome_onehot.values) ** 2, axis=1))
+    log_loss = per_match_log_loss(scored).mean()
 
     return {
         "n_evaluated": len(scored),
@@ -90,6 +106,7 @@ def compute_metrics(df: pd.DataFrame) -> dict:
         "mae_home_goals": round(float(mae_home), 3),
         "mae_away_goals": round(float(mae_away), 3),
         "brier_score": round(float(brier), 4),
+        "log_loss": round(float(log_loss), 4),
     }
 
 

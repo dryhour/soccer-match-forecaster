@@ -149,6 +149,19 @@ and models actually work, see [METHODOLOGY.md](METHODOLOGY.md).
   attack/defense strength by construction, so "rolling-form vs. team-level"
   isn't a natural experiment on the R side the way it is for Python.
 
+**10. Log loss added to evaluation (2026-09-28, step 1 of the 2026-10-03 milestone)**
+- `per_match_log_loss()` in `src/evaluation/evaluate_predictions.py`:
+  −ln(probability assigned to the actual H/D/A outcome), clipped at 1e-15
+  so a stored 0.0 probability gives a large finite penalty rather than inf.
+  `compute_metrics` now reports `log_loss`; the backtest prints it in the
+  comparison table, and `paired_bootstrap` reports `log_loss_diff`.
+- Measurement-only change — Brier/accuracy/MAE numbers are identical to
+  before. Held-out log loss: rolling-form baseline 1.068, venue-split
+  1.062 (diff −0.0060, 95% CI [−0.0132, +0.0013] — includes zero, same
+  verdict as Brier), R Dixon-Coles 1.028 (computed from its existing
+  holdout CSV, n=342). Reference: uniform 1/3 guess = ln 3 ≈ 1.099.
+- 3 tests added (49 pass).
+
 ## Current state / known gaps
 
 - **Player-stats coverage**: 24/81 team-seasons still unparsed (a 4th
