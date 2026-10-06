@@ -253,13 +253,13 @@ Complete:
 
 Complete:
 
-- [ ] Strength-of-schedule adjustment
-- [ ] 3-match form
-- [ ] 5-match form
-- [ ] 10-match form
-- [ ] Compare different form windows
+- [x] Strength-of-schedule adjustment
+- [x] 3-match form
+- [x] 5-match form
+- [x] 10-match form
+- [x] Compare different form windows
 - [ ] Test whether combining windows helps
-- [ ] Record accuracy, Brier score, and log loss
+- [x] Record accuracy, Brier score, and log loss
 
 **Research question:**
 
@@ -271,12 +271,12 @@ Complete:
 
 Complete:
 
-- [ ] Build squad-quality feature
-- [ ] Use existing Wikipedia player data
-- [ ] Account for appearances / sample size
-- [ ] Aggregate player information into team-level features
-- [ ] Add squad quality to the model
-- [ ] Compare against the previous best model
+- [x] Build squad-quality feature
+- [x] Use existing Wikipedia player data
+- [x] Account for appearances / sample size
+- [x] Aggregate player information into team-level features
+- [x] Add squad quality to the model
+- [x] Compare against the previous best model (R Dixon-Coles)
 
 **Research question:**
 
