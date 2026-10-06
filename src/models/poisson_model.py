@@ -44,12 +44,14 @@ def load_config() -> dict:
 class PoissonMatchModel:
     """Two independent Poisson regressors: one for home goals, one for away."""
 
-    def __init__(self, feature_cols_home: list, feature_cols_away: list, max_goals: int = 10):
+    def __init__(self, feature_cols_home: list, feature_cols_away: list, max_goals: int = 10,
+                 alpha: float = 1.0):
         self.feature_cols_home = feature_cols_home
         self.feature_cols_away = feature_cols_away
         self.max_goals = max_goals
-        self.home_model = PoissonRegressor(alpha=1.0, max_iter=500)
-        self.away_model = PoissonRegressor(alpha=1.0, max_iter=500)
+        # L2 penalty strength (config.yaml -> model.poisson_alpha).
+        self.home_model = PoissonRegressor(alpha=alpha, max_iter=1000)
+        self.away_model = PoissonRegressor(alpha=alpha, max_iter=1000)
 
     def fit(self, df: pd.DataFrame):
         X_home = df[self.feature_cols_home].values
@@ -117,8 +119,9 @@ def build_feature_lists(windows: list):
 
 def build_team_level_feature_lists():
     """
-    Challenger feature set (2026-09-26 experiment): season-to-date average
-    goals scored/conceded, computed ONLY from each team's past matches at
+    Challenger feature set (2026-09-26 experiment): average goals
+    scored/conceded over each team's whole history in the data (expanding
+    mean, not reset each season), computed ONLY from its past matches at
     the SAME venue as this match -- the home team's own home-match record,
     the away team's own away-match record. See
     src/features/build_match_features.py's add_venue_split_averages().
@@ -131,6 +134,46 @@ def build_team_level_feature_lists():
     away_features = ["away_avg_goals_for_by_venue", "home_avg_goals_against_by_venue"]
     return home_features, away_features
 
+
+def build_sos_feature_lists(windows: list):
+    """
+    Challenger feature set (2026-10-03 experiment): the baseline's rolling
+    N-match form, but with each past match's goals adjusted for that
+    opponent's pre-match strength. See
+    src/features/build_match_features.py's add_sos_adjusted_form().
+    Compared head-to-head with build_feature_lists in src/evaluation/backtest.py.
+    """
+    w = windows[0]
+    home_features = [f"home_avg_sos_goals_for_last{w}", f"away_avg_sos_goals_against_last{w}"]
+    away_features = [f"away_avg_sos_goals_for_last{w}", f"home_avg_sos_goals_against_last{w}"]
+    return home_features, away_features
+
+
+def build_squad_feature_lists(windows: list):
+    """
+    Challenger feature set (2026-10-10 experiment): the rolling-form
+    baseline PLUS each side's squad_prior_goals_per_match (its current
+    roster's previous-season PL goals per match) in that side's own goals
+    model. An addition to the baseline, not a replacement, so the comparison
+    isolates what the squad feature adds. See
+    src/features/build_match_features.py's build_squad_quality().
+    """
+    home_features, away_features = build_feature_lists(windows)
+    return (home_features + ["home_squad_prior_goals_per_match"],
+            away_features + ["away_squad_prior_goals_per_match"])
+
+
+def build_prev_season_control_feature_lists(windows: list):
+    """
+    Control arm for the squad-quality experiment: the rolling-form baseline
+    PLUS each side's own previous-season goals per match from match results
+    (no player data). See build_prev_season_team_goals() in
+    src/features/build_match_features.py. Squad quality has to beat THIS,
+    not just the baseline, before the gain can be credited to player data.
+    """
+    home_features, away_features = build_feature_lists(windows)
+    return (home_features + ["home_prev_season_goals_per_match"],
+            away_features + ["away_prev_season_goals_per_match"])
 
 def latest_team_row(team_history: pd.DataFrame, team: str) -> pd.Series:
     """Most recent rolling-form snapshot available for a team (their form
@@ -209,7 +252,8 @@ def main():
 
     print(f"Training on {len(train_df)} matches with complete rolling-form features "
           f"(window={windows[0]})...")
-    model = PoissonMatchModel(home_features, away_features, max_goals=cfg["model"]["max_goals_simulated"])
+    model = PoissonMatchModel(home_features, away_features, max_goals=cfg["model"]["max_goals_simulated"],
+                              alpha=cfg["model"]["poisson_alpha"])
     model.fit(train_df)
     model.save(model_path)
     print(f"Saved model -> {model_path.relative_to(PROJECT_ROOT)}")

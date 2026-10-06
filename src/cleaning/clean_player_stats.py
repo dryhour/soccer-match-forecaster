@@ -6,16 +6,23 @@ club-season article's player statistics, and writes a single combined table
 to data/silver/players_clean/player_stats.csv -- one row per (team, season,
 player).
 
-Wikipedia season articles present this in two different layouts depending
-on the club/editor:
-  1. Separate tables under "Appearances" and "Goals" headings, each with a
-     "Premier League" column (e.g. "35+2" meaning 35 starts + 2 sub apps).
-  2. ONE combined table under an "Appearances and goals" heading, with a
-     two-level header: competition (e.g. "Premier League") x stat
-     ("Apps"/"Goals").
-Both are handled; a file matching neither is skipped rather than crashing
-the whole run, since Wikipedia's exact formatting isn't guaranteed to stay
-consistent across ~100 club-season articles written by different editors.
+Wikipedia season articles present this in several layouts depending on the
+club/editor:
+  1. Separate tables under "Appearances" and "Goals"/"Goalscorers" headings,
+     each with a "Premier League" column (e.g. "35+2" meaning 35 starts + 2
+     sub apps).
+  2. ONE combined table under an "Appearances and goals" (or similar)
+     heading, with a multi-level header: competition (e.g. "Premier League")
+     x stat ("Apps"/"Goals"), sometimes with a third positional-group level
+     ("Goalkeepers", "Defenders", ...). If that table has no goals column
+     (some list Apps/Starts only), goals come from the separate goalscorers
+     table instead.
+  3. Icon-only sub-columns under a "Statistics" heading (see
+     clean_icon_header_table).
+A file matching none is skipped rather than crashing the whole run, since
+Wikipedia's exact formatting isn't guaranteed to stay consistent across
+~100 club-season articles written by different editors. Summary rows
+("Total", "Own goals") are dropped so they never masquerade as players.
 
 Usage:
     python -m src.cleaning.clean_player_stats
@@ -86,8 +93,54 @@ def parse_apps_value(value) -> tuple:
 
 def clean_player_name(name) -> str:
     """Strips trailing footnote markers Wikipedia uses on player names, e.g.
-    'Bukayo Saka*' or 'Ethan Nwaneri†' -> the plain name."""
-    return re.sub(r"[*†‡]+$", "", str(name)).strip()
+    'Bukayo Saka*', 'Ethan Nwaneri†' or 'Myles Lewis-Skelly#' -> the plain name."""
+    return re.sub(r"[*†‡#]+$", "", str(name)).strip()
+
+
+SUMMARY_ROW_LABELS = {"total", "totals", "own goal", "own goals", "own goal(s)"}
+
+
+def drop_summary_rows(df: pd.DataFrame) -> pd.DataFrame:
+    """Drops table-footer rows like 'Total'/'Totals'/'Own goals' that sit in
+    the player column. Left in, a 'Totals' row merges with the goals table's
+    own 'Totals' row and doubles the team's goal count."""
+    return df[~df["player"].str.lower().isin(SUMMARY_ROW_LABELS)]
+
+
+GOALS_TABLE_HEADINGS = ["Goals", "Goalscorers", "Goals_&_Assists"]
+PLAYER_COLUMN_NAMES = ["Player", "Name"]
+LEAGUE_COLUMN_NAMES = ["Premier League", "League"]
+
+
+def clean_goals_table(soup: BeautifulSoup) -> pd.DataFrame:
+    """Per-player league goals from a standalone goalscorers table (one row
+    per scorer, a 'Premier League' column). Returns columns [player,
+    league_goals], or an empty frame if no such table is found."""
+    for heading_id in GOALS_TABLE_HEADINGS:
+        table = find_table_after_heading(soup, heading_id)
+        if table is None:
+            continue
+        goals_df = flatten_columns(read_table(table))
+        player_col = next((c for c in PLAYER_COLUMN_NAMES if c in goals_df.columns), None)
+        league_col = next((c for c in LEAGUE_COLUMN_NAMES if c in goals_df.columns), None)
+        if player_col is None or league_col is None:
+            continue
+        goals_df = drop_divider_rows(goals_df)
+        goals_df["player"] = goals_df[player_col].apply(clean_player_name)
+        goals_df["league_goals"] = pd.to_numeric(goals_df[league_col], errors="coerce").fillna(0).astype(int)
+        return goals_df[["player", "league_goals"]].drop_duplicates(subset="player")
+    return pd.DataFrame()
+
+
+def attach_goals(result: pd.DataFrame, goals_df: pd.DataFrame) -> pd.DataFrame:
+    """Left-joins goals onto the appearances rows; a player absent from the
+    goalscorers table scored 0."""
+    if not goals_df.empty:
+        result = result.merge(goals_df, on="player", how="left")
+    if "league_goals" not in result.columns:
+        result["league_goals"] = 0
+    result["league_goals"] = result["league_goals"].fillna(0).astype(int)
+    return result
 
 
 def clean_separate_tables(soup: BeautifulSoup) -> pd.DataFrame:
@@ -110,37 +163,30 @@ def clean_separate_tables(soup: BeautifulSoup) -> pd.DataFrame:
 
     result = apps_df[["player", "position", "league_starts", "league_subs", "league_apps"]].copy()
     result = result.drop_duplicates(subset="player")
-
-    goals_table = find_table_after_heading(soup, "Goals")
-    if goals_table is not None:
-        goals_df = flatten_columns(read_table(goals_table))
-        if "Player" in goals_df.columns and "Premier League" in goals_df.columns:
-            goals_df = drop_divider_rows(goals_df)
-            goals_df["player"] = goals_df["Player"].apply(clean_player_name)
-            goals_df["league_goals"] = pd.to_numeric(goals_df["Premier League"], errors="coerce").fillna(0).astype(int)
-            goals_df = goals_df.drop_duplicates(subset="player")
-            result = result.merge(goals_df[["player", "league_goals"]], on="player", how="left")
-
-    if "league_goals" not in result.columns:
-        result["league_goals"] = 0
-    result["league_goals"] = result["league_goals"].fillna(0).astype(int)
-    return result
+    return attach_goals(result, clean_goals_table(soup))
 
 
 def find_stat_column(df: pd.DataFrame, top: str, bottom: str):
+    """Matches on the first two header levels, so a third positional-group
+    level (e.g. ('Premier League', 'Apps', 'Goalkeepers')) doesn't hide the
+    column."""
     for col in df.columns:
-        if isinstance(col, tuple) and col[0] == top and col[-1] == bottom:
+        if isinstance(col, tuple) and col[0] == top and col[1] == bottom:
             return col
     return None
 
 
-COMBINED_TABLE_HEADINGS = ["Appearances_and_goals", "Appearances", "Squad_statistics"]
-PLAYER_COLUMN_NAMES = ["Player", "Name"]
-LEAGUE_COLUMN_NAMES = ["Premier League", "League"]
+COMBINED_TABLE_HEADINGS = ["Appearances_and_goals", "Appearances", "Squad_statistics", "Statistics"]
+APPS_COLUMN_NAMES = ["Apps", "Apps."]
+
+
+def find_league_stat_column(df: pd.DataFrame, stat_names: list):
+    return next((c for league in LEAGUE_COLUMN_NAMES for stat in stat_names
+                 if (c := find_stat_column(df, league, stat)) is not None), None)
 
 
 def clean_combined_table(soup: BeautifulSoup) -> pd.DataFrame:
-    """Layout 2: one table with a two-level header (competition x
+    """Layout 2: one table with a multi-level header (competition x
     Apps/Goals). The table shape is what determines this parser, not the
     heading name or exact column labels -- both vary across articles (e.g.
     heading 'Squad_statistics' with columns 'Name'/'League' instead of
@@ -158,12 +204,9 @@ def clean_combined_table(soup: BeautifulSoup) -> pd.DataFrame:
         return pd.DataFrame()
 
     player_col = next((c for name in PLAYER_COLUMN_NAMES if (c := find_stat_column(df, name, name)) is not None), None)
-    apps_col = next(
-        (c for name in LEAGUE_COLUMN_NAMES if (c := find_stat_column(df, name, "Apps")) is not None), None
-    )
-    goals_col = next(
-        (c for name in LEAGUE_COLUMN_NAMES if (c := find_stat_column(df, name, "Goals")) is not None), None
-    )
+    apps_col = find_league_stat_column(df, APPS_COLUMN_NAMES)
+    starts_col = find_league_stat_column(df, ["Starts"])
+    goals_col = find_league_stat_column(df, ["Goals"])
     if player_col is None or apps_col is None:
         return pd.DataFrame()
 
@@ -175,12 +218,18 @@ def clean_combined_table(soup: BeautifulSoup) -> pd.DataFrame:
     result["player"] = df[player_col].apply(clean_player_name)
     result["position"] = df[pos_col] if pos_col is not None else None
     starts_subs = df[apps_col].apply(parse_apps_value)
-    result["league_starts"] = starts_subs.apply(lambda t: t[0])
-    result["league_subs"] = starts_subs.apply(lambda t: t[1])
+    if starts_col is not None:
+        # Apps/Starts layout: Apps is the total, so subs = Apps - Starts.
+        apps = starts_subs.apply(lambda t: t[0] + t[1])
+        result["league_starts"] = pd.to_numeric(df[starts_col], errors="coerce").fillna(0).astype(int)
+        result["league_subs"] = (apps - result["league_starts"]).clip(lower=0)
+    else:
+        result["league_starts"] = starts_subs.apply(lambda t: t[0])
+        result["league_subs"] = starts_subs.apply(lambda t: t[1])
     result["league_apps"] = result["league_starts"] + result["league_subs"]
-    result["league_goals"] = (
-        pd.to_numeric(df[goals_col], errors="coerce").fillna(0).astype(int) if goals_col is not None else 0
-    )
+    if goals_col is None:
+        return attach_goals(result.drop_duplicates(subset="player"), clean_goals_table(soup))
+    result["league_goals"] = pd.to_numeric(df[goals_col], errors="coerce").fillna(0).astype(int)
     return result.drop_duplicates(subset="player")
 
 
@@ -229,6 +278,7 @@ def clean_one_file(path: Path, team: str, season: str) -> pd.DataFrame:
         print(f"  [skip] {path.name}: no recognizable appearances table found")
         return pd.DataFrame()
 
+    result = drop_summary_rows(result).copy()
     result["team"] = team
     result["season"] = season
     return result[OUTPUT_COLUMNS]

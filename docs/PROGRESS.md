@@ -162,11 +162,160 @@ and models actually work, see [METHODOLOGY.md](METHODOLOGY.md).
   holdout CSV, n=342). Reference: uniform 1/3 guess = ln 3 ≈ 1.099.
 - 3 tests added (49 pass).
 
+**11. Strength-of-schedule-adjusted form (2026-09-29, step 2 of the 2026-10-03 milestone)**
+- Hypothesis: raw rolling form over-rates teams that just played weak
+  opponents; adjusting each past match for opponent strength should help.
+- `add_sos_adjusted_form()` in `src/features/build_match_features.py`:
+  `adj_goals_for = goals_for − (opp_avg_goals_against − league_avg)` and
+  the mirror for goals against, where the opponent's averages are its
+  expanding mean over matches strictly before this one and `league_avg`
+  uses only strictly earlier dates. An opponent with < `min_matches_for_form`
+  matches of history (e.g. newly promoted) counts as league-average, so no
+  adjustment. Then a shifted rolling mean → `avg_sos_goals_{for,against}_last{w}`.
+  Challenger feature list: `build_sos_feature_lists()` in `poisson_model.py`.
+- Held-out result (n=374, same matches as the other sets): Brier 0.6437 vs.
+  0.6446 baseline (diff −0.0008, 95% CI [−0.0023, +0.0006]); log loss
+  1.0669 vs. 1.0678 (−0.0009, CI [−0.0029, +0.0010]); accuracy 44.4% vs.
+  44.1% (+1 match, CI [−0.8, +1.6] pts). **Negative result**: the
+  adjustment barely moves predictions and the effect is indistinguishable
+  from zero. Plausible reason: over 5 matches most teams face a roughly
+  average mix of opponents, so the correction mostly averages out.
+- 3 tests added (52 pass): hand-calculated adjustment, no-history
+  opponent fallback, and no leakage of the current match's score.
+
+**12. Wikipedia player-data parser fixed and validated (2026-10-05, prerequisite for the 2026-10-10 milestone)**
+- A squad-quality feature is only as good as the player table under it, and
+  that table had three problems: 23 PL team-seasons didn't parse; 8 parsed
+  with **zero** goals (all four Chelsea seasons, Arsenal 2024-25, Villa
+  2023-24/2024-25, Liverpool 2022-23); and Man City's "Totals"/"Own goals"
+  footer rows were parsed as players, doubling the team's goal sum.
+- Causes and fixes in `src/cleaning/clean_player_stats.py`: three-level
+  headers (a "Goalkeepers"/"Defenders" group row) broke the column lookup
+  (now matches on header levels 0/1); goals tables live under "Goals",
+  "Goalscorers" or "Goals & Assists" (all tried, via a shared
+  `clean_goals_table`); Apps/Starts-only tables now take goals from that
+  separate table instead of silently writing 0, and use the real Starts
+  column; "Statistics" heading and "Apps." alias added; summary rows
+  dropped; `#` footnote marker stripped.
+- Coverage 57/80 -> **79/80** PL team-seasons (Wolves 2022-23 still
+  missing; Ipswich 2025-26 is a Championship season and correctly skipped).
+- Validated against match results: summed player league goals / actual
+  team goals is 0.93-1.00 for nearly every team-season (the gap is opponent
+  own goals). Two outliers are source gaps, left as-is since Bronze is never
+  hand-edited: Bournemouth 2024-25's table omits Semenyo (11 goals; ratio
+  0.79) and Luton 2023-24 under-reports appearances.
+- 3 tests added (three-level header, Apps/Starts + Goalscorers fallback,
+  summary rows not counted).
+
+**13. Form window comparison: 3 vs. 5 vs. 10 matches (2026-10-05, completes the 2026-10-03 milestone)**
+- `config.yaml -> features.form_windows` is now `[5, 3, 10]`; the first
+  entry stays the model's window, the rest are backtest challengers
+  (`rolling_form_last3`, `rolling_form_last10`).
+- Held-out (n=374, same matches as every other Experiment 1 set), vs. the
+  5-match baseline: last3 Brier +0.0011 (95% CI [-0.0022, +0.0043]), log
+  loss +0.0016 ([-0.0028, +0.0060]), accuracy -1.1 pts ([-2.7, +0.3]);
+  last10 Brier -0.0002 ([-0.0036, +0.0032]), log loss +0.0002
+  ([-0.0043, +0.0047]), accuracy -0.8 pts ([-2.4, +0.8]).
+- **Negative result**: window length doesn't matter in this range. Same
+  verdict at alpha=0.01 (see 15).
+
+**14. Squad-quality feature (2026-10-05, the 2026-10-10 milestone)**
+- Hypothesis: a team's current roster's proven PL goal output carries
+  information that 5-match form doesn't.
+- `squad_prior_goals_per_match` = sum of the PREVIOUS season's PL goals (any
+  club) of every player on this season's roster, / 38. Previous season,
+  because Wikipedia's end-of-season totals would leak the predicted match
+  and all later ones. A sum, not a rate, so low-appearance players can't
+  dominate without needing a floor. NaN, not 0, for missing data. Full
+  definition and the one known look-ahead (end-of-season rosters include
+  January signings) in METHODOLOGY.md. Sanity check: correlation 0.65 with
+  the same season's actual goals per match across 59 team-seasons.
+- Design: no previous season exists for 2022-23, so this experiment trains
+  every arm on 2023-24 + 2024-25 only, the baseline included, so the
+  training set isn't a confound. A **control arm**
+  (`prev_season_goals_per_match`: the team's own last-season goals per
+  match from match results, 0 if promoted, no player data) separates
+  "player information helps" from "any longer-horizon strength helps".
+- Held-out (n=377), alpha=1.0, vs. baseline refit on the same rows:
+  - squad quality: Brier 0.6380 vs. 0.6460, **-0.0080 [-0.0129, -0.0030]**;
+    log loss **-0.0112 [-0.0177, -0.0046]**; accuracy 48.8% vs. 43.2%,
+    **+5.6 pts [+2.4, +9.0]**. The first experiment in the project with
+    all three intervals excluding zero.
+  - control: Brier -0.0053 [-0.0107, +0.0001]; log loss -0.0078
+    [-0.0149, -0.0005]; accuracy +1.9 pts [-1.6, +5.3].
+  - squad vs. control (what the roster adds): Brier -0.0027
+    [-0.0060, +0.0005]; log loss -0.0035 [-0.0079, +0.0008]; accuracy
+    +3.7 pts [+1.6, +6.1].
+  - Larger gain on matches involving a promoted team (Brier -0.0135, n=105)
+    than on the rest (-0.0059, n=272), but present in both.
+- vs. R Dixon-Coles on R's own 342 matches: squad model Brier 0.6350 vs. R
+  0.6177 (+0.0173 [-0.0059, +0.0403]), accuracy 49.7% vs. 47.7% (+2.0 pts
+  [-2.3, +6.4]). R still leads on the proper scoring rules; neither gap is
+  distinguishable from noise.
+- **Verdict: the most promising feature so far, but not established.** See
+  15: the accuracy gain doesn't survive weaker regularization, and the
+  Brier/log-loss gain keeps its direction and size but loses significance.
+- 5 tests added: previous-season-only (no leakage of same-season goals),
+  transfer credited to the new club, NaN-not-zero for missing data,
+  promoted team computed, control arm values.
+
+**15. Regularization robustness check (2026-10-05)**
+- `PoissonRegressor(alpha=1.0)` penalizes **unstandardized** features. On
+  the baseline it roughly halves the coefficients (home: 0.105/0.066 vs.
+  0.223/0.151 unpenalized) and shrinks the spread of predicted goal rates
+  from sd 0.33 to 0.15. Every recorded experiment used alpha=1.0, so all of
+  them were run under heavy shrinkage. The penalty hits smooth,
+  low-variance features (whole-history averages) harder than noisy 5-match
+  form, which biases comparisons against long-horizon features.
+- Made it configurable (`config.yaml -> model.poisson_alpha`, default
+  1.0, so every number above is unchanged and reproducible) and re-ran
+  everything at 0.01 (diagnostic only, default not changed):
+  - baseline itself: Brier 0.6446 -> 0.6372 (-0.0074 [-0.0141, -0.0009]),
+    log loss -0.0114 [-0.0204, -0.0025]. Similar in size to any feature
+    gain so far.
+  - **venue-split vs. baseline: Brier -0.0161 [-0.0309, -0.0014]**,
+    excluding zero (it was "not distinguishable" at 1.0). Venue-split
+    Brier 0.6211, close to R's 0.6177 (different samples).
+  - squad vs. baseline: Brier -0.0092 [-0.0200, +0.0021], log loss -0.0141
+    [-0.0286, +0.0012], accuracy -0.8 pts. The point estimates hold but
+    the intervals now include zero, and the +5.6-pt accuracy gain at 1.0
+    disappears: it was shrinkage relief (a second strength feature lets
+    more signal through the penalty), not information.
+  - squad vs. control: Brier -0.0070 [-0.0143, +0.0005]. At 1.0 the control
+    captured ~2/3 of the squad gain; at 0.01 only ~1/4. So "how much is
+    roster info vs. longer horizon" isn't stable across settings.
+  - SOS and windows 3/10: still null.
+- Also found: `season_avg_*` and `*_by_venue` are expanding means over each
+  team's **whole history** in the data, not reset each season (grouped by
+  team only). The venue-split "team-level" features were always a
+  long-horizon signal. Docstrings corrected; column names left unchanged
+  because the app uses them.
+- Emerging pattern across all experiments: the features that help
+  (whole-history venue split, previous-season squad/control, whole-history
+  Dixon-Coles) are long-horizon strength signals; variations on short-term
+  form (SOS adjustment, window 3/10) don't help.
+- **Caveat:** alpha=0.01 was picked here only as a diagnostic, and it has
+  now been seen to score well on the holdout. Adopting it on that basis
+  would tune to the holdout. The defensible fix is to standardize features
+  and choose alpha by walk-forward validation inside the training seasons
+  (train 2022-23 -> validate 2023-24; train 2022-24 -> validate 2024-25),
+  then run the holdout once.
+- Also: ~8 challengers have now been compared against the same baseline,
+  so a single 95% interval that excludes zero deserves less weight than it
+  would alone. The squad Brier result at alpha=1.0 is far enough from zero
+  to survive a Bonferroni correction for 8 comparisons (bootstrap 99.375%
+  interval [-0.0149, -0.0011]), but its alpha sensitivity is the bigger
+  issue.
+
 ## Current state / known gaps
 
-- **Player-stats coverage**: 24/81 team-seasons still unparsed (a 4th
-  Wikipedia table layout, not yet reverse-engineered). Concentrated in
-  2022-23/2023-24.
+- **Player-stats coverage**: 79/80 PL team-seasons parse and are
+  validated against match goals (Wolves 2022-23 missing; Bournemouth
+  2024-25 and Luton 2023-24 have source-level gaps). See item 12.
+- **Regularization**: every recorded Python result uses alpha=1.0 on
+  unstandardized features, which changes some conclusions (item 15). Not
+  yet chosen properly. This is the most important open methodological
+  issue before the freeze.
 - **R model**: doesn't yet include the Dixon-Coles low-score correlation
   (`tau`/`rho`) adjustment from the original paper — just the team
   attack/defense parameterization.
@@ -176,8 +325,8 @@ and models actually work, see [METHODOLOGY.md](METHODOLOGY.md).
   newly promoted teams it has zero training history for.
 - **Fixtures feed** only covers the next matchweek or two (a limitation of
   the free source, not something this project controls).
-- **Player stats are display-only** — not feeding into either forecasting
-  model yet.
+- **Player stats** feed only the squad-quality challenger (item 14), not the
+  production baseline. No injury/lineup/availability data at all.
 - `run_pipeline.py` covers only the original match pipeline (ingest → clean
   → features → train). Wikipedia ingestion and the R model are separate,
   manually-run steps, not wired in.
@@ -186,12 +335,17 @@ and models actually work, see [METHODOLOGY.md](METHODOLOGY.md).
 
 ## Suggested next steps
 
-- Extend `clean_player_stats.py` to handle the 4th Wikipedia layout (the
-  remaining 24 team-seasons).
-- Feed player/squad-availability data into the forecasting models
-  (roadmap stage 3 — this is the biggest remaining lift).
-- Add the Dixon-Coles `tau`/`rho` low-score adjustment to the R model.
-- Real chronological train/test split for both models, per the model
-  comparison protocol already documented in METHODOLOGY.md.
+- **Decide the regularization question before the freeze** (item 15): it
+  changes which features look useful. Defensible version: standardize
+  features, choose alpha by walk-forward validation inside the training
+  seasons only, then re-run every experiment on the holdout once. A
+  decision for the user; nothing has been changed yet.
+- 2026-10-17 milestone: derby/rivalry analysis (EPL pairings only).
+- More evaluation power: one holdout season (n~375) can't resolve effects
+  of ~0.005 Brier. A walk-forward over 2024-25 and 2025-26 as two test
+  seasons would roughly double n.
+- Add the Dixon-Coles `tau`/`rho` low-score adjustment to the R model
+  (post-freeze unless needed).
 - Consider wiring Wikipedia ingestion + the R model into `run_pipeline.py`
-  once both are stable enough to run unattended.
+  once both are stable enough to run unattended (not needed for either
+  research question).

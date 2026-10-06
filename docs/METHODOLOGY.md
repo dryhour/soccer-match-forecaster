@@ -29,18 +29,28 @@ plain HTTP client.
 Provides per-player, per-season Premier League appearances (starts + sub
 appearances) and goals -- real performance data, not video-game ratings.
 Article formatting isn't fully standardized across ~100 club-season articles
-written by different editors: some use separate "Appearances"/"Goals"
-tables, others one combined "Appearances and goals" table with a two-level
-header. Both are handled (see `src/cleaning/clean_player_stats.py`); a file
-matching neither layout is skipped with a logged message rather than
-crashing the run. Not every (team, season) will resolve -- a club playing
-outside the Premier League that season has no "Premier League" column and is
-correctly skipped, not a bug.
+written by different editors: separate "Appearances" + "Goals"/"Goalscorers"
+tables; one combined "Appearances and goals" table with a two- or
+three-level header (the third level is a positional-group row like
+"Goalkeepers"); Apps/Starts-only tables whose goals live in a separate
+goalscorers table; and icon-only column headers. All are handled (see
+`src/cleaning/clean_player_stats.py`); a file matching none is skipped with
+a logged message rather than crashing the run. Footer rows ("Total",
+"Own goals") are dropped so they can't be counted as players.
 
-This is currently **ingestion + display only**: player stats show in the
-app's per-team squad view, but don't yet feed into the forecasting model.
-Feeding them in (e.g. squad-quality or injury-adjusted team strength) is
-future work, not yet started.
+**Coverage and validation (2026-10-05):** 79 of the 80 PL team-seasons in
+2022-23..2025-26 parse (Wolves 2022-23 is the one miss). Each parsed
+team-season's summed player league goals was checked against the team's
+actual goals from match results: the ratio is 0.93-1.00 for almost all of
+them, the shortfall being opponent own goals, which no player is credited
+with. Two outliers are gaps in the Wikipedia source itself, not the parser,
+and are left as-is (Bronze is never hand-edited): Bournemouth 2024-25's
+table omits Antoine Semenyo (11 PL goals; ratio 0.79), and Luton 2023-24's
+Apps column under-reports appearances (11.6 per match vs. a normal ~14-16).
+Ipswich 2025-26 (a Championship season) is correctly skipped.
+
+Player stats feed the squad-quality **challenger** feature (see below) and
+the app's squad view. The production baseline model doesn't use them.
 
 Wikipedia's anonymous API has a modest rate limit; ingestion sleeps between
 requests and backs off on HTTP 429, and skips files that already exist so
@@ -119,16 +129,63 @@ the original Dixon-Coles paper, which corrects for the independence
 assumption below on 0-0/1-0/0-1/1-1 scorelines specifically -- the team
 attack/defense parameterization is the part that's done.
 
+## Squad-quality feature (2026-10-10 experiment)
+
+`squad_prior_goals_per_match` for team T in season s = (sum of the
+PREVIOUS season's Premier League goals, at any club, of every player on T's
+season-s roster) / 38. Built by `build_squad_quality()` in
+`src/features/build_match_features.py`; tested as the rolling-form baseline
+plus this feature (`build_squad_feature_lists`).
+
+- **Why the previous season:** Wikipedia gives end-of-season totals only,
+  so any same-season player stat contains the goals of the match being
+  predicted and every later one. Last season's totals are known before the
+  season starts, and summing over the current roster carries transfers in
+  both directions.
+- **Why a sum, not a per-appearance rate:** a rate lets a 1-goal,
+  1-appearance player dominate; in a sum his weight is his (small) goal
+  total, so no minimum-appearances floor is needed.
+- **Missing data stays missing:** NaN (not 0) when the team-season has no
+  roster, when the previous season isn't in the data at all (2022-23), or
+  when the team was in the PL last season but its own article didn't parse.
+  Players with no PL goals last season (signings from abroad, most of a
+  promoted squad) contribute 0, so promoted squads score near 0 by design.
+- **Known look-ahead, roster composition only:** rosters come from
+  end-of-season articles, so a January signing counts toward the August-
+  December matches too, and a January departure toward February-May.
+  Results never leak.
+- **Control arm:** `prev_season_goals_per_match` is the team's own goals per
+  match last season from match results (0 if promoted). It has no player
+  data and no look-ahead. Squad quality must beat this, not only the
+  baseline, before a gain can be credited to player information.
+
+Because squad quality doesn't exist for the earliest season, every arm of
+this experiment is trained on the same reduced rows (2023-24 + 2024-25).
+Results are in `docs/PROGRESS.md` (2026-10-05).
+
 ## Known limitations (current stage)
 
-- No player-level information yet — a team missing key attackers/defenders
-  isn't reflected in predictions.
+- Player information enters only through the squad-quality challenger
+  (previous-season goals). There is no availability, injury, or lineup data,
+  so a team missing key players on the day isn't reflected.
+- The Python model's L2 penalty (`config.yaml -> model.poisson_alpha`,
+  1.0 in every recorded experiment) acts on **unstandardized** features. It
+  roughly halves the coefficients and penalizes smooth, low-variance
+  features (whole-history averages) more than noisy ones (5-match form),
+  which biases feature comparisons against long-horizon features. Setting
+  it to 0.01 changes some conclusions (see PROGRESS.md 2026-10-05). It
+  should be chosen on a validation split inside the training seasons, with
+  features standardized first.
+- The `season_avg_*` and `*_by_venue` columns are expanding means over each
+  team's whole history in the data. They are NOT reset each season, despite
+  the names.
 - No head-to-head or tactical-matchup features yet.
 - Home advantage is only implicit (via separate home/away goal columns), not
   an explicit modeled term yet.
-- Rolling form window defaults to last 5 matches (`config.yaml ->
-  features.form_windows`) — this is a reasonable starting point, not a
-  validated optimum. Should be swept as part of model comparison.
+- Rolling form window is 5 matches (`config.yaml -> features.form_windows`,
+  first entry). 3 and 10 were tested against it on the held-out season
+  (2026-10-05) with no distinguishable difference at either regularization
+  setting.
 - Independence assumption between home and away goals is a simplification;
   real matches have some correlation (e.g. game state effects). The R model
   adds team-specific attack/defense parameters but not yet the Dixon-Coles
@@ -142,7 +199,12 @@ attack/defense parameterization is the part that's done.
    this is time-series data and shuffling leaks the future into training).
 2. Compare candidates on the same metrics tracked in
    `src/evaluation/evaluate_predictions.py`: winner accuracy, exact-score
-   accuracy, goal MAE, Brier score.
+   accuracy, goal MAE, Brier score, log loss -- on the identical held-out
+   matches, with a paired bootstrap (`backtest.paired_bootstrap`) giving a
+   95% interval for every difference. If a challenger can only train on a
+   subset of rows, refit the baseline on exactly that subset.
+   Hyperparameters (e.g. `poisson_alpha`) must be chosen without looking at
+   the holdout season.
 3. A challenger model replaces the production baseline only if it wins on
    Brier score (calibration) AND doesn't meaningfully regress on winner
    accuracy, evaluated on a held-out set it never trained on.

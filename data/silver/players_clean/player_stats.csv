@@ -51,41 +51,41 @@ Arsenal,2324,Mohamed Elneny,MF,0,3,3,0
 Arsenal,2324,Kai Havertz,MF,30,7,37,13
 Arsenal,2324,Oleksandr Zinchenko,DF,20,7,27,1
 Arsenal,2324,Declan Rice,MF,37,1,38,7
-Arsenal,2324,Ethan Nwaneri#,MF,0,1,1,0
+Arsenal,2324,Ethan Nwaneri,MF,0,1,1,0
 Arsenal,2324,Kieran Tierney,DF,0,0,0,0
-Arsenal,2324,Charles Sagoe Jr†#,FW,0,0,0,0
-Arsenal,2425,William Saliba,DF,35,0,35,0
-Arsenal,2425,Kieran Tierney,DF,2,11,13,0
+Arsenal,2324,Charles Sagoe Jr,FW,0,0,0,0
+Arsenal,2425,William Saliba,DF,35,0,35,2
+Arsenal,2425,Kieran Tierney,DF,2,11,13,1
 Arsenal,2425,Ben White,DF,13,4,17,0
-Arsenal,2425,Thomas Partey,MF,31,4,35,0
-Arsenal,2425,Gabriel Magalhães,DF,28,0,28,0
-Arsenal,2425,Bukayo Saka,FW,20,5,25,0
-Arsenal,2425,Martin Ødegaard,MF,26,4,30,0
-Arsenal,2425,Gabriel Jesus,FW,6,11,17,0
-Arsenal,2425,Gabriel Martinelli,FW,25,8,33,0
-Arsenal,2425,Jurriën Timber,DF,27,3,30,0
-Arsenal,2425,Jakub Kiwior,DF,10,7,17,0
+Arsenal,2425,Thomas Partey,MF,31,4,35,4
+Arsenal,2425,Gabriel Magalhães,DF,28,0,28,3
+Arsenal,2425,Bukayo Saka,FW,20,5,25,6
+Arsenal,2425,Martin Ødegaard,MF,26,4,30,3
+Arsenal,2425,Gabriel Jesus,FW,6,11,17,3
+Arsenal,2425,Gabriel Martinelli,FW,25,8,33,8
+Arsenal,2425,Jurriën Timber,DF,27,3,30,1
+Arsenal,2425,Jakub Kiwior,DF,10,7,17,1
 Arsenal,2425,Oleksandr Zinchenko,DF,5,10,15,0
 Arsenal,2425,Takehiro Tomiyasu,DF,0,1,1,0
-Arsenal,2425,Leandro Trossard,FW,28,10,38,0
+Arsenal,2425,Leandro Trossard,FW,28,10,38,8
 Arsenal,2425,Jorginho,MF,9,6,15,0
 Arsenal,2425,David Raya,GK,38,0,38,0
-Arsenal,2425,Mikel Merino,MF,17,11,28,0
-Arsenal,2425,Kai Havertz,FW,21,2,23,0
+Arsenal,2425,Mikel Merino,MF,17,11,28,7
+Arsenal,2425,Kai Havertz,FW,21,2,23,9
 Arsenal,2425,Raheem Sterling,FW,7,10,17,0
 Arsenal,2425,Neto,GK,0,0,0,0
-Arsenal,2425,Riccardo Calafiori,DF,11,8,19,0
-Arsenal,2425,Tommy Setford*#,GK,0,0,0,0
-Arsenal,2425,Nathan Butler-Oyedeji#,FW,0,1,1,0
-Arsenal,2425,Declan Rice,MF,33,2,35,0
-Arsenal,2425,Ismeal Kabia#,FW,0,0,0,0
-Arsenal,2425,Myles Lewis-Skelly#,MF,15,8,23,0
-Arsenal,2425,Josh Nichols#,DF,0,0,0,0
-Arsenal,2425,Ethan Nwaneri#,MF,11,15,26,0
-Arsenal,2425,Jack Porter#,GK,0,0,0,0
+Arsenal,2425,Riccardo Calafiori,DF,11,8,19,2
+Arsenal,2425,Tommy Setford,GK,0,0,0,0
+Arsenal,2425,Nathan Butler-Oyedeji,FW,0,1,1,0
+Arsenal,2425,Declan Rice,MF,33,2,35,4
+Arsenal,2425,Ismeal Kabia,FW,0,0,0,0
+Arsenal,2425,Myles Lewis-Skelly,MF,15,8,23,1
+Arsenal,2425,Josh Nichols,DF,0,0,0,0
+Arsenal,2425,Ethan Nwaneri,MF,11,15,26,4
+Arsenal,2425,Jack Porter,GK,0,0,0,0
 Arsenal,2425,Reiss Nelson,FW,0,1,1,0
-Arsenal,2425,Maldini Kacurri†#,DF,0,0,0,0
-Arsenal,2425,Ayden Heaven†#,DF,0,0,0,0
+Arsenal,2425,Maldini Kacurri,DF,0,0,0,0
+Arsenal,2425,Ayden Heaven,DF,0,0,0,0
 Arsenal,2526,David Raya,GK,37,0,37,0
 Arsenal,2526,William Saliba,DF,30,1,31,1
 Arsenal,2526,Cristhian Mosquera,DF,9,11,20,0
@@ -117,83 +117,114 @@ Arsenal,2526,Andre Harriman-Annous^,FW,0,0,0,0
 Arsenal,2526,Ife Ibrahim^,MF,0,0,0,0
 Arsenal,2526,Brando Bailey-Joseph^,FW,0,0,0,0
 Arsenal,2526,Marli Salmon^,DF,0,0,0,0
+Aston Villa,2223,Emiliano Martínez,GK,36,0,36,0
+Aston Villa,2223,Jed Steer,GK,0,0,0,0
+Aston Villa,2223,Robin Olsen,GK,2,2,4,0
+Aston Villa,2223,Viljami Sinisalo,GK,0,0,0,0
+Aston Villa,2223,Matty Cash,DF,20,6,26,0
+Aston Villa,2223,Diego Carlos,DF,2,1,3,0
+Aston Villa,2223,Ezri Konsa,DF,37,1,38,0
+Aston Villa,2223,Tyrone Mings,DF,35,0,35,1
+Aston Villa,2223,Álex Moreno,DF,14,5,19,0
+Aston Villa,2223,Calum Chambers,DF,2,12,14,0
+Aston Villa,2223,Ashley Young,DF,23,6,29,1
+Aston Villa,2223,Lucas Digne,DF,18,10,28,1
+Aston Villa,2223,Kaine Kesler-Hayden,DF,0,0,0,0
+Aston Villa,2223,Sil Swinkels,DF,0,0,0,0
+Aston Villa,2223,Douglas Luiz,MF,33,4,37,6
+Aston Villa,2223,John McGinn,MF,30,4,34,1
+Aston Villa,2223,Emiliano Buendía,MF,27,11,38,5
+Aston Villa,2223,Philippe Coutinho,MF,7,13,20,1
+Aston Villa,2223,Leander Dendoncker,MF,7,13,20,0
+Aston Villa,2223,Jacob Ramsey,MF,31,4,35,6
+Aston Villa,2223,Boubacar Kamara,MF,21,3,24,0
+Aston Villa,2223,Bertrand Traoré,FW,1,7,8,2
+Aston Villa,2223,Ollie Watkins,FW,36,1,37,15
+Aston Villa,2223,Jhon Durán,FW,0,12,12,0
+Aston Villa,2223,Leon Bailey,FW,26,7,33,4
+Aston Villa,2223,Brad Young,FW,0,0,0,0
+Aston Villa,2223,Morgan Sanson,MF,0,2,2,0
+Aston Villa,2223,Danny Ings,FW,8,10,18,6
+Aston Villa,2223,Ludwig Augustinsson,DF,1,2,3,0
+Aston Villa,2223,Jan Bednarek,DF,1,2,3,0
+Aston Villa,2223,Cameron Archer,FW,0,6,6,0
+Aston Villa,2223,Tim Iroegbunam,MF,0,0,0,0
 Aston Villa,2324,Emiliano Martínez,GK,34,0,34,0
-Aston Villa,2324,Matty Cash,DF,29,0,29,0
-Aston Villa,2324,Diego Carlos,DF,27,0,27,0
-Aston Villa,2324,Ezri Konsa,DF,35,0,35,0
+Aston Villa,2324,Matty Cash,DF,23,6,29,2
+Aston Villa,2324,Diego Carlos,DF,20,7,27,0
+Aston Villa,2324,Ezri Konsa,DF,35,0,35,1
 Aston Villa,2324,Tyrone Mings,DF,1,0,1,0
-Aston Villa,2324,Douglas Luiz,MF,35,0,35,0
-Aston Villa,2324,John McGinn,MF,35,0,35,0
-Aston Villa,2324,Youri Tielemans,MF,32,0,32,0
-Aston Villa,2324,Bertrand Traoré,FW,2,0,2,0
+Aston Villa,2324,Douglas Luiz,MF,35,0,35,9
+Aston Villa,2324,John McGinn,MF,35,0,35,6
+Aston Villa,2324,Youri Tielemans,MF,17,15,32,2
+Aston Villa,2324,Bertrand Traoré,FW,0,2,2,0
 Aston Villa,2324,Emiliano Buendía,MF,0,0,0,0
-Aston Villa,2324,Ollie Watkins,FW,37,0,37,0
-Aston Villa,2324,Lucas Digne,DF,33,0,33,0
-Aston Villa,2324,Pau Torres,DF,29,0,29,0
-Aston Villa,2324,Àlex Moreno,DF,21,0,21,0
-Aston Villa,2324,Calum Chambers,DF,5,0,5,0
+Aston Villa,2324,Ollie Watkins,FW,37,0,37,19
+Aston Villa,2324,Lucas Digne,DF,27,6,33,1
+Aston Villa,2324,Pau Torres,DF,27,2,29,2
+Aston Villa,2324,Àlex Moreno,DF,11,10,21,2
+Aston Villa,2324,Calum Chambers,DF,1,4,5,0
 Aston Villa,2324,Clément Lenglet,DF,14,0,14,0
 Aston Villa,2324,Joe Gauci,GK,0,0,0,0
-Aston Villa,2324,Moussa Diaby,FW,38,0,38,0
-Aston Villa,2324,Nicolò Zaniolo,MF,25,0,25,0
-Aston Villa,2324,Philippe Coutinho,MF,2,0,2,0
-Aston Villa,2324,Jhon Durán,FW,23,0,23,0
-Aston Villa,2324,Robin Olsen,GK,5,0,5,0
-Aston Villa,2324,Morgan Rogers,FW,11,0,11,0
-Aston Villa,2324,Kaine Kesler-Hayden,DF,3,0,3,0
+Aston Villa,2324,Moussa Diaby,FW,25,13,38,6
+Aston Villa,2324,Nicolò Zaniolo,MF,9,16,25,2
+Aston Villa,2324,Philippe Coutinho,MF,0,2,2,0
+Aston Villa,2324,Jhon Durán,FW,3,20,23,5
+Aston Villa,2324,Robin Olsen,GK,4,1,5,0
+Aston Villa,2324,Morgan Rogers,FW,8,3,11,3
+Aston Villa,2324,Kaine Kesler-Hayden,DF,0,3,3,0
 Aston Villa,2324,Kortney Hause,DF,0,0,0,0
-Aston Villa,2324,Leon Bailey,FW,35,0,35,0
-Aston Villa,2324,Leander Dendoncker,MF,8,0,8,0
-Aston Villa,2324,Jaden Philogene,FW,1,0,1,0
-Aston Villa,2324,Cameron Archer,FW,1,0,1,0
-Aston Villa,2324,Jacob Ramsey,MF,16,0,16,0
+Aston Villa,2324,Leon Bailey,FW,22,13,35,10
+Aston Villa,2324,Leander Dendoncker,MF,1,7,8,1
+Aston Villa,2324,Jaden Philogene,FW,0,1,1,0
+Aston Villa,2324,Cameron Archer,FW,0,1,1,0
+Aston Villa,2324,Jacob Ramsey,MF,8,8,16,1
 Aston Villa,2324,Filip Marschall,GK,0,0,0,0
 Aston Villa,2324,Boubacar Kamara,MF,20,0,20,0
-Aston Villa,2324,Tim Iroegbunam,MF,9,0,9,0
+Aston Villa,2324,Tim Iroegbunam,MF,1,8,9,0
 Aston Villa,2324,Sil Swinkels,DF,0,0,0,0
 Aston Villa,2324,Sebastian Revan,DF,0,0,0,0
 Aston Villa,2324,Ajani Burchall,FW,0,0,0,0
 Aston Villa,2324,Tommi O'Reilly,MF,0,0,0,0
 Aston Villa,2324,Rory Wilson,FW,0,0,0,0
-Aston Villa,2324,Finley Munroe,DF,1,0,1,0
-Aston Villa,2324,Omari Kellyman,FW,2,0,2,0
+Aston Villa,2324,Finley Munroe,DF,0,1,1,0
+Aston Villa,2324,Omari Kellyman,FW,0,2,2,0
 Aston Villa,2324,Kadan Young,FW,0,0,0,0
-Aston Villa,2324,Total,Total,38,0,38,0
-Aston Villa,2425,Matty Cash,DF,27,0,27,0
-Aston Villa,2425,Axel Disasi,DF,7,0,7,0
-Aston Villa,2425,Ezri Konsa,DF,34,0,34,0
-Aston Villa,2425,Tyrone Mings,DF,14,0,14,0
-Aston Villa,2425,Ross Barkley,MF,20,0,20,0
-Aston Villa,2425,John McGinn,MF,34,0,34,0
-Aston Villa,2425,Youri Tielemans,MF,36,0,36,0
-Aston Villa,2425,Marcus Rashford,FW,10,0,10,0
-Aston Villa,2425,Ollie Watkins,FW,38,0,38,0
-Aston Villa,2425,Lucas Digne,DF,32,0,32,0
-Aston Villa,2425,Pau Torres,DF,24,0,24,0
-Aston Villa,2425,Andrés García,DF,7,0,7,0
-Aston Villa,2425,Donyell Malen,FW,14,0,14,0
-Aston Villa,2425,Marco Asensio,FW,13,0,13,0
-Aston Villa,2425,Ian Maatsen,DF,29,0,29,0
+Aston Villa,2425,Matty Cash,DF,24,3,27,1
+Aston Villa,2425,Axel Disasi,DF,5,2,7,0
+Aston Villa,2425,Ezri Konsa,DF,33,1,34,2
+Aston Villa,2425,Tyrone Mings,DF,12,2,14,0
+Aston Villa,2425,Ross Barkley,MF,3,17,20,3
+Aston Villa,2425,John McGinn,MF,27,7,34,1
+Aston Villa,2425,Youri Tielemans,MF,35,1,36,3
+Aston Villa,2425,Marcus Rashford,FW,4,6,10,2
+Aston Villa,2425,Ollie Watkins,FW,32,6,38,16
+Aston Villa,2425,Lucas Digne,DF,28,4,32,0
+Aston Villa,2425,Pau Torres,DF,23,1,24,0
+Aston Villa,2425,Andrés García,DF,5,2,7,0
+Aston Villa,2425,Donyell Malen,FW,2,12,14,3
+Aston Villa,2425,Marco Asensio,FW,9,4,13,3
+Aston Villa,2425,Ian Maatsen,DF,10,19,29,1
 Aston Villa,2425,Emiliano Martínez,GK,37,0,37,0
-Aston Villa,2425,Amadou Onana,MF,26,0,26,0
-Aston Villa,2425,Robin Olsen,GK,4,0,4,0
-Aston Villa,2425,Lamare Bogarde,DF,8,0,8,0
-Aston Villa,2425,Morgan Rogers,FW,37,0,37,0
-Aston Villa,2425,Leon Bailey,FW,24,0,24,0
-Aston Villa,2425,Jacob Ramsey,MF,29,0,29,0
-Aston Villa,2425,Boubacar Kamara,MF,26,0,26,0
+Aston Villa,2425,Amadou Onana,MF,20,6,26,3
+Aston Villa,2425,Robin Olsen,GK,1,3,4,0
+Aston Villa,2425,Lamare Bogarde,DF,5,3,8,0
+Aston Villa,2425,Morgan Rogers,FW,37,0,37,8
+Aston Villa,2425,Leon Bailey,FW,14,10,24,1
+Aston Villa,2425,Jacob Ramsey,MF,19,10,29,1
+Aston Villa,2425,Boubacar Kamara,MF,20,6,26,1
 Aston Villa,2425,Aidan Borland,MF,0,0,0,0
 Aston Villa,2425,Jamaldeen Jimoh-Aloba,MF,0,0,0,0
 Aston Villa,2425,Ben Broggio,MF,0,0,0,0
-Aston Villa,2425,Emiliano Buendía,MF,12,0,12,0
+Aston Villa,2425,Emiliano Buendía,MF,0,12,12,0
 Aston Villa,2425,Joe Gauci,GK,0,0,0,0
-Aston Villa,2425,Kosta Nedeljković,DF,5,0,5,0
+Aston Villa,2425,Kosta Nedeljković,DF,0,5,5,0
 Aston Villa,2425,Sil Swinkels,DF,0,0,0,0
 Aston Villa,2425,Travis Patterson,DF,0,0,0,0
 Aston Villa,2425,Kadan Young,FW,0,0,0,0
-Aston Villa,2425,Diego Carlos,DF,10,0,10,0
-Aston Villa,2425,Jhon Durán,FW,20,0,20,0
-Aston Villa,2425,Jaden Philogene,FW,11,0,11,0
+Aston Villa,2425,Diego Carlos,DF,8,2,10,0
+Aston Villa,2425,Jhon Durán,FW,4,16,20,7
+Aston Villa,2425,Jaden Philogene,FW,2,9,11,0
 Aston Villa,2526,Matty Cash,DF,34,1,35,3
 Aston Villa,2526,Victor Lindelöf,DF,11,6,17,0
 Aston Villa,2526,Ezri Konsa,DF,34,0,34,0
@@ -469,6 +500,87 @@ Brentford,2526,Benjamin Arthur,DF,0,0,0,0
 Brentford,2526,Romelle Donovan,FW,0,4,4,0
 Brentford,2526,Kaye Furo,FW,0,1,1,0
 Brentford,2526,Luka Bentt,MF,0,0,0,0
+Brighton,2223,Robert Sánchez,GK,23,0,23,0
+Brighton,2223,Jason Steele,GK,15,0,15,0
+Brighton,2223,Tom McGill,GK,0,0,0,0
+Brighton,2223,Tariq Lamptey,DF,3,17,20,0
+Brighton,2223,Adam Webster,DF,23,4,27,0
+Brighton,2223,Lewis Dunk,DF,36,0,36,1
+Brighton,2223,Levi Colwill,DF,13,4,17,0
+Brighton,2223,Jan Paul van Hecke,DF,3,5,8,0
+Brighton,2223,Pervis Estupiñán,DF,31,4,35,1
+Brighton,2223,Joël Veltman,DF,25,6,31,1
+Brighton,2223,Odeluga Offiah,DF,0,2,2,0
+Brighton,2223,Solly March,MF,31,2,33,7
+Brighton,2223,Alexis Mac Allister,MF,31,4,35,10
+Brighton,2223,Pascal Groß,MF,37,0,37,9
+Brighton,2223,Adam Lallana,MF,12,4,16,2
+Brighton,2223,Jakub Moder,MF,0,0,0,0
+Brighton,2223,Jeremy Sarmiento,MF,1,8,9,0
+Brighton,2223,Kaoru Mitoma,MF,24,9,33,7
+Brighton,2223,Moisés Caicedo,MF,34,3,37,1
+Brighton,2223,Yasin Ayari,MF,1,2,3,0
+Brighton,2223,Billy Gilmour,MF,6,7,13,0
+Brighton,2223,Facundo Buonanotte,MF,6,7,13,1
+Brighton,2223,Andrew Moran,MF,0,1,1,0
+Brighton,2223,Cameron Peupion,MF,0,1,1,0
+Brighton,2223,Jack Hinchy,MF,0,0,0,0
+Brighton,2223,Jack Hinshelwood,MF,0,1,1,0
+Brighton,2223,Danny Welbeck,FW,21,10,31,6
+Brighton,2223,Julio Enciso,FW,8,12,20,4
+Brighton,2223,Deniz Undav,FW,6,16,22,5
+Brighton,2223,Evan Ferguson,FW,10,9,19,6
+Brighton,2223,Enock Mwepu[12],MF,2,4,6,0
+Brighton,2223,Neal Maupay[59],FW,0,0,0,0
+Brighton,2223,Leandro Trossard[64],FW,16,0,16,7
+Brighton,2223,Kjell Scherpen[83],GK,0,0,0,0
+Brighton,2223,Steven Alzate[88],MF,0,0,0,0
+Brighton,2223,Shane Duffy[82][65],DF,0,0,0,0
+Brighton,2223,Matt Clarke[58],DF,0,0,0,0
+Brighton,2223,Florin Andone[60],FW,0,0,0,0
+Brighton,2223,Jack Spong[94],MF,0,0,0,0
+Brighton,2223,Ed Turns[91],DF,0,0,0,0
+Brighton,2223,Antef Tsoungui[95],DF,0,0,0,0
+Brighton,2223,James Furlong[93],DF,0,0,0,0
+Brighton,2324,Bart Verbruggen,GK,21,0,21,0
+Brighton,2324,Jason Steele,GK,17,0,17,0
+Brighton,2324,Tom McGill,GK,0,0,0,0
+Brighton,2324,Tariq Lamptey,DF,10,8,18,0
+Brighton,2324,Igor Julio,DF,17,8,25,0
+Brighton,2324,Adam Webster,DF,13,2,15,0
+Brighton,2324,Lewis Dunk,DF,33,0,33,3
+Brighton,2324,Valentín Barco,DF,3,3,6,0
+Brighton,2324,Jan Paul van Hecke,DF,26,2,28,0
+Brighton,2324,Pervis Estupiñán,DF,15,4,19,2
+Brighton,2324,Joël Veltman,DF,17,10,27,1
+Brighton,2324,Odeluga Offiah,DF,1,3,4,0
+Brighton,2324,Ben Jackson,DF,0,0,0,0
+Brighton,2324,Leigh Kavanagh,DF,0,0,0,0
+Brighton,2324,Noël Atom,DF,0,0,0,0
+Brighton,2324,James Milner,MF,11,4,15,0
+Brighton,2324,Solly March,MF,7,0,7,3
+Brighton,2324,Billy Gilmour,MF,24,6,30,0
+Brighton,2324,Pascal Groß,MF,34,2,36,4
+Brighton,2324,Adam Lallana,MF,13,12,25,0
+Brighton,2324,Jakub Moder,MF,6,11,17,0
+Brighton,2324,Carlos Baleba,MF,15,12,27,0
+Brighton,2324,Kaoru Mitoma,MF,15,4,19,3
+Brighton,2324,Simon Adingra,MF,25,6,31,6
+Brighton,2324,Ansu Fati,MF,3,16,19,2
+Brighton,2324,Facundo Buonanotte,MF,17,10,27,3
+Brighton,2324,Jack Hinshelwood,MF,8,4,12,3
+Brighton,2324,Cameron Peupion,MF,0,0,0,0
+Brighton,2324,Benicio Baker-Boaitey,MF,0,5,5,0
+Brighton,2324,Samy Chouchane,MF,0,0,0,0
+Brighton,2324,Luca Barrington,MF,0,0,0,0
+Brighton,2324,João Pedro,FW,19,12,31,9
+Brighton,2324,Julio Enciso,FW,5,7,12,0
+Brighton,2324,Danny Welbeck,FW,21,8,29,5
+Brighton,2324,Evan Ferguson,FW,15,12,27,6
+Brighton,2324,Mark O'Mahony,FW,1,2,3,0
+Brighton,2324,Joshua Duffus,FW,0,0,0,0
+Brighton,2324,Mahmoud Dahoud[79],MF,6,3,9,0
+Brighton,2324,Jack Hinchy[80],MF,0,0,0,0
 Brighton,2425,Bart Verbruggen,GK,36,0,36,0
 Brighton,2425,Tariq Lamptey,DF,10,5,15,2
 Brighton,2425,Igor Julio,DF,9,3,12,0
@@ -600,66 +712,66 @@ Burnley,2526,Jaydon Banel,FW,0,1,1,0
 Burnley,2526,Ashley Barnes,FW,0,7,7,0
 Burnley,2526,Ellis Clark,MF,0,0,0,0
 Chelsea,2223,Kepa Arrizabalaga,GK,29,0,29,0
-Chelsea,2223,Benoît Badiashile,DF,11,0,11,0
+Chelsea,2223,Benoît Badiashile,DF,11,0,11,1
 Chelsea,2223,Enzo Fernández,MF,18,0,18,0
 Chelsea,2223,Thiago Silva,DF,27,0,27,0
 Chelsea,2223,N'Golo Kanté,MF,7,0,7,0
-Chelsea,2223,Mateo Kovačić,MF,27,0,27,0
-Chelsea,2223,Pierre-Emerick Aubameyang,FW,15,0,15,0
-Chelsea,2223,Christian Pulisic,FW,23,0,23,0
-Chelsea,2223,João Félix,FW,16,0,16,0
+Chelsea,2223,Mateo Kovačić,MF,27,0,27,1
+Chelsea,2223,Pierre-Emerick Aubameyang,FW,15,0,15,1
+Chelsea,2223,Christian Pulisic,FW,23,0,23,1
+Chelsea,2223,João Félix,FW,16,0,16,4
 Chelsea,2223,Ruben Loftus-Cheek,MF,25,0,25,0
 Chelsea,2223,Marcus Bettinelli,GK,0,0,0,0
 Chelsea,2223,Trevoh Chalobah,DF,25,0,25,0
 Chelsea,2223,Mykhailo Mudryk,FW,15,0,15,0
 Chelsea,2223,Édouard Mendy,GK,10,0,10,0
-Chelsea,2223,Raheem Sterling,FW,28,0,28,0
-Chelsea,2223,Armando Broja,FW,12,0,12,0
-Chelsea,2223,Mason Mount,MF,24,0,24,0
+Chelsea,2223,Raheem Sterling,FW,28,0,28,6
+Chelsea,2223,Armando Broja,FW,12,0,12,1
+Chelsea,2223,Mason Mount,MF,24,0,24,3
 Chelsea,2223,Denis Zakaria,MF,7,0,7,0
-Chelsea,2223,Ben Chilwell,DF,23,0,23,0
+Chelsea,2223,Ben Chilwell,DF,23,0,23,2
 Chelsea,2223,Hakim Ziyech,FW,17,0,17,0
-Chelsea,2223,Conor Gallagher,MF,35,0,35,0
-Chelsea,2223,Reece James,DF,16,0,16,0
-Chelsea,2223,Kalidou Koulibaly,DF,23,0,23,0
+Chelsea,2223,Conor Gallagher,MF,35,0,35,3
+Chelsea,2223,Reece James,DF,16,0,16,1
+Chelsea,2223,Kalidou Koulibaly,DF,23,0,23,2
 Chelsea,2223,David Datro Fofana,FW,3,0,3,0
 Chelsea,2223,César Azpilicueta,DF,25,0,25,0
-Chelsea,2223,Kai Havertz,FW,35,0,35,0
+Chelsea,2223,Kai Havertz,FW,35,0,35,7
 Chelsea,2223,Carney Chukwuemeka,MF,14,0,14,0
-Chelsea,2223,Noni Madueke,FW,12,0,12,0
+Chelsea,2223,Noni Madueke,FW,12,0,12,1
 Chelsea,2223,Marc Cucurella,DF,24,0,24,0
-Chelsea,2223,Wesley Fofana,DF,15,0,15,0
+Chelsea,2223,Wesley Fofana,DF,15,0,15,1
 Chelsea,2223,Bashir Humphreys,DF,0,0,0,0
 Chelsea,2223,Omari Hutchinson,MF,1,0,1,0
 Chelsea,2223,Lewis Hall,MF,9,0,9,0
-Chelsea,2223,Jorginho,MF,18,0,18,0
+Chelsea,2223,Jorginho,MF,18,0,18,2
 Chelsea,2324,Robert Sánchez,GK,16,0,16,0
-Chelsea,2324,Axel Disasi,DF,31,0,31,0
+Chelsea,2324,Axel Disasi,DF,31,0,31,2
 Chelsea,2324,Marc Cucurella,DF,19,0,19,0
 Chelsea,2324,Benoît Badiashile,DF,16,0,16,0
-Chelsea,2324,Thiago Silva,DF,29,0,29,0
-Chelsea,2324,Raheem Sterling,FW,29,0,29,0
-Chelsea,2324,Enzo Fernández,MF,28,0,28,0
-Chelsea,2324,Mykhailo Mudryk,FW,30,0,30,0
-Chelsea,2324,Noni Madueke,FW,21,0,21,0
+Chelsea,2324,Thiago Silva,DF,29,0,29,3
+Chelsea,2324,Raheem Sterling,FW,29,0,29,8
+Chelsea,2324,Enzo Fernández,MF,28,0,28,3
+Chelsea,2324,Mykhailo Mudryk,FW,30,0,30,5
+Chelsea,2324,Noni Madueke,FW,21,0,21,5
 Chelsea,2324,Marcus Bettinelli,GK,0,0,0,0
-Chelsea,2324,Trevoh Chalobah,DF,11,0,11,0
-Chelsea,2324,Nicolas Jackson,FW,33,0,33,0
+Chelsea,2324,Trevoh Chalobah,DF,11,0,11,1
+Chelsea,2324,Nicolas Jackson,FW,33,0,33,14
 Chelsea,2324,Lesley Ugochukwu,MF,10,0,10,0
-Chelsea,2324,Carney Chukwuemeka,MF,9,0,9,0
-Chelsea,2324,Christopher Nkunku,FW,9,0,9,0
-Chelsea,2324,Cole Palmer,MF,31,0,31,0
+Chelsea,2324,Carney Chukwuemeka,MF,9,0,9,1
+Chelsea,2324,Christopher Nkunku,FW,9,0,9,3
+Chelsea,2324,Cole Palmer,MF,31,0,31,22
 Chelsea,2324,Ben Chilwell,DF,13,0,13,0
-Chelsea,2324,Conor Gallagher,MF,35,0,35,0
+Chelsea,2324,Conor Gallagher,MF,35,0,35,5
 Chelsea,2324,Reece James,DF,9,0,9,0
-Chelsea,2324,Moisés Caicedo,MF,33,0,33,0
-Chelsea,2324,Levi Colwill,DF,23,0,23,0
+Chelsea,2324,Moisés Caicedo,MF,33,0,33,1
+Chelsea,2324,Levi Colwill,DF,23,0,23,1
 Chelsea,2324,Malo Gusto,DF,25,0,25,0
 Chelsea,2324,Đorđe Petrović,GK,22,0,22,0
 Chelsea,2324,Cesare Casadei,MF,9,0,9,0
 Chelsea,2324,Wesley Fofana,DF,0,0,0,0
 Chelsea,2324,Deivid Washington,FW,2,0,2,0
-Chelsea,2324,Alfie Gilchrist,DF,11,0,11,0
+Chelsea,2324,Alfie Gilchrist,DF,11,0,11,1
 Chelsea,2324,Diego Moreira,FW,0,0,0,0
 Chelsea,2324,Roméo Lavia,MF,1,0,1,0
 Chelsea,2324,Jimi Tauriainen,MF,1,0,1,0
@@ -667,37 +779,37 @@ Chelsea,2324,Leo Castledine,MF,0,0,0,0
 Chelsea,2324,Josh Acheampong,DF,1,0,1,0
 Chelsea,2324,Michael Golding,MF,0,0,0,0
 Chelsea,2324,Malang Sarr,DF,0,0,0,0
-Chelsea,2324,Armando Broja,FW,13,0,13,0
+Chelsea,2324,Armando Broja,FW,13,0,13,1
 Chelsea,2324,Ian Maatsen,DF,12,0,12,0
 Chelsea,2324,Mason Burstow,FW,2,0,2,0
 Chelsea,2324,Bashir Humphreys,DF,0,0,0,0
 Chelsea,2324,Alex Matos,MF,1,0,1,0
 Chelsea,2425,Robert Sánchez,GK,32,0,32,0
-Chelsea,2425,Marc Cucurella,DF,33,3,36,0
-Chelsea,2425,Tosin Adarabioyo,DF,15,7,22,0
+Chelsea,2425,Marc Cucurella,DF,33,3,36,5
+Chelsea,2425,Tosin Adarabioyo,DF,15,7,22,1
 Chelsea,2425,Benoît Badiashile,DF,3,2,5,0
-Chelsea,2425,Levi Colwill,DF,35,0,35,0
-Chelsea,2425,Pedro Neto,FW,24,11,35,0
-Chelsea,2425,Enzo Fernández,MF,32,4,36,0
+Chelsea,2425,Levi Colwill,DF,35,0,35,2
+Chelsea,2425,Pedro Neto,FW,24,11,35,4
+Chelsea,2425,Enzo Fernández,MF,32,4,36,6
 Chelsea,2425,Liam Delap,FW,0,0,0,0
-Chelsea,2425,Cole Palmer,MF,36,1,37,0
-Chelsea,2425,Noni Madueke,FW,27,5,32,0
+Chelsea,2425,Cole Palmer,MF,36,1,37,15
+Chelsea,2425,Noni Madueke,FW,27,5,32,7
 Chelsea,2425,Filip Jörgensen,GK,6,0,6,0
 Chelsea,2425,Marcus Bettinelli,GK,0,0,0,0
 Chelsea,2425,Dário Essugo,MF,0,0,0,0
-Chelsea,2425,Nicolas Jackson,FW,28,2,30,0
+Chelsea,2425,Nicolas Jackson,FW,28,2,30,10
 Chelsea,2425,Andrey Santos,MF,0,0,0,0
-Chelsea,2425,Christopher Nkunku,FW,9,18,27,0
+Chelsea,2425,Christopher Nkunku,FW,9,18,27,3
 Chelsea,2425,Mamadou Sarr,DF,0,0,0,0
 Chelsea,2425,João Pedro,FW,0,0,0,0
 Chelsea,2425,Kiernan Dewsbury-Hall,MF,2,11,13,0
 Chelsea,2425,Trevoh Chalobah,DF,12,2,14,0
-Chelsea,2425,Reece James,DF,12,7,19,0
-Chelsea,2425,Moisés Caicedo,MF,38,0,38,0
+Chelsea,2425,Reece James,DF,12,7,19,1
+Chelsea,2425,Moisés Caicedo,MF,38,0,38,1
 Chelsea,2425,Malo Gusto,DF,19,13,32,0
 Chelsea,2425,Wesley Fofana,DF,14,0,14,0
 Chelsea,2425,Aarón Anselmino,DF,0,0,0,0
-Chelsea,2425,Tyrique George,MF,1,7,8,0
+Chelsea,2425,Tyrique George,MF,1,7,8,1
 Chelsea,2425,Kiano Dyer,MF,0,0,0,0
 Chelsea,2425,Josh Acheampong,DF,2,2,4,0
 Chelsea,2425,Omari Kellyman,MF,0,0,0,0
@@ -714,49 +826,105 @@ Chelsea,2425,Shim Mheuka,FW,0,1,1,0
 Chelsea,2425,Reggie Walsh,MF,0,0,0,0
 Chelsea,2425,Mathis Amougou,MF,0,1,1,0
 Chelsea,2425,Mykhailo Mudryk,FW,1,6,7,0
-Chelsea,2425,Jadon Sancho,FW,19,12,31,0
+Chelsea,2425,Jadon Sancho,FW,19,12,31,3
 Chelsea,2425,Cesare Casadei,MF,0,0,0,0
 Chelsea,2425,Ben Chilwell,DF,0,0,0,0
 Chelsea,2425,Carney Chukwuemeka,MF,0,0,0,0
-Chelsea,2425,Axel Disasi,DF,4,2,6,0
-Chelsea,2425,João Félix,MF,3,9,12,0
+Chelsea,2425,Axel Disasi,DF,4,2,6,1
+Chelsea,2425,João Félix,MF,3,9,12,1
 Chelsea,2425,Harvey Vale,MF,0,0,0,0
 Chelsea,2425,Renato Veiga,DF,1,6,7,0
 Chelsea,2526,Robert Sánchez,GK,35,0,35,0
-Chelsea,2526,Marc Cucurella,DF,31,3,34,0
+Chelsea,2526,Marc Cucurella,DF,31,3,34,1
 Chelsea,2526,Tosin Adarabioyo,DF,7,8,15,0
 Chelsea,2526,Benoît Badiashile,DF,7,2,9,0
 Chelsea,2526,Levi Colwill,DF,2,1,3,0
-Chelsea,2526,Pedro Neto,FW,30,4,34,0
-Chelsea,2526,Enzo Fernández,MF,35,1,36,0
-Chelsea,2526,Liam Delap,FW,12,16,28,0
-Chelsea,2526,Cole Palmer,MF,24,2,26,0
+Chelsea,2526,Pedro Neto,FW,30,4,34,5
+Chelsea,2526,Enzo Fernández,MF,35,1,36,10
+Chelsea,2526,Liam Delap,FW,12,16,28,1
+Chelsea,2526,Cole Palmer,MF,24,2,26,10
 Chelsea,2526,Jamie Gittens,FW,5,11,16,0
 Chelsea,2526,Filip Jörgensen,GK,3,2,5,0
 Chelsea,2526,Dário Essugo,MF,0,3,3,0
-Chelsea,2526,Andrey Santos,MF,13,14,27,0
+Chelsea,2526,Andrey Santos,MF,13,14,27,1
 Chelsea,2526,Mamadou Sarr,DF,1,2,3,0
-Chelsea,2526,João Pedro,FW,31,4,35,0
+Chelsea,2526,João Pedro,FW,31,4,35,15
 Chelsea,2526,Jorrel Hato,DF,12,10,22,0
-Chelsea,2526,Trevoh Chalobah,DF,31,3,34,0
-Chelsea,2526,Reece James,DF,20,9,29,0
-Chelsea,2526,Moisés Caicedo,MF,32,1,33,0
-Chelsea,2526,Malo Gusto,DF,26,8,34,0
+Chelsea,2526,Trevoh Chalobah,DF,31,3,34,3
+Chelsea,2526,Reece James,DF,20,9,29,2
+Chelsea,2526,Moisés Caicedo,MF,32,1,33,3
+Chelsea,2526,Malo Gusto,DF,26,8,34,2
 Chelsea,2526,Teddy Sharman-Lowe,GK,0,0,0,0
 Chelsea,2526,Wesley Fofana,DF,20,5,25,0
-Chelsea,2526,Josh Acheampong,DF,8,9,17,0
+Chelsea,2526,Josh Acheampong,DF,8,9,17,1
 Chelsea,2526,Marc Guiu,FW,1,7,8,0
-Chelsea,2526,Estêvão,FW,12,10,22,0
+Chelsea,2526,Estêvão,FW,12,10,22,2
 Chelsea,2526,Gabriel Slonina,GK,0,0,0,0
 Chelsea,2526,Roméo Lavia,MF,4,8,12,0
 Chelsea,2526,Reggie Walsh,MF,0,0,0,0
-Chelsea,2526,Alejandro Garnacho,FW,14,10,24,0
+Chelsea,2526,Alejandro Garnacho,FW,14,10,24,1
 Chelsea,2526,Jesse Derry,FW,1,0,1,0
 Chelsea,2526,Shim Mheuka,FW,0,1,1,0
 Chelsea,2526,Ryan Kavuma-McQueen,MF,0,0,0,0
 Chelsea,2526,Mykhailo Mudryk,FW,0,0,0,0
 Chelsea,2526,Facundo Buonanotte,MF,1,0,1,0
 Chelsea,2526,Tyrique George,FW,0,4,4,0
+Crystal Palace,2223,Vicente Guaita,GK,27,0,27,0
+Crystal Palace,2223,Sam Johnstone,GK,7,0,7,0
+Crystal Palace,2223,Joe Whitworth,GK,2,0,2,0
+Crystal Palace,2223,Joel Ward,DF,22,4,26,1
+Crystal Palace,2223,Tyrick Mitchell,DF,32,2,34,0
+Crystal Palace,2223,James Tomkins,DF,3,3,6,1
+Crystal Palace,2223,Marc Guéhi,DF,35,0,35,1
+Crystal Palace,2223,Joachim Andersen,DF,30,0,30,1
+Crystal Palace,2223,Nathaniel Clyne,DF,19,3,22,0
+Crystal Palace,2223,Chris Richards,DF,4,5,9,0
+Crystal Palace,2223,Kaden Rodney,DF,0,0,0,0
+Crystal Palace,2223,Luka Milivojević,MF,5,13,18,0
+Crystal Palace,2223,Michael Olise,MF,26,6,32,2
+Crystal Palace,2223,Albert Sambi Lokonga,MF,6,3,9,0
+Crystal Palace,2223,Eberechi Eze,MF,28,8,36,10
+Crystal Palace,2223,Jeffrey Schlupp,MF,30,4,34,3
+Crystal Palace,2223,James McArthur,MF,0,3,3,0
+Crystal Palace,2223,Will Hughes,MF,5,20,25,1
+Crystal Palace,2223,Malcolm Ebiowei,MF,0,3,3,0
+Crystal Palace,2223,Cheick Doucouré,MF,32,0,32,0
+Crystal Palace,2223,Naouirou Ahamada,MF,0,7,7,0
+Crystal Palace,2223,Jaïro Riedewald,MF,0,5,5,0
+Crystal Palace,2223,Killian Phillips,MF,0,0,0,0
+Crystal Palace,2223,David Ozoh,MF,0,1,1,0
+Crystal Palace,2223,Jordan Ayew,FW,29,7,36,4
+Crystal Palace,2223,Wilfried Zaha,FW,27,0,27,7
+Crystal Palace,2223,Jean-Philippe Mateta,FW,6,21,27,2
+Crystal Palace,2223,Odsonne Édouard,FW,18,15,33,4
+Crystal Palace,2324,Sam Johnstone,GK,20,0,20,0
+Crystal Palace,2324,Dean Henderson,GK,18,0,18,0
+Crystal Palace,2324,Remi Matthews,GK,0,1,1,0
+Crystal Palace,2324,Joel Ward,DF,23,3,26,0
+Crystal Palace,2324,Tyrick Mitchell,DF,37,0,37,2
+Crystal Palace,2324,Rob Holding,DF,0,0,0,0
+Crystal Palace,2324,James Tomkins,DF,0,4,4,0
+Crystal Palace,2324,Marc Guéhi,DF,23,2,25,0
+Crystal Palace,2324,Daniel Muñoz,DF,16,0,16,0
+Crystal Palace,2324,Joachim Andersen,DF,38,0,38,2
+Crystal Palace,2324,Nathaniel Clyne,DF,14,5,19,0
+Crystal Palace,2324,Chris Richards,DF,23,3,26,1
+Crystal Palace,2324,Jefferson Lerma,MF,27,0,27,1
+Crystal Palace,2324,Eberechi Eze,MF,24,3,27,11
+Crystal Palace,2324,Matheus França,MF,1,9,10,0
+Crystal Palace,2324,Jeffrey Schlupp,MF,17,12,29,2
+Crystal Palace,2324,Will Hughes,MF,23,7,30,0
+Crystal Palace,2324,Adam Wharton,MF,15,1,16,0
+Crystal Palace,2324,Cheick Doucouré,MF,11,0,11,0
+Crystal Palace,2324,Naouirou Ahamada,MF,0,20,20,0
+Crystal Palace,2324,Jaïro Riedewald,MF,2,7,9,0
+Crystal Palace,2324,David Ozoh,MF,0,9,9,0
+Crystal Palace,2324,Michael Olise,FW,14,5,19,10
+Crystal Palace,2324,Jordan Ayew,FW,30,5,35,4
+Crystal Palace,2324,Jean-Philippe Mateta,FW,25,10,35,16
+Crystal Palace,2324,Odsonne Édouard,FW,17,13,30,7
+Crystal Palace,2324,Malcolm Ebiowei,FW,0,0,0,0
+Crystal Palace,2324,Jesurun Rak-Sakyi,FW,0,6,6,0
 Crystal Palace,2425,Dean Henderson,GK,38,0,38,0
 Crystal Palace,2425,Joel Ward,DF,1,1,2,0
 Crystal Palace,2425,Tyrick Mitchell,DF,37,0,37,0
@@ -820,6 +988,66 @@ Crystal Palace,2526,Romain Esse,FW,0,4,4,0
 Crystal Palace,2526,Marc Guéhi,DF,20,0,20,2
 Crystal Palace,2526,Eberechi Eze,FW,1,0,1,0
 Crystal Palace,2526,Odsonne Édouard,FW,0,1,1,0
+Everton,2223,Jordan Pickford,GK,37,0,37,0
+Everton,2223,Asmir Begović,GK,1,0,1,0
+Everton,2223,James Tarkowski,DF,38,0,38,1
+Everton,2223,Nathan Patterson,DF,14,5,19,0
+Everton,2223,Mason Holgate,DF,5,3,8,0
+Everton,2223,Michael Keane,DF,10,2,12,1
+Everton,2223,Yerry Mina,DF,7,0,7,2
+Everton,2223,Vitaliy Mykolenko,DF,30,4,34,0
+Everton,2223,Ben Godfrey,DF,10,3,13,0
+Everton,2223,Séamus Coleman,DF,20,3,23,1
+Everton,2223,Rúben Vinagre,DF,0,2,2,0
+Everton,2223,Conor Coady,DF,23,1,24,1
+Everton,2223,Reece Welch,DF,0,0,0,0
+Everton,2223,Amadou Onana,MF,29,4,33,1
+Everton,2223,Abdoulaye Doucouré,MF,17,8,25,5
+Everton,2223,Alex Iwobi,MF,38,0,38,2
+Everton,2223,Tom Davies,MF,4,15,19,0
+Everton,2223,Idrissa Gueye,MF,32,1,33,0
+Everton,2223,James Garner,MF,7,9,16,0
+Everton,2223,Isaac Price,MF,0,1,1,0
+Everton,2223,Dwight McNeil,FW,28,8,36,7
+Everton,2223,Dominic Calvert-Lewin,FW,15,2,17,2
+Everton,2223,Demarai Gray,FW,27,6,33,4
+Everton,2223,Neal Maupay,FW,9,17,26,1
+Everton,2223,Ellis Simms,FW,2,9,11,1
+Everton,2223,Stanley Mills,FW,0,0,0,0
+Everton,2223,Anthony Gordon,FW,12,4,16,3
+Everton,2223,Dele Alli,FW,0,2,2,0
+Everton,2223,Salomón Rondón,FW,1,6,7,0
+Everton,2223,Thomas Cannon,FW,0,2,2,0
+Everton,2223,Lewis Warrington,MF,0,0,0,0
+Everton,2324,Jordan Pickford,GK,38,0,38,0
+Everton,2324,João Virgínia,GK,0,0,0,0
+Everton,2324,Andy Lonergan,GK,0,0,0,0
+Everton,2324,Nathan Patterson,DF,9,11,20,0
+Everton,2324,Michael Keane,DF,4,5,9,1
+Everton,2324,James Tarkowski,DF,38,0,38,1
+Everton,2324,Ashley Young,DF,27,4,31,0
+Everton,2324,Vitaliy Mykolenko,DF,28,0,28,2
+Everton,2324,Ben Godfrey,DF,13,2,15,0
+Everton,2324,Séamus Coleman,DF,8,4,12,0
+Everton,2324,Jarrad Branthwaite,DF,35,0,35,3
+Everton,2324,Amadou Onana,MF,24,6,30,2
+Everton,2324,Abdoulaye Doucouré,MF,32,0,32,7
+Everton,2324,Dele Alli,MF,0,0,0,0
+Everton,2324,André Gomes,MF,3,9,12,1
+Everton,2324,Idrissa Gueye,MF,25,0,25,4
+Everton,2324,James Garner,MF,34,3,37,1
+Everton,2324,Lewis Warrington,MF,0,1,1,0
+Everton,2324,Tyler Onyango,MF,0,1,1,0
+Everton,2324,Dwight McNeil,FW,33,2,35,3
+Everton,2324,Dominic Calvert-Lewin,FW,26,6,32,7
+Everton,2324,Arnaut Danjuma,FW,5,9,14,1
+Everton,2324,Beto,FW,9,20,29,3
+Everton,2324,Youssef Chermiti,FW,1,17,18,0
+Everton,2324,Jack Harrison,FW,25,4,29,3
+Everton,2324,Lewis Dobbin,FW,1,11,12,1
+Everton,2324,Alex Iwobi,MF,2,0,2,0
+Everton,2324,Neal Maupay,FW,1,1,2,0
+Everton,2324,Thomas Cannon,FW,0,1,1,0
 Everton,2425,Jordan Pickford,GK,38,0,38,0
 Everton,2425,Nathan Patterson,DF,3,7,10,0
 Everton,2425,Mason Holgate,DF,0,1,1,0
@@ -873,6 +1101,84 @@ Everton,2526,Tim Iroegbunam,MF,17,12,29,0
 Everton,2526,Harrison Armstrong,MF,6,7,13,0
 Everton,2526,Reece Welch,DF,0,0,0,0
 Everton,2526,Elijah Campbell,DF,0,0,0,0
+Fulham,2223,Marek Rodák,GK,2,0,2,0
+Fulham,2223,Bernd Leno,GK,36,0,36,0
+Fulham,2223,George Wickens,GK,0,0,0,0
+Fulham,2223,Kenny Tete,RB,29,2,31,1
+Fulham,2223,Layvin Kurzawa,LB,2,1,3,0
+Fulham,2223,Tosin Adarabioyo,CB,23,2,25,1
+Fulham,2223,Shane Duffy,CB,0,5,5,0
+Fulham,2223,Cédric Soares,RB,2,4,6,0
+Fulham,2223,Tim Ream,CB,33,0,33,1
+Fulham,2223,Issa Diop,CB,21,4,25,1
+Fulham,2223,Antonee Robinson,LB,35,0,35,0
+Fulham,2223,Luciano D'Auria-Henry,RB,0,0,0,0
+Fulham,2223,Charlie Robinson,CB,0,0,0,0
+Fulham,2223,Harrison Reed,CM,35,2,37,3
+Fulham,2223,Neeskens Kebano,LW,9,8,17,0
+Fulham,2223,Tom Cairney,CM,6,27,33,2
+Fulham,2223,Manor Solomon,LW,4,15,19,4
+Fulham,2223,Andreas Pereira,AM,33,0,33,4
+Fulham,2223,Willian,RW,25,2,27,5
+Fulham,2223,João Palhinha,DM,35,0,35,3
+Fulham,2223,Saša Lukić,CM,4,8,12,0
+Fulham,2223,Tyrese Francois,CM,0,1,1,0
+Fulham,2223,Luke Harris,CM,0,3,3,0
+Fulham,2223,Kristian Šekularac,AM,0,0,0,0
+Fulham,2223,Martial Godo,LW,0,0,0,0
+Fulham,2223,Matthew Dibley-Dias,CM,0,0,0,0
+Fulham,2223,Harry Wilson,RW,13,16,29,2
+Fulham,2223,Aleksandar Mitrović,ST,23,1,24,14
+Fulham,2223,Bobby Decordova-Reid,AM/ST,29,7,36,4
+Fulham,2223,Daniel James,RW/ST,5,15,20,2
+Fulham,2223,Carlos Vinícius,ST,11,17,28,5
+Fulham,2223,Terry Ablade,ST,0,0,0,0
+Fulham,2223,Rodrigo Muniz,ST,0,0,0,0
+Fulham,2223,Paulo Gazzaniga,GK,0,0,0,0
+Fulham,2223,Joe Bryan,LB,0,0,0,0
+Fulham,2223,Kevin Mbabu,RB,1,5,6,0
+Fulham,2223,Connor McAvoy,CB,0,0,0,0
+Fulham,2223,Adrion Pajaziti,CM,0,0,0,0
+Fulham,2223,Ollie O'Neill,LW,0,0,0,0
+Fulham,2223,Jay Stansfield,ST,1,2,3,0
+Fulham,2223,Nathaniel Chalobah,CM,1,3,4,0
+Fulham,2223,Josh Onomah,CM,0,2,2,0
+Fulham,2223,Marlon Fossey,RB,0,0,0,0
+Fulham,2324,Marek Rodák,GK,0,0,0,0
+Fulham,2324,Bernd Leno,GK,38,0,38,0
+Fulham,2324,Steven Benda,GK,0,0,0,0
+Fulham,2324,Kenny Tete,RB,10,4,14,1
+Fulham,2324,Calvin Bassey,CB,25,4,29,1
+Fulham,2324,Tosin Adarabioyo,CB,18,2,20,2
+Fulham,2324,Fodé Ballo-Touré,LB,0,6,6,0
+Fulham,2324,Tim Ream,CB,17,1,18,1
+Fulham,2324,Timothy Castagne,RB,29,5,34,1
+Fulham,2324,Issa Diop,CB,16,2,18,0
+Fulham,2324,Antonee Robinson,LB,37,0,37,0
+Fulham,2324,Devan Tanton,RB,0,0,0,0
+Fulham,2324,Luc de Fougerolles,CB,0,0,0,0
+Fulham,2324,Harrison Reed,CM,15,12,27,0
+Fulham,2324,Tom Cairney,CM,14,20,34,1
+Fulham,2324,Bobby Decordova-Reid,AM,17,16,33,6
+Fulham,2324,Andreas Pereira,AM,34,3,37,3
+Fulham,2324,Alex Iwobi,AM,25,5,30,5
+Fulham,2324,João Palhinha,DM,31,2,33,4
+Fulham,2324,Saša Lukić,CM,13,11,24,1
+Fulham,2324,Matt Dibley-Dias,CM,0,0,0,0
+Fulham,2324,Kristian Šekularac,AM,0,0,0,0
+Fulham,2324,Joshua King,CM,0,0,0,0
+Fulham,2324,Raúl Jiménez,CF,18,6,24,7
+Fulham,2324,Harry Wilson,RW,16,19,35,4
+Fulham,2324,Armando Broja,CF,0,8,8,0
+Fulham,2324,Adama Traoré,RW,1,16,17,2
+Fulham,2324,Rodrigo Muniz,CF,18,8,26,9
+Fulham,2324,Willian,LW,24,7,31,4
+Fulham,2324,Kevin Mbabu,RB,0,0,0,0
+Fulham,2324,Carlos Vinícius,CF,2,11,13,2
+Fulham,2324,Tyrese Francois,CM,0,0,0,0
+Fulham,2324,Luke Harris,CM,0,1,1,0
+Fulham,2324,Jay Stansfield,CF,0,0,0,0
+Fulham,2324,Aleksandar Mitrović,CF,0,1,1,0
 Fulham,2425,Bernd Leno,GK,38,0,38,0
 Fulham,2425,Kenny Tete,DF,21,1,22,0
 Fulham,2425,Calvin Bassey,DF,34,1,35,1
@@ -958,6 +1264,61 @@ Ipswich,2425,Harry Clarke,DF,4,3,7,0
 Ipswich,2425,George Edmundson,DF,0,1,1,0
 Ipswich,2425,Marcus Harness,FW,0,2,2,0
 Ipswich,2425,Ali Al-Hamadi,FW,0,11,11,0
+Leeds,2223,Illan Meslier,GK,34,0,34,0
+Leeds,2223,Luke Ayling,DF,22,7,29,2
+Leeds,2223,Junior Firpo,DF,14,5,19,1
+Leeds,2223,Adam Forshaw,MF,5,7,12,0
+Leeds,2223,Robin Koch,DF,36,0,36,0
+Leeds,2223,Liam Cooper,DF,16,2,18,1
+Leeds,2223,Brenden Aaronson,MF,28,8,36,1
+Leeds,2223,Marc Roca,MF,29,3,32,1
+Leeds,2223,Patrick Bamford,FW,18,10,28,4
+Leeds,2223,Crysencio Summerville,FW,12,16,28,4
+Leeds,2223,Jack Harrison,MF,34,2,36,5
+Leeds,2223,Tyler Adams,MF,24,0,24,0
+Leeds,2223,Diego Llorente,DF,7,1,8,0
+Leeds,2223,Sonny Perkins,FW,0,0,0,0
+Leeds,2223,Darko Gyabi,MF,0,1,1,0
+Leeds,2223,Rodrigo,FW,23,8,31,13
+Leeds,2223,Daniel James,MF,2,2,4,0
+Leeds,2223,Pascal Struijk,DF,26,3,29,2
+Leeds,2223,Joel Robles,GK,4,0,4,0
+Leeds,2223,Luis Sinisterra,FW,13,6,19,5
+Leeds,2223,Georginio Rutter,FW,1,10,11,0
+Leeds,2223,Rasmus Kristensen,DF,21,5,26,3
+Leeds,2223,Weston McKennie,MF,16,3,19,0
+Leeds,2223,Wilfried Gnonto,FW,14,10,24,2
+Leeds,2223,Joe Gelhardt,FW,1,14,15,0
+Leeds,2223,Leo Hjelde,DF,0,0,0,0
+Leeds,2223,Cody Drameh,DF,1,0,1,0
+Leeds,2223,Maximilian Wöber,DF,14,2,16,0
+Leeds,2223,Sam Greenwood,MF,3,15,18,1
+Leeds,2223,Mateusz Klich,DF,0,14,14,0
+Leeds,2223,Mateo Joseph,FW,0,3,3,0
+Leeds,2526,Lucas Perri,GK,16,0,16,0
+Leeds,2526,Jayden Bogle,DF,32,2,34,1
+Leeds,2526,Gabriel Gudmundsson,DF,31,1,32,0
+Leeds,2526,Ethan Ampadu,MF,35,0,35,1
+Leeds,2526,Pascal Struijk,DF,33,2,35,0
+Leeds,2526,Joe Rodon,DF,33,2,35,2
+Leeds,2526,Daniel James,MF,6,13,19,0
+Leeds,2526,Sean Longstaff,MF,10,13,23,2
+Leeds,2526,Dominic Calvert-Lewin,FW,30,5,35,14
+Leeds,2526,Joël Piroe,FW,2,14,16,0
+Leeds,2526,Brenden Aaronson,MF,30,7,37,4
+Leeds,2526,Lukas Nmecha,FW,10,20,30,6
+Leeds,2526,Jaka Bijol,DF,21,4,25,1
+Leeds,2526,Anton Stach,MF,28,1,29,5
+Leeds,2526,Noah Okafor,FW,19,9,28,8
+Leeds,2526,Jack Harrison,MF,1,10,11,0
+Leeds,2526,Ao Tanaka,MF,14,14,28,2
+Leeds,2526,Sebastiaan Bornauw,DF,5,7,12,0
+Leeds,2526,James Justin,DF,21,9,30,2
+Leeds,2526,Sam Byram,DF,0,2,2,0
+Leeds,2526,Karl Darlow,GK,22,0,22,0
+Leeds,2526,Wilfried Gnonto,FW,4,19,23,0
+Leeds,2526,Facundo Buonanotte,MF,0,3,3,0
+Leeds,2526,Ilia Gruev,MF,15,8,23,0
 Leicester City,2223,Danny Ward,GK,26,0,26,0
 Leicester City,2223,James Justin,DF,14,0,14,0
 Leicester City,2223,Wout Faes,DF,31,0,31,1
@@ -1031,39 +1392,38 @@ Leicester City,2425,Hamza Choudhury,MF,1,3,4,0
 Leicester City,2425,Will Alves,MF,0,1,1,0
 Leicester City,2425,Chris Popov,MF,0,0,0,0
 Liverpool,2223,Alisson,GK,37,0,37,0
-Liverpool,2223,Joe Gomez,DF,21,0,21,0
-Liverpool,2223,Fabinho,MF,36,0,36,0
-Liverpool,2223,Virgil van Dijk,DF,32,0,32,0
-Liverpool,2223,Ibrahima Konaté,DF,18,0,18,0
-Liverpool,2223,Thiago,MF,18,0,18,0
-Liverpool,2223,James Milner,MF,31,0,31,0
-Liverpool,2223,Naby Keïta,MF,8,0,8,0
-Liverpool,2223,Roberto Firmino,FW,25,0,25,0
-Liverpool,2223,Mohamed Salah,FW,38,0,38,0
+Liverpool,2223,Joe Gomez,DF,15,6,21,0
+Liverpool,2223,Fabinho,MF,31,5,36,0
+Liverpool,2223,Virgil van Dijk,DF,32,0,32,3
+Liverpool,2223,Ibrahima Konaté,DF,17,1,18,0
+Liverpool,2223,Thiago,MF,14,4,18,0
+Liverpool,2223,James Milner,MF,7,24,31,0
+Liverpool,2223,Naby Keïta,MF,3,5,8,0
+Liverpool,2223,Roberto Firmino,FW,13,12,25,11
+Liverpool,2223,Mohamed Salah,FW,37,1,38,19
 Liverpool,2223,Adrián,GK,0,0,0,0
-Liverpool,2223,Jordan Henderson,MF,35,0,35,0
-Liverpool,2223,Alex Oxlade-Chamberlain,MF,9,0,9,0
-Liverpool,2223,Curtis Jones,MF,18,0,18,0
-Liverpool,2223,Cody Gakpo,FW,21,0,21,0
-Liverpool,2223,Harvey Elliott,MF,32,0,32,0
-Liverpool,2223,Diogo Jota,FW,22,0,22,0
-Liverpool,2223,Kostas Tsimikas,DF,20,0,20,0
+Liverpool,2223,Jordan Henderson,MF,23,12,35,0
+Liverpool,2223,Alex Oxlade-Chamberlain,MF,4,5,9,1
+Liverpool,2223,Curtis Jones,MF,12,6,18,3
+Liverpool,2223,Cody Gakpo,FW,17,4,21,7
+Liverpool,2223,Harvey Elliott,MF,18,14,32,1
+Liverpool,2223,Diogo Jota,FW,12,10,22,7
+Liverpool,2223,Kostas Tsimikas,DF,9,11,20,0
 Liverpool,2223,Calvin Ramsay,DF,0,0,0,0
-Liverpool,2223,Luis Díaz,FW,17,0,17,0
-Liverpool,2223,Andy Robertson,DF,34,0,34,0
-Liverpool,2223,Darwin Núñez,FW,29,0,29,0
-Liverpool,2223,Fabio Carvalho,FW,13,0,13,0
+Liverpool,2223,Luis Díaz,FW,11,6,17,4
+Liverpool,2223,Andy Robertson,DF,29,5,34,0
+Liverpool,2223,Darwin Núñez,FW,19,10,29,9
+Liverpool,2223,Fabio Carvalho,FW,4,9,13,0
 Liverpool,2223,Arthur,MF,0,0,0,0
-Liverpool,2223,Joël Matip,DF,14,0,14,0
-Liverpool,2223,Bobby Clark,MF,1,0,1,0
-Liverpool,2223,Stefan Bajcetic,MF,11,0,11,0
-Liverpool,2223,Nat Phillips,DF,2,0,2,0
-Liverpool,2223,Ben Gannon-Doak,FW,2,0,2,0
+Liverpool,2223,Joël Matip,DF,12,2,14,1
+Liverpool,2223,Bobby Clark,MF,0,1,1,0
+Liverpool,2223,Stefan Bajcetic,MF,6,5,11,1
+Liverpool,2223,Nat Phillips,DF,1,1,2,0
+Liverpool,2223,Ben Gannon-Doak,FW,0,2,2,0
 Liverpool,2223,Caoimhín Kelleher,GK,1,0,1,0
-Liverpool,2223,Trent Alexander-Arnold,DF,37,0,37,0
+Liverpool,2223,Trent Alexander-Arnold,DF,34,3,37,2
 Liverpool,2223,Layton Stewart,FW,0,0,0,0
 Liverpool,2223,Melkamu Frauendorf,MF,0,0,0,0
-Liverpool,2223,Total,Total,38,0,38,0
 Liverpool,2324,Alisson,GK,28,0,28,0
 Liverpool,2324,Joe Gomez,DF,17,15,32,0
 Liverpool,2324,Wataru Endo,MF,20,9,29,1
@@ -1162,6 +1522,36 @@ Liverpool,2526,Jayden Danns,FW,0,0,0,0
 Liverpool,2526,Wellity Lucky,DF,0,0,0,0
 Liverpool,2526,Harvey Elliott,MF,0,1,1,0
 Liverpool,2526,Trent Koné-Doherty,FW,0,0,0,0
+Luton,2324,James Shea,GK,1,0,1,0
+Luton,2324,Tim Krul,GK,0,0,0,0
+Luton,2324,Thomas Kaminski,GK,29,0,29,0
+Luton,2324,Gabriel Osho,DF,16,0,16,2
+Luton,2324,Dan Potts,DF,0,0,0,0
+Luton,2324,Tom Lockyer,DF,14,0,14,1
+Luton,2324,Mads Andersen,DF,8,0,8,1
+Luton,2324,Issa Kaboré,DF,20,0,20,0
+Luton,2324,Teden Mengi,DF,22,0,22,1
+Luton,2324,Reece Burke,DF,14,0,14,0
+Luton,2324,Daiki Hashioka,DF,3,0,3,0
+Luton,2324,Amari'i Bell,DF,21,0,21,0
+Luton,2324,Joe Johnson,DF,0,0,0,0
+Luton,2324,Alfie Doughty,DF,28,0,28,2
+Luton,2324,Ross Barkley,MF,24,0,24,5
+Luton,2324,Luke Berry,MF,9,0,9,2
+Luton,2324,Marvelous Nakamba,MF,13,0,13,0
+Luton,2324,Pelly Ruddock Mpanzu,MF,21,0,21,0
+Luton,2324,Jordan Clark,MF,15,0,15,0
+Luton,2324,Fred Onyedinma,MF,0,0,0,0
+Luton,2324,Albert Sambi Lokonga,MF,12,0,12,0
+Luton,2324,Zack Nelson,MF,1,0,1,0
+Luton,2324,Chiedozie Ogbene,FW,28,0,28,4
+Luton,2324,Carlton Morris,FW,29,0,29,11
+Luton,2324,Cauley Woodrow,FW,15,0,15,1
+Luton,2324,Elijah Adebayo,FW,23,0,23,10
+Luton,2324,Tahith Chong,FW,24,0,24,4
+Luton,2324,Jacob Brown,FW,19,0,19,2
+Luton,2324,Andros Townsend,FW,20,0,20,1
+Luton,2324,Ryan Giles,DF,11,0,11,0
 Manchester City,2223,Kyle Walker,DF,27,0,27,0
 Manchester City,2223,Rúben Dias,DF,26,0,26,0
 Manchester City,2223,Kalvin Phillips,MF,12,0,12,0
@@ -1188,8 +1578,6 @@ Manchester City,2223,Shea Charles,DF,1,0,1,0
 Manchester City,2223,Cole Palmer,MF,14,0,14,0
 Manchester City,2223,Rico Lewis,DF,14,0,14,0
 Manchester City,2223,Josh Wilson-Esbrand,DF,0,0,0,0
-Manchester City,2223,Own goals,Own goals,0,0,0,2
-Manchester City,2223,Totals,Totals,0,0,0,94
 Manchester City,2324,Kyle Walker,DF,32,0,32,0
 Manchester City,2324,Rúben Dias,DF,29,0,29,0
 Manchester City,2324,John Stones,DF,16,0,16,1
@@ -1219,8 +1607,6 @@ Manchester City,2324,Kalvin Phillips,MF,4,0,4,0
 Manchester City,2324,James McAtee,MF,1,0,1,0
 Manchester City,2324,Aymeric Laporte,DF,1,0,1,0
 Manchester City,2324,Cole Palmer,MF,1,0,1,0
-Manchester City,2324,Own goals,Own goals,0,0,0,2
-Manchester City,2324,Totals,Totals,0,0,0,96
 Manchester City,2425,Rúben Dias,DF,27,0,27,0
 Manchester City,2425,Tijjani Reijnders,MF,0,0,0,0
 Manchester City,2425,John Stones,DF,11,0,11,2
@@ -1258,8 +1644,6 @@ Manchester City,2425,Nico O'Reilly,MF,9,0,9,2
 Manchester City,2425,Rico Lewis,DF,28,0,28,1
 Manchester City,2425,James McAtee,MF,15,0,15,3
 Manchester City,2425,Kyle Walker,DF,15,0,15,0
-Manchester City,2425,Own goals,Own goals,0,0,0,1
-Manchester City,2425,Totals,Totals,0,0,0,72
 Manchester City,2526,James Trafford,GK,4,0,4,0
 Manchester City,2526,Rúben Dias,DF,27,0,27,2
 Manchester City,2526,Tijjani Reijnders,MF,29,0,29,5
@@ -1293,8 +1677,6 @@ Manchester City,2526,Jaden Heskey,FW,0,0,0,0
 Manchester City,2526,Rico Lewis,DF,11,0,11,0
 Manchester City,2526,Stephen Mfuni,DF,0,0,0,0
 Manchester City,2526,Reigan Heskey,FW,0,0,0,0
-Manchester City,2526,Own goals,Own goals,0,0,0,3
-Manchester City,2526,Totals,Totals,0,0,0,77
 Manchester United,2223,David de Gea,GK,38,0,38,0
 Manchester United,2223,Victor Lindelöf,DF,14,6,20,0
 Manchester United,2223,Eric Bailly,DF,0,0,0,0
@@ -1340,7 +1722,6 @@ Manchester United,2223,Marc Jurado,DF,0,0,0,0
 Manchester United,2223,Rhys Bennett,DF,0,0,0,0
 Manchester United,2223,Kobbie Mainoo,MF,0,1,1,0
 Manchester United,2223,Tyler Fredricson,DF,0,0,0,0
-Manchester United,2223,Own goals,Own goals,0,0,0,2
 Manchester United,2324,Altay Bayındır,GK,0,0,0,0
 Manchester United,2324,Victor Lindelöf,DF,14,5,19,1
 Manchester United,2324,Eric Bailly,DF,0,0,0,0
@@ -1382,7 +1763,6 @@ Manchester United,2324,Shola Shoretire,FW,0,0,0,0
 Manchester United,2324,Willy Kambwala,DF,3,5,8,0
 Manchester United,2324,Omari Forson,MF,1,3,4,0
 Manchester United,2324,Ethan Wheatley,FW,0,3,3,0
-Manchester United,2324,Own goals,Own goals,0,0,0,0
 Manchester United,2425,Altay Bayındır,GK,4,0,4,0
 Manchester United,2425,Victor Lindelöf,DF,6,10,16,0
 Manchester United,2425,Noussair Mazraoui,DF,34,3,37,0
@@ -1414,7 +1794,6 @@ Manchester United,2425,Harry Amass,DF,4,1,5,0
 Manchester United,2425,Toby Collyer,MF,0,6,6,0
 Manchester United,2425,Tyler Fredricson,DF,2,0,2,0
 Manchester United,2425,Chido Obi,FW,1,6,7,0
-Manchester United,2425,Own goals,Own goals,0,0,0,2
 Manchester United,2526,Altay Bayındır,GK,6,0,6,0
 Manchester United,2526,Diogo Dalot,DF,29,5,34,1
 Manchester United,2526,Noussair Mazraoui,DF,11,9,20,0
@@ -1449,7 +1828,68 @@ Manchester United,2526,Shea Lacey,FW,0,3,3,0
 Manchester United,2526,Bendito Mantato,FW,0,1,1,0
 Manchester United,2526,Godwill Kukonki,DF,0,0,0,0
 Manchester United,2526,Jim Thwaites,MF,0,0,0,0
-Manchester United,2526,Own goals,Own goals,0,0,0,3
+Newcastle United,2223,Martin Dúbravka,GK,1,1,2,0
+Newcastle United,2223,Loris Karius,GK,0,0,0,0
+Newcastle United,2223,Nick Pope,GK,37,0,37,0
+Newcastle United,2223,Kieran Trippier,DF,38,0,38,1
+Newcastle United,2223,Paul Dummett,DF,0,0,0,0
+Newcastle United,2223,Sven Botman,DF,35,1,36,0
+Newcastle United,2223,Fabian Schär,DF,36,0,36,1
+Newcastle United,2223,Jamaal Lascelles,DF,2,5,7,0
+Newcastle United,2223,Jamal Lewis,DF,0,2,2,0
+Newcastle United,2223,Matt Targett,DF,6,11,17,0
+Newcastle United,2223,Emil Krafth,DF,0,1,1,0
+Newcastle United,2223,Javier Manquillo,DF,0,4,4,0
+Newcastle United,2223,Dan Burn,DF,35,3,38,1
+Newcastle United,2223,Joelinton,MF,30,2,32,6
+Newcastle United,2223,Anthony Gordon,MF,4,12,16,1
+Newcastle United,2223,Allan Saint-Maximin,MF,12,13,25,1
+Newcastle United,2223,Matt Ritchie,MF,0,7,7,0
+Newcastle United,2223,Ryan Fraser,MF,3,5,8,0
+Newcastle United,2223,Jacob Murphy,MF,14,22,36,4
+Newcastle United,2223,Miguel Almirón,MF,29,5,34,11
+Newcastle United,2223,Joe Willock,MF,31,4,35,3
+Newcastle United,2223,Elliot Anderson,MF,3,19,22,0
+Newcastle United,2223,Sean Longstaff,MF,28,5,33,1
+Newcastle United,2223,Bruno Guimarães,MF,32,0,32,4
+Newcastle United,2223,Lewis Miley,MF,0,1,1,0
+Newcastle United,2223,Callum Wilson,FW,21,10,31,18
+Newcastle United,2223,Alexander Isak,FW,17,5,22,10
+Newcastle United,2223,Chris Wood,FW,4,14,18,2
+Newcastle United,2223,Karl Darlow,GK,0,0,0,0
+Newcastle United,2223,Jonjo Shelvey,MF,0,3,3,0
+Newcastle United,2324,Martin Dúbravka,GK,21,1,22,0
+Newcastle United,2324,Loris Karius,GK,1,0,1,0
+Newcastle United,2324,Nick Pope,GK,14,0,14,0
+Newcastle United,2324,Kieran Trippier,DF,25,1,26,1
+Newcastle United,2324,Paul Dummett,DF,0,4,4,0
+Newcastle United,2324,Sven Botman,DF,15,2,17,2
+Newcastle United,2324,Fabian Schär,DF,34,0,34,4
+Newcastle United,2324,Jamaal Lascelles,DF,13,3,16,1
+Newcastle United,2324,Matt Targett,DF,1,2,3,0
+Newcastle United,2324,Emil Krafth,DF,6,9,15,0
+Newcastle United,2324,Lewis Hall,DF,6,10,16,0
+Newcastle United,2324,Tino Livramento,DF,12,14,26,1
+Newcastle United,2324,Dan Burn,DF,29,2,31,2
+Newcastle United,2324,Alex Murphy,DF,0,2,2,0
+Newcastle United,2324,Joelinton,MF,14,4,18,2
+Newcastle United,2324,Sandro Tonali,MF,5,3,8,1
+Newcastle United,2324,Anthony Gordon,MF,33,1,34,11
+Newcastle United,2324,Matt Ritchie,MF,0,13,13,1
+Newcastle United,2324,Harvey Barnes,MF,6,13,19,5
+Newcastle United,2324,Jacob Murphy,MF,12,7,19,2
+Newcastle United,2324,Miguel Almirón,MF,23,8,31,3
+Newcastle United,2324,Joe Willock,MF,5,4,9,1
+Newcastle United,2324,Elliot Anderson,MF,9,10,19,0
+Newcastle United,2324,Sean Longstaff,MF,28,5,33,6
+Newcastle United,2324,Bruno Guimarães,MF,35,0,35,7
+Newcastle United,2324,Joe White,MF,0,4,4,0
+Newcastle United,2324,Amadou Diallo,MF,0,1,1,0
+Newcastle United,2324,Lewis Miley,MF,14,3,17,1
+Newcastle United,2324,Callum Wilson,FW,9,10,19,9
+Newcastle United,2324,Alexander Isak,FW,25,3,28,21
+Newcastle United,2324,Ben Parkinson,FW,0,1,1,0
+Newcastle United,2324,Michael Ndiweni,FW,0,1,1,0
 Newcastle United,2425,Martin Dúbravka,GK,10,0,10,0
 Newcastle United,2425,Kieran Trippier,DF,14,11,25,0
 Newcastle United,2425,Sven Botman,DF,6,2,8,0
@@ -1607,39 +2047,158 @@ Nottingham Forest,2425,Nikola Milenković,CB,37,0,37,5
 Nottingham Forest,2425,Carlos Miguel,GK,0,0,0,0
 Nottingham Forest,2425,Ola Aina,RB,35,0,35,2
 Nottingham Forest,2425,Zach Abbott,CB,0,0,0,0
-Nottingham Forest,2526,Neco Williams,RB,0,0,0,2
-Nottingham Forest,2526,Morato,CB,0,0,0,1
+Nottingham Forest,2526,Neco Williams,RB,36,1,37,2
+Nottingham Forest,2526,Morato,CB,14,7,21,1
 Nottingham Forest,2526,Murillo,CB,25,0,25,1
-Nottingham Forest,2526,Ibrahim Sangaré,DM,0,0,0,2
-Nottingham Forest,2526,Callum Hudson-Odoi,LW,0,0,0,3
-Nottingham Forest,2526,Elliot Anderson,CM,0,0,0,4
-Nottingham Forest,2526,Taiwo Awoniyi,CF,0,0,0,4
-Nottingham Forest,2526,Morgan Gibbs-White,AM,0,0,0,15
-Nottingham Forest,2526,Chris Wood,CF,0,0,0,3
+Nottingham Forest,2526,Ibrahim Sangaré,DM,25,3,28,2
+Nottingham Forest,2526,Callum Hudson-Odoi,LW,21,9,30,3
+Nottingham Forest,2526,Elliot Anderson,CM,37,1,38,4
+Nottingham Forest,2526,Taiwo Awoniyi,CF,3,14,17,4
+Nottingham Forest,2526,Morgan Gibbs-White,AM,35,2,37,15
+Nottingham Forest,2526,Chris Wood,CF,12,4,16,3
 Nottingham Forest,2526,John Victor,GK,5,0,5,0
-Nottingham Forest,2526,Dan Ndoye,RW,0,0,0,1
-Nottingham Forest,2526,Nicolás Domínguez,CM,0,0,0,1
-Nottingham Forest,2526,Angus Gunn,GK,0,0,0,0
-Nottingham Forest,2526,Igor Jesus,CF,0,0,0,6
-Nottingham Forest,2526,Lorenzo Lucca,CF,0,0,0,1
-Nottingham Forest,2526,Omari Hutchinson,RW,0,0,0,1
-Nottingham Forest,2526,Ryan Yates,DM,0,0,0,0
-Nottingham Forest,2526,Jair Cunha,CB,0,0,0,0
-Nottingham Forest,2526,James McAtee,AM,0,0,0,0
-Nottingham Forest,2526,Luca Netz,LB,0,0,0,0
-Nottingham Forest,2526,Matz Sels,GK,0,0,0,0
+Nottingham Forest,2526,Dan Ndoye,RW,14,10,24,1
+Nottingham Forest,2526,Nicolás Domínguez,CM,17,10,27,1
+Nottingham Forest,2526,Angus Gunn,GK,0,1,1,0
+Nottingham Forest,2526,Igor Jesus,CF,28,9,37,6
+Nottingham Forest,2526,Lorenzo Lucca,CF,1,3,4,1
+Nottingham Forest,2526,Omari Hutchinson,RW,16,15,31,1
+Nottingham Forest,2526,Ryan Yates,DM,2,20,22,0
+Nottingham Forest,2526,Jair Cunha,CB,6,3,9,0
+Nottingham Forest,2526,James McAtee,AM,2,12,14,0
+Nottingham Forest,2526,Luca Netz,LB,3,4,7,0
+Nottingham Forest,2526,Matz Sels,GK,30,1,31,0
 Nottingham Forest,2526,Stefan Ortega,GK,3,0,3,0
-Nottingham Forest,2526,Dilane Bakwa,RW,0,0,0,0
+Nottingham Forest,2526,Dilane Bakwa,RW,6,8,14,0
 Nottingham Forest,2526,Willy Boly,CB,0,0,0,0
-Nottingham Forest,2526,Nikola Milenković,CB,0,0,0,0
+Nottingham Forest,2526,Nikola Milenković,CB,37,1,38,0
 Nottingham Forest,2526,Ola Aina,RB,18,0,18,0
-Nottingham Forest,2526,Nicolò Savona,RB,0,0,0,2
-Nottingham Forest,2526,Zach Abbott,CB,0,0,0,0
+Nottingham Forest,2526,Nicolò Savona,RB,11,3,14,2
+Nottingham Forest,2526,Zach Abbott,CB,2,1,3,0
 Nottingham Forest,2526,Jimmy Sinclair,RB,0,0,0,0
-Nottingham Forest,2526,Douglas Luiz,CM,0,0,0,0
-Nottingham Forest,2526,Oleksandr Zinchenko,LB,0,0,0,0
-Nottingham Forest,2526,Arnaud Kalimuendo,CF,0,0,0,0
-Nottingham Forest,2526,Jota Silva,RW,0,0,0,0
+Nottingham Forest,2526,Douglas Luiz,CM,5,2,7,0
+Nottingham Forest,2526,Oleksandr Zinchenko,LB,4,1,5,0
+Nottingham Forest,2526,Arnaud Kalimuendo,CF,0,9,9,0
+Nottingham Forest,2526,Jota Silva,RW,0,1,1,0
+Sheffield United,2324,Adam Davies,GK,0,0,0,0
+Sheffield United,2324,Ivo Grbić,GK,9,0,9,0
+Sheffield United,2324,Wes Foderingham,GK,29,1,30,0
+Sheffield United,2324,Jordan Amissah,GK,0,0,0,0
+Sheffield United,2324,George Baldock,DF,11,2,13,0
+Sheffield United,2324,Max Lowe,DF,4,6,10,0
+Sheffield United,2324,Auston Trusty,DF,30,4,34,0
+Sheffield United,2324,Chris Basham,DF,3,5,8,0
+Sheffield United,2324,John Egan,DF,6,0,6,0
+Sheffield United,2324,Anel Ahmedhodžić,DF,29,2,31,2
+Sheffield United,2324,Jack Robinson,DF,32,2,34,1
+Sheffield United,2324,Jayden Bogle,DF,32,2,34,3
+Sheffield United,2324,Yasser Larouci,DF,5,5,10,0
+Sheffield United,2324,Sam Curtis,DF,0,1,1,0
+Sheffield United,2324,Mason Holgate,DF,9,1,10,0
+Sheffield United,2324,Rhys Norrington-Davies,DF,2,3,5,0
+Sheffield United,2324,Jili Buyabu,DF,0,0,0,0
+Sheffield United,2324,Gustavo Hamer,MF,34,2,36,4
+Sheffield United,2324,Oliver Norwood,MF,16,11,27,1
+Sheffield United,2324,Vinícius Souza,MF,29,7,36,1
+Sheffield United,2324,Tom Davies,MF,2,7,9,0
+Sheffield United,2324,Ben Osborn,MF,14,10,24,0
+Sheffield United,2324,Anis Slimane,MF,4,11,15,0
+Sheffield United,2324,James McAtee,MF,20,10,30,3
+Sheffield United,2324,Oliver Arblaster,MF,11,1,12,0
+Sheffield United,2324,Andre Brooks,MF,12,8,20,0
+Sheffield United,2324,Sydie Peck,MF,0,1,1,0
+Sheffield United,2324,Rhian Brewster,FW,3,10,13,0
+Sheffield United,2324,Oli McBurnie,FW,15,6,21,6
+Sheffield United,2324,Cameron Archer,FW,21,8,29,4
+Sheffield United,2324,Ben Brereton Díaz,FW,14,0,14,6
+Sheffield United,2324,William Osula,FW,9,12,21,0
+Sheffield United,2324,Daniel Jebbison,FW,0,1,1,0
+Sheffield United,2324,Antwoine Hackford,FW,0,2,2,0
+Sheffield United,2324,Bénie Traoré,FW,3,4,7,0
+Sheffield United,2324,Ismaila Coulibaly,MF,0,0,0,0
+Sheffield United,2324,Louie Marsh,FW,0,0,0,0
+Sheffield United,2324,Sai Sachdev,DF,0,0,0,0
+Sheffield United,2324,John Fleck,MF,1,3,4,0
+Sheffield United,2324,Luke Thomas,DF,11,1,12,0
+Southampton,2223,Alex McCarthy,GK,6,0,6,0
+Southampton,2223,Kyle Walker-Peters,DF,30,1,31,1
+Southampton,2223,Ainsley Maitland-Niles,MF,13,9,22,0
+Southampton,2223,Lyanco,DF,11,10,21,1
+Southampton,2223,Duje Ćaleta-Car,DF,9,4,13,1
+Southampton,2223,Joe Aribo,MF,13,8,21,2
+Southampton,2223,James Ward-Prowse,MF,38,0,38,9
+Southampton,2223,Adam Armstrong,FW,14,16,30,2
+Southampton,2223,Ché Adams,FW,23,5,28,5
+Southampton,2223,Mislav Oršić,MF,0,1,1,0
+Southampton,2223,Paul Onuachu,FW,4,7,11,0
+Southampton,2223,Willy Caballero,GK,0,0,0,0
+Southampton,2223,James Bree,DF,4,1,5,0
+Southampton,2223,Romain Perraud,DF,22,7,29,2
+Southampton,2223,Stuart Armstrong,MF,14,18,32,2
+Southampton,2223,Sékou Mara,FW,3,19,22,1
+Southampton,2223,Moussa Djenepo,MF,7,9,16,0
+Southampton,2223,Kamaldeen Sulemana,MF,10,8,18,2
+Southampton,2223,Tino Livramento,DF,0,2,2,0
+Southampton,2223,Mohammed Salisu,DF,21,1,22,0
+Southampton,2223,Samuel Edozie,MF,5,12,17,0
+Southampton,2223,Mohamed Elyounoussi,MF,27,6,33,1
+Southampton,2223,Carlos Alcaraz,MF,13,5,18,4
+Southampton,2223,Ibrahima Diallo,MF,11,7,18,0
+Southampton,2223,Juan Larios,DF,2,3,5,0
+Southampton,2223,Gavin Bazunu,GK,32,0,32,0
+Southampton,2223,Theo Walcott,MF,13,7,20,2
+Southampton,2223,Jan Bednarek,DF,20,0,20,0
+Southampton,2223,Armel Bella-Kotchap,DF,24,0,24,0
+Southampton,2223,Roméo Lavia,MF,26,3,29,1
+Southampton,2223,Dom Ballard,FW,0,2,2,0
+Southampton,2223,Lewis Payne,DF,0,0,0,0
+Southampton,2223,Kamari Doyle,MF,0,1,1,0
+Southampton,2223,Diamond Edwards,MF,0,0,0,0
+Southampton,2223,Sam Amo-Ameyaw,MF,0,1,1,0
+Southampton,2223,Jack Stephens,DF,0,2,2,0
+Southampton,2223,Oriol Romeu,MF,1,0,1,0
+Southampton,2223,Nathan Redmond,MF,0,1,1,0
+Southampton,2223,Yan Valery,DF,1,0,1,0
+Southampton,2425,Alex McCarthy,GK,5,0,5,0
+Southampton,2425,Kyle Walker-Peters,DF,33,0,33,0
+Southampton,2425,Ryan Manning,DF,18,6,24,0
+Southampton,2425,Flynn Downes,MF,25,2,27,1
+Southampton,2425,Jack Stephens,DF,17,2,19,1
+Southampton,2425,Taylor Harwood-Bellis,DF,32,2,34,1
+Southampton,2425,Joe Aribo,MF,21,11,32,3
+Southampton,2425,Will Smallbone,MF,6,12,18,1
+Southampton,2425,Adam Lallana,MF,5,9,14,0
+Southampton,2425,Ross Stewart,FW,4,8,12,1
+Southampton,2425,Joe Lumley,GK,3,0,3,0
+Southampton,2425,James Bree,DF,13,4,17,0
+Southampton,2425,Nathan Wood,DF,9,2,11,0
+Southampton,2425,Yukinari Sugawara,DF,16,14,30,1
+Southampton,2425,Mateus Fernandes,MF,34,2,36,2
+Southampton,2425,Cameron Archer,FW,13,22,35,2
+Southampton,2425,Kamaldeen Sulemana,MF,17,9,26,1
+Southampton,2425,Charlie Taylor,DF,3,5,8,0
+Southampton,2425,Ryan Fraser,MF,4,4,8,0
+Southampton,2425,Lesley Ugochukwu,MF,18,8,26,1
+Southampton,2425,Juan Larios,DF,0,0,0,0
+Southampton,2425,Albert Grønbæk,MF,2,2,4,0
+Southampton,2425,Aaron Ramsdale,GK,30,0,30,0
+Southampton,2425,Paul Onuachu,FW,11,14,25,4
+Southampton,2425,Tyler Dibling,MF,20,13,33,2
+Southampton,2425,Welington,DF,6,4,10,0
+Southampton,2425,Jan Bednarek,DF,30,0,30,2
+Southampton,2425,Armel Bella-Kotchap,DF,2,2,4,0
+Southampton,2425,Joachim Kayi Sanda,DF,0,2,2,0
+Southampton,2425,Jay Robinson,FW,1,3,4,0
+Southampton,2425,Romeo Akachukwu,FW,0,0,0,0
+Southampton,2425,Jayden Moore,DF,0,0,0,0
+Southampton,2425,Adam Armstrong,FW,15,5,20,2
+Southampton,2425,Ronnie Edwards,DF,0,1,1,0
+Southampton,2425,Ben Brereton Díaz,FW,4,6,10,0
+Southampton,2425,Samuel Edozie,MF,0,2,2,0
+Southampton,2425,Sam Amo-Ameyaw,MF,0,2,2,0
+Southampton,2425,Joe O'Brien-Whitmarsh,MF,0,0,0,0
+Southampton,2425,Carlos Alcaraz,MF,0,1,1,0
+Southampton,2425,Maxwel Cornet,MF,1,1,2,0
 Sunderland,2526,Dennis Cirkin,DF,3,5,8,0
 Sunderland,2526,Daniel Ballard,DF,24,5,29,2
 Sunderland,2526,Lutsharel Geertruida,DF,17,11,28,0
@@ -1674,6 +2233,67 @@ Sunderland,2526,Simon Adingra,FW,9,5,14,1
 Sunderland,2526,Arthur Masuaku,DF,2,1,3,0
 Sunderland,2526,Marc Guiu,FW,0,2,2,0
 Sunderland,2526,Patrick Roberts,FW,0,1,1,0
+Tottenham Hotspur,2223,Hugo Lloris,GK,25,0,25,0
+Tottenham Hotspur,2223,Fraser Forster,GK,13,1,14,0
+Tottenham Hotspur,2223,Davinson Sánchez,DF,8,10,18,0
+Tottenham Hotspur,2223,Emerson Royal,DF,20,6,26,2
+Tottenham Hotspur,2223,Eric Dier,DF,31,2,33,2
+Tottenham Hotspur,2223,Cristian Romero,DF,26,1,27,0
+Tottenham Hotspur,2223,Ryan Sessegnon,DF,9,8,17,2
+Tottenham Hotspur,2223,Pedro Porro,DF,13,2,15,3
+Tottenham Hotspur,2223,Djed Spence,DF,0,4,4,0
+Tottenham Hotspur,2223,Japhet Tanganga,DF,2,2,4,0
+Tottenham Hotspur,2223,Ben Davies,DF,26,5,31,2
+Tottenham Hotspur,2223,Clément Lenglet,DF,24,2,26,0
+Tottenham Hotspur,2223,George Abbott,DF,0,1,1,0
+Tottenham Hotspur,2223,Oliver Skipp,MF,18,5,23,1
+Tottenham Hotspur,2223,Pierre-Emile Højbjerg,MF,35,0,35,4
+Tottenham Hotspur,2223,Ivan Perišić,MF,23,11,34,1
+Tottenham Hotspur,2223,Pape Matar Sarr,MF,2,9,11,0
+Tottenham Hotspur,2223,Rodrigo Bentancur,MF,17,1,18,5
+Tottenham Hotspur,2223,Yves Bissouma,MF,10,13,23,0
+Tottenham Hotspur,2223,Harvey White,MF,0,1,1,0
+Tottenham Hotspur,2223,Alfie Devine,MF,0,0,0,0
+Tottenham Hotspur,2223,Matthew Craig,MF,0,1,1,0
+Tottenham Hotspur,2223,Son Heung-min,FW,33,3,36,10
+Tottenham Hotspur,2223,Richarlison,FW,12,15,27,1
+Tottenham Hotspur,2223,Harry Kane,FW,38,0,38,30
+Tottenham Hotspur,2223,Bryan Gil,FW,2,2,4,0
+Tottenham Hotspur,2223,Arnaut Danjuma,FW,1,8,9,1
+Tottenham Hotspur,2223,Dejan Kulusevski,FW,23,7,30,2
+Tottenham Hotspur,2223,Lucas Moura,FW,0,15,15,1
+Tottenham Hotspur,2223,Matt Doherty,DF,7,5,12,1
+Tottenham Hotspur,2324,Guglielmo Vicario,GK,38,0,38,0
+Tottenham Hotspur,2324,Fraser Forster,GK,0,0,0,0
+Tottenham Hotspur,2324,Radu Drăgușin,DF,4,5,9,0
+Tottenham Hotspur,2324,Emerson Royal,DF,11,11,22,1
+Tottenham Hotspur,2324,Cristian Romero,DF,33,0,33,5
+Tottenham Hotspur,2324,Ryan Sessegnon,DF,0,0,0,0
+Tottenham Hotspur,2324,Pedro Porro,DF,35,0,35,3
+Tottenham Hotspur,2324,Ben Davies,DF,12,5,17,1
+Tottenham Hotspur,2324,Micky van de Ven,DF,27,0,27,3
+Tottenham Hotspur,2324,Destiny Udogie,DF,28,0,28,2
+Tottenham Hotspur,2324,Oliver Skipp,MF,5,16,21,0
+Tottenham Hotspur,2324,Pierre-Emile Højbjerg,MF,8,28,36,0
+Tottenham Hotspur,2324,Yves Bissouma,MF,25,2,27,0
+Tottenham Hotspur,2324,James Maddison,MF,26,2,28,4
+Tottenham Hotspur,2324,Giovani Lo Celso,MF,4,18,22,2
+Tottenham Hotspur,2324,Pape Matar Sarr,MF,27,7,34,3
+Tottenham Hotspur,2324,Rodrigo Bentancur,MF,13,10,23,1
+Tottenham Hotspur,2324,Son Heung-min,FW,34,1,35,17
+Tottenham Hotspur,2324,Richarlison,FW,18,10,28,11
+Tottenham Hotspur,2324,Bryan Gil,FW,2,9,11,0
+Tottenham Hotspur,2324,Timo Werner,FW,10,3,13,2
+Tottenham Hotspur,2324,Dejan Kulusevski,FW,31,5,36,8
+Tottenham Hotspur,2324,Brennan Johnson,FW,23,9,32,5
+Tottenham Hotspur,2324,Manor Solomon,FW,2,3,5,0
+Tottenham Hotspur,2324,Dane Scarlett,FW,0,4,4,0
+Tottenham Hotspur,2324,Mikey Moore,FW,0,2,2,0
+Tottenham Hotspur,2324,Jamie Donley,FW,0,3,3,0
+Tottenham Hotspur,2324,Davinson Sánchez,DF,0,1,1,0
+Tottenham Hotspur,2324,Ivan Perišić,MF,0,5,5,0
+Tottenham Hotspur,2324,Eric Dier,DF,1,3,4,0
+Tottenham Hotspur,2324,Alejo Véliz,FW,0,8,8,1
 Tottenham Hotspur,2425,Guglielmo Vicario,GK,24,0,24,0
 Tottenham Hotspur,2425,Sergio Reguilón,DF,1,3,4,0
 Tottenham Hotspur,2425,Kevin Danso,DF,10,1,11,0
@@ -1739,6 +2359,66 @@ Tottenham Hotspur,2526,Jun'ai Byfield,DF,0,1,1,0
 Tottenham Hotspur,2526,Lucá Williams-Barnett,MF,0,0,0,0
 Tottenham Hotspur,2526,James Rowswell,DF,0,1,1,0
 Tottenham Hotspur,2526,Brennan Johnson,FW,6,10,16,2
+West Ham United,2223,Łukasz Fabiański,GK,36,0,36,0
+West Ham United,2223,Alphonse Areola,GK,2,3,5,0
+West Ham United,2223,Ben Johnson,DF,9,8,17,0
+West Ham United,2223,Aaron Cresswell,DF,24,4,28,0
+West Ham United,2223,Kurt Zouma,DF,24,1,25,2
+West Ham United,2223,Vladimír Coufal,DF,24,3,27,0
+West Ham United,2223,Angelo Ogbonna,DF,13,3,16,0
+West Ham United,2223,Thilo Kehrer,DF,25,2,27,0
+West Ham United,2223,Nayef Aguerd,DF,17,1,18,2
+West Ham United,2223,Emerson,DF,17,5,22,1
+West Ham United,2223,Levi Laing,DF,0,0,0,0
+West Ham United,2223,Pablo Fornals,MF,17,15,32,3
+West Ham United,2223,Manuel Lanzini,MF,2,8,10,1
+West Ham United,2223,Lucas Paquetá,MF,27,1,28,4
+West Ham United,2223,Flynn Downes,MF,7,14,21,0
+West Ham United,2223,Tomáš Souček,MF,32,4,36,2
+West Ham United,2223,Armstrong Oko-Flex,MF,0,0,0,0
+West Ham United,2223,Declan Rice,MF,36,1,37,4
+West Ham United,2223,Kamarai Simon-Swyer,MF,0,0,0,0
+West Ham United,2223,Keenan Forson,MF,0,0,0,0
+West Ham United,2223,Freddie Potts,MF,0,0,0,0
+West Ham United,2223,Oliver Scarles,MF,0,0,0,0
+West Ham United,2223,Kaelan Casey,MF,0,0,0,0
+West Ham United,2223,Gianluca Scamacca,FW,11,5,16,3
+West Ham United,2223,Michail Antonio,FW,21,12,33,5
+West Ham United,2223,Maxwel Cornet,FW,2,12,14,0
+West Ham United,2223,Danny Ings,FW,7,10,17,2
+West Ham United,2223,Jarrod Bowen,FW,36,2,38,6
+West Ham United,2223,Saïd Benrahma,FW,22,13,35,6
+West Ham United,2223,Divin Mubama,FW,0,3,3,0
+West Ham United,2223,Craig Dawson,DF,8,0,8,0
+West Ham United,2223,Conor Coventry,MF,0,1,1,0
+West Ham United,2223,Harrison Ashby,DF,0,0,0,0
+West Ham United,2324,Łukasz Fabiański,GK,7,3,10,0
+West Ham United,2324,Alphonse Areola,GK,31,0,31,0
+West Ham United,2324,Ben Johnson,DF,4,10,14,0
+West Ham United,2324,Aaron Cresswell,DF,4,7,11,0
+West Ham United,2324,Kurt Zouma,DF,32,1,33,3
+West Ham United,2324,Vladimír Coufal,DF,36,0,36,0
+West Ham United,2324,Konstantinos Mavropanos,DF,16,3,19,1
+West Ham United,2324,Angelo Ogbonna,DF,7,4,11,0
+West Ham United,2324,Nayef Aguerd,DF,21,0,21,1
+West Ham United,2324,Emerson,DF,35,1,36,1
+West Ham United,2324,Kaelan Casey,DF,0,1,1,0
+West Ham United,2324,James Ward-Prowse,MF,34,3,37,7
+West Ham United,2324,Lucas Paquetá,MF,31,0,31,4
+West Ham United,2324,Kalvin Phillips,MF,3,5,8,0
+West Ham United,2324,Mohammed Kudus,MF,27,6,33,8
+West Ham United,2324,Maxwel Cornet,MF,1,6,7,1
+West Ham United,2324,Edson Álvarez,MF,28,3,31,1
+West Ham United,2324,Tomáš Souček,MF,34,3,37,7
+West Ham United,2324,George Earthy,MF,0,3,3,1
+West Ham United,2324,Michail Antonio,FW,21,5,26,6
+West Ham United,2324,Danny Ings,FW,3,16,19,1
+West Ham United,2324,Jarrod Bowen,FW,34,0,34,16
+West Ham United,2324,Divin Mubama,FW,0,5,5,0
+West Ham United,2324,Pablo Fornals,MF,4,11,15,0
+West Ham United,2324,Saïd Benrahma,FW,5,8,13,0
+West Ham United,2324,Thilo Kehrer,DF,0,4,4,0
+West Ham United,2324,Callum Marshall,FW,0,0,0,0
 West Ham United,2425,Łukasz Fabiański,GK,13,1,14,0
 West Ham United,2425,Aaron Cresswell,DF,10,8,18,0
 West Ham United,2425,Carlos Soler,MF,14,17,31,1
@@ -1801,6 +2481,35 @@ West Ham United,2526,James Ward-Prowse,MF,5,0,5,0
 West Ham United,2526,Niclas Füllkrug,FW,6,3,9,0
 West Ham United,2526,George Earthy,MF,0,1,1,0
 West Ham United,2526,Callum Marshall,FW,0,2,2,0
+Wolverhampton Wanderers,2324,José Sá,GK,33,0,33,0
+Wolverhampton Wanderers,2324,Dan Bentley,GK,2,2,4,0
+Wolverhampton Wanderers,2324,Matt Doherty,DF,8,20,28,1
+Wolverhampton Wanderers,2324,Rayan Aït-Nouri,DF,26,3,29,2
+Wolverhampton Wanderers,2324,Santiago Bueno,DF,8,3,11,0
+Wolverhampton Wanderers,2324,Craig Dawson,DF,25,0,25,1
+Wolverhampton Wanderers,2324,Hugo Bueno,DF,6,13,19,0
+Wolverhampton Wanderers,2324,Nélson Semedo,DF,33,0,33,0
+Wolverhampton Wanderers,2324,Max Kilman,DF,35,0,35,2
+Wolverhampton Wanderers,2324,Toti,DF,28,4,32,1
+Wolverhampton Wanderers,2324,Alfie Pond,DF,0,0,0,0
+Wolverhampton Wanderers,2324,Mario Lemina,MF,31,1,32,4
+Wolverhampton Wanderers,2324,Boubacar Traoré,MF,5,16,21,0
+Wolverhampton Wanderers,2324,João Gomes,MF,31,1,32,2
+Wolverhampton Wanderers,2324,Tommy Doyle,MF,11,13,24,0
+Wolverhampton Wanderers,2324,Pablo Sarabia,MF,20,8,28,4
+Wolverhampton Wanderers,2324,Jean-Ricner Bellegarde,MF,9,10,19,2
+Wolverhampton Wanderers,2324,Harvey Griffiths,MF,0,0,0,0
+Wolverhampton Wanderers,2324,Tawanda Chirewa,MF,1,6,7,0
+Wolverhampton Wanderers,2324,Pedro Neto,FW,17,1,18,2
+Wolverhampton Wanderers,2324,Hwang Hee-chan,FW,22,4,26,12
+Wolverhampton Wanderers,2324,Matheus Cunha,FW,26,3,29,12
+Wolverhampton Wanderers,2324,Nathan Fraser,FW,1,6,7,0
+Wolverhampton Wanderers,2324,Leon Chiwome,FW,2,1,3,0
+Wolverhampton Wanderers,2324,Jonny,DF,0,1,1,0
+Wolverhampton Wanderers,2324,Matheus Nunes,MF,2,0,2,0
+Wolverhampton Wanderers,2324,Fábio Silva,FW,4,4,8,0
+Wolverhampton Wanderers,2324,Saša Kalajdžić,FW,1,10,11,2
+Wolverhampton Wanderers,2324,Joe Hodge,MF,0,0,0,0
 Wolverhampton Wanderers,2425,José Sá,GK,29,0,29,0
 Wolverhampton Wanderers,2425,Matt Doherty,DF,25,5,30,2
 Wolverhampton Wanderers,2425,Rayan Aït-Nouri,DF,37,0,37,4

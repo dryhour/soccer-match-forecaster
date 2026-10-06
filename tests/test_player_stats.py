@@ -114,3 +114,83 @@ def test_clean_one_file_missing_appearances_table_returns_empty(tmp_path):
 
     df = clean_one_file(path, "No Stats Team", "2324")
     assert df.empty
+
+
+# Header row 3 is a positional-group label ("Goalkeepers") that pandas reads
+# as a third header level -- the column lookup must still find League/Apps.
+THREE_LEVEL_HEADER_HTML = """
+<html><body>
+<h3><span class="mw-headline" id="Appearances_and_goals">Appearances and goals</span></h3>
+<table class="wikitable">
+<tr>
+<th rowspan="2">No.</th><th rowspan="2">Pos</th><th rowspan="2">Player</th>
+<th colspan="2">Premier League</th>
+</tr>
+<tr><th>Apps</th><th>Goals</th></tr>
+<tr><th colspan="5">Goalkeepers</th></tr>
+<tr><td>1</td><td>GK</td><td>Group Keeper</td><td>38</td><td>0</td></tr>
+<tr><th colspan="5">Forwards</th></tr>
+<tr><td>9</td><td>FW</td><td>Group Striker</td><td>30+4</td><td>12</td></tr>
+</table>
+</body></html>
+"""
+
+
+def test_clean_one_file_three_level_header(tmp_path):
+    path = tmp_path / "Group_Team_2324.html"
+    path.write_text(THREE_LEVEL_HEADER_HTML, encoding="utf-8")
+
+    df = clean_one_file(path, "Group Team", "2324")
+
+    assert set(df["player"]) == {"Group Keeper", "Group Striker"}  # "Forwards" divider dropped
+    striker = df[df["player"] == "Group Striker"].iloc[0]
+    assert striker["league_apps"] == 34
+    assert striker["league_goals"] == 12
+
+
+# Apps/Starts table with NO goals column, plus a separate "Goalscorers"
+# table carrying "Own goals"/"Totals" footer rows (Aston Villa/Liverpool style).
+APPS_STARTS_WITH_SCORERS_HTML = """
+<html><body>
+<h3><span class="mw-headline" id="Appearances">Appearances</span></h3>
+<table class="wikitable">
+<tr>
+<th rowspan="2">No.</th><th rowspan="2">Pos.</th><th rowspan="2">Player</th>
+<th colspan="2">Premier League</th>
+</tr>
+<tr><th>Apps</th><th>Starts</th></tr>
+<tr><td>2</td><td>DF</td><td>Starts Defender</td><td>29</td><td>23</td></tr>
+<tr><td>11</td><td>FW</td><td>Starts Striker</td><td>37</td><td>37</td></tr>
+<tr><td>Total</td><td>Total</td><td>Total</td><td>38</td><td>38</td></tr>
+</table>
+<h3><span class="mw-headline" id="Goalscorers">Goalscorers</span></h3>
+<table class="wikitable">
+<tr><th>Rank</th><th>Player</th><th>Premier League</th><th>Total</th></tr>
+<tr><td>1</td><td>Starts Striker</td><td>19</td><td>27</td></tr>
+<tr><td>Own goals</td><td>Own goals</td><td>4</td><td>4</td></tr>
+<tr><td>Totals</td><td>Totals</td><td>23</td><td>31</td></tr>
+</table>
+</body></html>
+"""
+
+
+def test_clean_one_file_apps_starts_table_takes_goals_from_scorers_table(tmp_path):
+    path = tmp_path / "Starts_Team_2324.html"
+    path.write_text(APPS_STARTS_WITH_SCORERS_HTML, encoding="utf-8")
+
+    df = clean_one_file(path, "Starts Team", "2324")
+
+    defender = df[df["player"] == "Starts Defender"].iloc[0]
+    assert (defender["league_starts"], defender["league_subs"], defender["league_apps"]) == (23, 6, 29)
+    assert defender["league_goals"] == 0
+    assert df[df["player"] == "Starts Striker"].iloc[0]["league_goals"] == 19
+
+
+def test_clean_one_file_drops_summary_rows(tmp_path):
+    path = tmp_path / "Starts_Team_2324.html"
+    path.write_text(APPS_STARTS_WITH_SCORERS_HTML, encoding="utf-8")
+
+    df = clean_one_file(path, "Starts Team", "2324")
+
+    assert set(df["player"]) == {"Starts Defender", "Starts Striker"}
+    assert df["league_goals"].sum() == 19  # not doubled by a "Totals" row

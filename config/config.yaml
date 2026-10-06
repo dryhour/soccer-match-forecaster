@@ -70,7 +70,10 @@ paths:
 # Feature engineering
 # -----------------------------------------------------------------------------
 features:
-  form_windows: [5, 10]        # rolling windows (# of matches) for "current form"
+  # Rolling windows (# of matches) for "current form". The FIRST entry is the
+  # window the model uses (baseline); the rest are computed so the backtest
+  # can compare windows head-to-head (2026-10-03 experiment).
+  form_windows: [5, 3, 10]
   min_matches_for_form: 3      # minimum matches before a form stat is considered reliable
 
 # -----------------------------------------------------------------------------
@@ -80,6 +83,12 @@ model:
   baseline: "poisson"
   candidates: ["poisson", "logistic", "random_forest", "xgboost"]
   max_goals_simulated: 10      # cap for Poisson scoreline probability grid
+  # L2 penalty on the Python Poisson regressions. 1.0 is the value every
+  # recorded experiment used; it roughly halves the coefficients vs. an
+  # unpenalized fit (see docs/PROGRESS.md, 2026-10-05). Set to 0.01 to
+  # reproduce the robustness check. Choosing it properly needs a
+  # validation split INSIDE the training seasons -- never the holdout.
+  poisson_alpha: 1.0
 
 # -----------------------------------------------------------------------------
 # Evaluation
