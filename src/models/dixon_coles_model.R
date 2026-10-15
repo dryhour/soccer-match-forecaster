@@ -162,51 +162,59 @@ cat(sprintf("Saved %d matchup prediction(s) -> %s\n", nrow(matchups_out),
 #         this section is the only true out-of-sample evaluation in the repo.
 #         Keep holdout_season in sync with config.yaml -> evaluation.holdout_season.
 holdout_season <- "2526"
-cat(sprintf("\nFitting a train-only model for the season-%s holdout backtest...\n", holdout_season))
 
-train_matches <- matches[matches$season != holdout_season, ]
-test_matches <- matches[matches$season == holdout_season, ]
+# Fits the GLM on train_matches only and predicts every match in
+# test_matches. Shared by the single-season holdout below and the
+# walk-forward in section 4, so both use the identical procedure.
+fit_and_predict_holdout <- function(train_matches, test_matches, max_goals) {
+  train_home_rows <- data.frame(team = train_matches$home_team, opponent = train_matches$away_team,
+                                 goals = train_matches$home_goals, home = 1L)
+  train_away_rows <- data.frame(team = train_matches$away_team, opponent = train_matches$home_team,
+                                 goals = train_matches$away_goals, home = 0L)
+  train_long <- rbind(train_home_rows, train_away_rows)
+  train_long$team <- factor(train_long$team)
+  train_long$opponent <- factor(train_long$opponent, levels = levels(train_long$team))
 
-train_home_rows <- data.frame(team = train_matches$home_team, opponent = train_matches$away_team,
-                               goals = train_matches$home_goals, home = 1L)
-train_away_rows <- data.frame(team = train_matches$away_team, opponent = train_matches$home_team,
-                               goals = train_matches$away_goals, home = 0L)
-train_long <- rbind(train_home_rows, train_away_rows)
-train_long$team <- factor(train_long$team)
-train_long$opponent <- factor(train_long$opponent, levels = levels(train_long$team))
+  fitted_model <- glm(goals ~ home + team + opponent, family = poisson(), data = train_long)
+  known_teams <- levels(train_long$team)
 
-holdout_model <- glm(goals ~ home + team + opponent, family = poisson(), data = train_long)
-known_teams <- levels(train_long$team)
-
-# A team with no matches in the training seasons (e.g. newly promoted for the
-# holdout season) has no fitted attack/defense coefficient -- the model has
-# literally never seen it play, so those matches are skipped rather than
-# guessed at. This is a real, expected limitation of the whole-history
-# parameterization, not a bug -- see docs/METHODOLOGY.md.
-skipped <- 0
-holdout_rows <- list()
-idx <- 1
-for (i in seq_len(nrow(test_matches))) {
-  m <- test_matches[i, ]
-  if (!(m$home_team %in% known_teams) || !(m$away_team %in% known_teams)) {
-    skipped <- skipped + 1
-    next
+  # A team with no matches in the training seasons (e.g. newly promoted for the
+  # holdout season) has no fitted attack/defense coefficient -- the model has
+  # literally never seen it play, so those matches are skipped rather than
+  # guessed at. This is a real, expected limitation of the whole-history
+  # parameterization, not a bug -- see docs/METHODOLOGY.md.
+  skipped <- 0
+  rows <- list()
+  idx <- 1
+  for (i in seq_len(nrow(test_matches))) {
+    m <- test_matches[i, ]
+    if (!(m$home_team %in% known_teams) || !(m$away_team %in% known_teams)) {
+      skipped <- skipped + 1
+      next
+    }
+    lam <- predict_lambdas(fitted_model, m$home_team, m$away_team)
+    pred <- predict_match(lam["lam_home"], lam["lam_away"], max_goals)
+    rows[[idx]] <- data.frame(
+      match_date = m$date, home_team = m$home_team, away_team = m$away_team,
+      expected_home_goals = pred$expected_home_goals, expected_away_goals = pred$expected_away_goals,
+      predicted_score = pred$predicted_score,
+      home_win_prob = pred$home_win_prob, draw_prob = pred$draw_prob, away_win_prob = pred$away_win_prob,
+      actual_home_goals = m$home_goals, actual_away_goals = m$away_goals, actual_result = m$result,
+      season = m$season, match_id = m$match_id
+    )
+    idx <- idx + 1
   }
-  lam <- predict_lambdas(holdout_model, m$home_team, m$away_team)
-  pred <- predict_match(lam["lam_home"], lam["lam_away"], max_goals)
-  holdout_rows[[idx]] <- data.frame(
-    match_date = m$date, home_team = m$home_team, away_team = m$away_team,
-    expected_home_goals = pred$expected_home_goals, expected_away_goals = pred$expected_away_goals,
-    predicted_score = pred$predicted_score,
-    home_win_prob = pred$home_win_prob, draw_prob = pred$draw_prob, away_win_prob = pred$away_win_prob,
-    actual_home_goals = m$home_goals, actual_away_goals = m$away_goals, actual_result = m$result
-  )
-  idx <- idx + 1
+  list(predictions = do.call(rbind, rows), skipped = skipped)
 }
-holdout_out <- do.call(rbind, holdout_rows)
+
+cat(sprintf("\nFitting a train-only model for the season-%s holdout backtest...\n", holdout_season))
+holdout <- fit_and_predict_holdout(matches[matches$season != holdout_season, ],
+                                   matches[matches$season == holdout_season, ], max_goals)
+# The holdout CSV keeps its original schema (no season/match_id columns).
+holdout_out <- holdout$predictions[, setdiff(names(holdout$predictions), c("season", "match_id"))]
 write.csv(holdout_out, file.path(gold_dir, "dixon_coles_holdout_backtest.csv"), row.names = FALSE)
 cat(sprintf("Saved %d held-out prediction(s) (skipped %d match(es) involving a team never seen in training) -> %s\n",
-            nrow(holdout_out), skipped,
+            nrow(holdout_out), holdout$skipped,
             file.path("data", "gold", "prediction_features", "dixon_coles_holdout_backtest.csv")))
 
 holdout_out$predicted_result <- apply(
@@ -231,5 +239,25 @@ cat(sprintf("  mae_home_goals: %.3f\n", mae_home))
 cat(sprintf("  mae_away_goals: %.3f\n", mae_away))
 cat(sprintf("  brier_score: %.4f\n", brier))
 cat("\nCompare against src/evaluation/backtest.py's output (same season, same schema) for a like-for-like model comparison.\n")
+
+# ---- 4) Walk-forward backtest (2026-10-17 derby analysis) -------------------
+#         Each test season is predicted by a model fit ONLY on the seasons
+#         before it (2324 <- 2223; 2425 <- 2223-2324; 2526 <- 2223-2425), so
+#         every prediction is out-of-sample and the pooled sample is ~3x one
+#         holdout season. The 2526 fold is the same fit as section 3.
+#         Keep in sync with config.yaml -> evaluation.walk_forward_test_seasons.
+walk_forward_test_seasons <- c("2324", "2425", "2526")
+wf_frames <- list()
+for (test_season in walk_forward_test_seasons) {
+  fold <- fit_and_predict_holdout(matches[as.integer(matches$season) < as.integer(test_season), ],
+                                  matches[matches$season == test_season, ], max_goals)
+  cat(sprintf("Walk-forward fold %s: %d prediction(s), %d skipped (team never seen in training)\n",
+              test_season, nrow(fold$predictions), fold$skipped))
+  wf_frames[[test_season]] <- fold$predictions
+}
+wf_out <- do.call(rbind, wf_frames)
+write.csv(wf_out, file.path(gold_dir, "dixon_coles_walkforward.csv"), row.names = FALSE)
+cat(sprintf("Saved %d walk-forward prediction(s) -> %s\n", nrow(wf_out),
+            file.path("data", "gold", "prediction_features", "dixon_coles_walkforward.csv")))
 
 cat("\nDone.\n")

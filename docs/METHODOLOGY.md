@@ -121,6 +121,11 @@ Run it with `Rscript src/models/dixon_coles_model.R` (needs R; on macOS,
 - `data/gold/prediction_features/dixon_coles_matchups.csv` -- a prediction
   for every pairing of current-season teams, including 80%/95% Poisson
   confidence intervals, which the app reads to show both models side by side.
+- `data/gold/prediction_features/dixon_coles_holdout_backtest.csv` -- the
+  held-out 2025-26 predictions from a fit on earlier seasons only.
+- `data/gold/prediction_features/dixon_coles_walkforward.csv` -- walk-forward
+  predictions for 2023-24..2025-26, each season from a fit on the seasons
+  before it (used by the derby analysis).
 
 This is not currently wired into `run_pipeline.py` -- it's an optional,
 separately-run comparison, the same way Wikipedia player-stats ingestion is.
@@ -163,6 +168,89 @@ Because squad quality doesn't exist for the earliest season, every arm of
 this experiment is trained on the same reduced rows (2023-24 + 2024-25).
 Results are in `docs/PROGRESS.md` (2026-10-05).
 
+## Derby / rivalry analysis (2026-10-17 experiment)
+
+`src/evaluation/derby_analysis.py` asks whether derbies are systematically
+harder to forecast. Results are in `docs/PROGRESS.md` (item 16).
+
+**Definitions** (`config.yaml -> derbies`, fixed before any result was
+computed, so they couldn't be tuned to the answer). EPL pairings only,
+unordered, with team names checked against the match data so a typo can't
+silently drop a derby:
+
+- **local (primary):** both clubs in the same metropolitan area (Greater
+  London, Greater Manchester, Merseyside, West Midlands, Tyne and Wear). A
+  geographic rule, not a judgment call, and the largest sample: 25
+  pairings, 194 of the 1,520 matches.
+- **classic:** the Manchester, North London and Merseyside derbies (24
+  matches).
+- **rivalry:** 9 named rivalries, including between-city ones (North-West,
+  M23, East Midlands, Roses, plus Tyne-Wear, West Midlands and the classic
+  three; 58 matches). This is the one definition that needs judgment, so
+  it's a sensitivity check only.
+
+**Sample: walk-forward, not one holdout season.** A pairing meets at most
+twice a season, so the 2025-26 holdout alone holds ~46 local derbies and 6
+classic ones. Each of 2023-24, 2024-25 and 2025-26
+(`config.yaml -> evaluation.walk_forward_test_seasons`) is predicted by a
+model trained only on the seasons before it, and the three are pooled. Every
+prediction is still out-of-sample. The 2025-26 fold is the same fit as the
+existing holdout backtest and reproduces its numbers exactly. Two models:
+the Python rolling-form baseline (`walk_forward_poisson`) and R
+Dixon-Coles (section 4 of the R script, `dixon_coles_walkforward.csv`).
+
+**"Harder" split into two questions.** A model's loss on derbies can be
+higher because derbies are close matchups (which even a perfect model finds
+uncertain) or because the model misjudges them. So two quantities are
+compared:
+
+- *raw loss*: per-match Brier / log loss;
+- *excess loss*: raw loss minus the loss the model expects from its own
+  probabilities p. Expected Brier = sum_k p_k * Brier(outcome k) =
+  1 - sum p_k^2; expected log loss = entropy -sum p_k ln p_k. Excess
+  averages zero for a calibrated model however close the matchup is.
+
+raw difference = expected difference + excess difference, exactly. Also
+compared: winner accuracy and calibration-in-the-large by outcome (mean of
+outcome indicator minus predicted probability for H/D/A, for the
+favorite's win, and actual minus expected goal difference).
+
+**Inference.** Derby minus non-derby difference in means, with a 95%
+bootstrap interval (10,000 resamples, each group resampled independently,
+since the groups are disjoint, unlike the paired feature comparisons), plus
+the minimum detectable difference at 80% power. Pre-specified primary test:
+raw and excess Brier, local definition, pooled sample. A claim is made only
+if the interval excludes zero for both models. Everything else is
+secondary: about 70 intervals are reported, so ~3-4 excluding zero by
+chance is expected.
+
+**Robustness checks:** the other two definitions; each test season alone;
+a pair-cluster bootstrap (resample whole pairings, in case meetings of the
+same two teams are correlated); both models on their common matches;
+Python at alpha=0.01; leave-one-pair-out.
+
+**Home advantage** uses actual results for all four seasons, with no model,
+so nothing can leak. Every pairing plays both legs each season, so team
+strength cancels out of each group's average home-minus-away goal
+difference, which makes the derby vs. non-derby comparison fair without
+any adjustment.
+
+**Limitations specific to this analysis:**
+- Power. ~145 out-of-sample local derbies give a minimum detectable Brier
+  difference of 0.05-0.08, larger than the models' whole skill over a
+  uniform guess. A null result here can't rule out a real but moderate
+  derby effect.
+- 86% of local derbies are London derbies, many of them low-intensity. The
+  high-intensity definitions (classic, rivalry) have 18-42 matches.
+- At alpha=1.0 the Python baseline's probabilities barely vary between
+  matches, so R is the more informative of the two tests.
+- R skips matches involving promoted teams (no training history), so its
+  sample is smaller and excludes e.g. 2025-26 Tyne-Wear derbies.
+- EPL only. The plan's non-EPL examples (Milan-Inter, Real
+  Madrid-Atletico) aren't in the data.
+- Neither model has a derby term. Given the null result, there's no
+  evidence-based reason to add one.
+
 ## Known limitations (current stage)
 
 - Player information enters only through the squad-quality challenger
@@ -204,7 +292,10 @@ Results are in `docs/PROGRESS.md` (2026-10-05).
    95% interval for every difference. If a challenger can only train on a
    subset of rows, refit the baseline on exactly that subset.
    Hyperparameters (e.g. `poisson_alpha`) must be chosen without looking at
-   the holdout season.
+   the holdout season. For a comparison between two disjoint groups of
+   matches (e.g. derbies vs. other matches) rather than two models on the
+   same matches, use `derby_analysis.compare_groups`, which resamples each
+   group independently.
 3. A challenger model replaces the production baseline only if it wins on
    Brier score (calibration) AND doesn't meaningfully regress on winner
    accuracy, evaluated on a held-out set it never trained on.

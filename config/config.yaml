@@ -62,6 +62,7 @@ paths:
   gold_player_features: "data/gold/player_features"
   gold_team_features: "data/gold/team_features"
   gold_prediction_features: "data/gold/prediction_features"
+  gold_derby_analysis: "data/gold/derby_analysis"
 
   models_dir: "models"
   predictions_dir: "data/gold/prediction_features"
@@ -98,3 +99,50 @@ model:
 # this is time-series data and shuffling would leak the future into training.
 evaluation:
   holdout_season: 2526
+  # Walk-forward test seasons (2026-10-17 derby analysis): each is predicted
+  # by a model trained ONLY on the seasons before it, so every prediction is
+  # out-of-sample and the pooled sample is ~3x the single holdout season.
+  walk_forward_test_seasons: [2324, 2425, 2526]
+
+# -----------------------------------------------------------------------------
+# Derby / rivalry definitions (2026-10-17 research question)
+# -----------------------------------------------------------------------------
+# Fixed BEFORE any derby result was computed, so the definition can't be
+# tuned to the answer. EPL pairings only: the dataset is EPL-only
+# (active.leagues), so Milan-Inter / Real Madrid-Atletico aren't testable
+# without adding leagues, which is a separate scope decision.
+#
+# Team names must match the Silver matches table exactly. A pairing is
+# unordered: Arsenal-Tottenham and Tottenham-Arsenal are both the derby.
+derbies:
+  # PRIMARY: a "local derby" = both clubs in the same metropolitan area
+  # (Greater London or one of the English metropolitan counties). A
+  # geographic rule rather than a judgment call, and the largest sample.
+  # Areas with only one club in the data (West Yorkshire: Leeds; South
+  # Yorkshire: Sheffield United) are omitted, as they can't produce a derby.
+  primary_definition: "local"
+  metro_areas:
+    London: ["Arsenal", "Brentford", "Chelsea", "Crystal Palace", "Fulham",
+             "Tottenham Hotspur", "West Ham United"]
+    Manchester: ["Manchester City", "Manchester United"]
+    Merseyside: ["Liverpool", "Everton"]
+    West Midlands: ["Aston Villa", "Wolverhampton Wanderers"]
+    Tyne and Wear: ["Newcastle United", "Sunderland"]
+  # SENSITIVITY 1: the three classic same-city derbies the research plan
+  # names. The most intense rivalries; tiny sample (2 meetings per season).
+  classic:
+    Manchester derby: ["Manchester City", "Manchester United"]
+    North London derby: ["Arsenal", "Tottenham Hotspur"]
+    Merseyside derby: ["Liverpool", "Everton"]
+  # SENSITIVITY 2: established, named rivalries, including ones between
+  # different cities. Tests "rivalry intensity" instead of "same city".
+  rivalry:
+    Manchester derby: ["Manchester City", "Manchester United"]
+    North London derby: ["Arsenal", "Tottenham Hotspur"]
+    Merseyside derby: ["Liverpool", "Everton"]
+    North-West derby: ["Liverpool", "Manchester United"]
+    Tyne-Wear derby: ["Newcastle United", "Sunderland"]
+    M23 derby: ["Brighton", "Crystal Palace"]
+    West Midlands derby: ["Aston Villa", "Wolverhampton Wanderers"]
+    East Midlands derby: ["Nottingham Forest", "Leicester City"]
+    Roses rivalry: ["Leeds", "Manchester United"]

@@ -1,0 +1,27 @@
+group,n,home_wins,draws,away_wins,mean_pred_home,mean_pred_draw,mean_pred_away,accuracy,brier,excess_brier,model
+Manchester derby,6,3,1,2,0.447,0.244,0.309,0.5,0.6135,-0.0304,python_poisson_baseline
+North London derby,6,2,1,3,0.444,0.24,0.315,0.333,0.6157,-0.027,python_poisson_baseline
+Merseyside derby,6,4,1,1,0.464,0.238,0.298,0.667,0.5485,-0.0894,python_poisson_baseline
+North-West derby,6,1,3,2,0.479,0.232,0.289,0.167,0.7889,0.1631,python_poisson_baseline
+Tyne-Wear derby,2,1,0,1,0.433,0.242,0.325,0.5,0.6476,0.0008,python_poisson_baseline
+M23 derby,6,2,2,2,0.457,0.241,0.301,0.333,0.6884,0.0471,python_poisson_baseline
+West Midlands derby,6,5,1,0,0.455,0.24,0.305,0.833,0.5156,-0.1221,python_poisson_baseline
+East Midlands derby,2,0,1,1,0.459,0.242,0.299,0.0,0.814,0.1725,python_poisson_baseline
+Roses rivalry,2,0,1,1,0.454,0.241,0.304,0.0,0.8335,0.1912,python_poisson_baseline
+London (all local pairs),126,47,31,48,0.46,0.239,0.301,0.381,0.6577,0.0204,python_poisson_baseline
+Manchester (all local pairs),6,3,1,2,0.447,0.244,0.309,0.5,0.6135,-0.0304,python_poisson_baseline
+Merseyside (all local pairs),6,4,1,1,0.464,0.238,0.298,0.667,0.5485,-0.0894,python_poisson_baseline
+West Midlands (all local pairs),6,5,1,0,0.455,0.24,0.305,0.833,0.5156,-0.1221,python_poisson_baseline
+Tyne and Wear (all local pairs),2,1,0,1,0.433,0.242,0.325,0.5,0.6476,0.0008,python_poisson_baseline
+Manchester derby,6,3,1,2,0.46,0.205,0.335,0.5,0.6676,0.1405,r_dixon_coles
+North London derby,6,2,1,3,0.485,0.176,0.338,0.833,0.4079,-0.1074,r_dixon_coles
+Merseyside derby,6,4,1,1,0.452,0.21,0.338,0.667,0.4359,-0.0766,r_dixon_coles
+North-West derby,6,1,3,2,0.459,0.229,0.313,0.167,0.8809,0.2789,r_dixon_coles
+M23 derby,6,2,2,2,0.451,0.243,0.306,0.333,0.6951,0.0691,r_dixon_coles
+West Midlands derby,6,5,1,0,0.441,0.246,0.313,0.5,0.5073,-0.0857,r_dixon_coles
+East Midlands derby,2,0,1,1,0.457,0.24,0.303,0.0,0.8645,0.2286,r_dixon_coles
+Roses rivalry,2,0,1,1,0.444,0.224,0.332,0.0,0.9732,0.3753,r_dixon_coles
+London (all local pairs),126,47,31,48,0.455,0.231,0.313,0.5,0.6184,0.0201,r_dixon_coles
+Manchester (all local pairs),6,3,1,2,0.46,0.205,0.335,0.5,0.6676,0.1405,r_dixon_coles
+Merseyside (all local pairs),6,4,1,1,0.452,0.21,0.338,0.667,0.4359,-0.0766,r_dixon_coles
+West Midlands (all local pairs),6,5,1,0,0.441,0.246,0.313,0.5,0.5073,-0.0857,r_dixon_coles

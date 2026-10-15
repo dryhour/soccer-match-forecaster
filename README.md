@@ -288,18 +288,25 @@ Complete:
 
 Complete:
 
-- [ ] Define derby/rivalry matches
-- [ ] Create derby subset
-- [ ] Test examples such as AC Milan vs Inter, Manchester United vs Manchester City, and Real Madrid vs Atlético Madrid
-- [ ] Compare derby vs non-derby predictions
-- [ ] Compare calibration
-- [ ] Analyze home advantage
-- [ ] Perform robustness checks
-- [ ] Document limitations caused by the smaller derby sample
+- [x] Define derby/rivalry matches
+- [x] Create derby subset
+- [x] Test examples such as Manchester United vs Manchester City, Arsenal vs Tottenham, and Liverpool vs Everton (AC Milan vs Inter and Real Madrid vs Atlético Madrid need Serie A / La Liga data, which is outside this EPL-only dataset)
+- [x] Compare derby vs non-derby predictions
+- [x] Compare calibration
+- [x] Analyze home advantage
+- [x] Perform robustness checks
+- [x] Document limitations caused by the smaller derby sample
 
 **Research question:**
 
 > Are derby/rivalry matches systematically harder for the forecasting models to predict?
+
+**Answer so far:** no evidence that they are. Across ~145 out-of-sample local derbies per model, neither model's Brier score is measurably worse on derbies. But the sample can only detect a very large gap, so this is absence of evidence, not proof of no effect. Details: [docs/PROGRESS.md](docs/PROGRESS.md) (item 16).
+
+```bash
+Rscript src/models/dixon_coles_model.R
+python -m src.evaluation.derby_analysis
+```
 
 ---
 

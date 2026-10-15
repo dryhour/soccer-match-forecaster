@@ -1,0 +1,99 @@
+dropped_pairing,n_dropped,diff,model,metric
+Arsenal vs Brentford,6,0.01408859372486504,python_poisson_baseline,brier
+Arsenal vs Chelsea,6,0.012603562010579217,python_poisson_baseline,brier
+Arsenal vs Crystal Palace,6,0.012780045224865089,python_poisson_baseline,brier
+Arsenal vs Fulham,6,0.013810211367722203,python_poisson_baseline,brier
+Arsenal vs Tottenham Hotspur,6,0.014080523724865124,python_poisson_baseline,brier
+Arsenal vs West Ham United,6,0.01066464093915076,python_poisson_baseline,brier
+Aston Villa vs Wolverhampton Wanderers,6,0.018372761867722298,python_poisson_baseline,brier
+Brentford vs Chelsea,6,0.009471816653436438,python_poisson_baseline,brier
+Brentford vs Crystal Palace,6,0.011758926724865004,python_poisson_baseline,brier
+Brentford vs Fulham,6,0.008794560724865064,python_poisson_baseline,brier
+Brentford vs Tottenham Hotspur,6,0.013217143724865044,python_poisson_baseline,brier
+Brentford vs West Ham United,6,0.014496222082007959,python_poisson_baseline,brier
+Chelsea vs Crystal Palace,6,0.008222010510579247,python_poisson_baseline,brier
+Chelsea vs Fulham,6,0.014429931296293552,python_poisson_baseline,brier
+Chelsea vs Tottenham Hotspur,6,0.01426572972486495,python_poisson_baseline,brier
+Chelsea vs West Ham United,6,0.019662705582007778,python_poisson_baseline,brier
+Crystal Palace vs Fulham,6,0.006335394153436424,python_poisson_baseline,brier
+Crystal Palace vs Tottenham Hotspur,6,0.013840810439150752,python_poisson_baseline,brier
+Crystal Palace vs West Ham United,6,0.007979552796293587,python_poisson_baseline,brier
+Everton vs Liverpool,6,0.016963068724865082,python_poisson_baseline,brier
+Fulham vs Tottenham Hotspur,6,0.01666541772486496,python_poisson_baseline,brier
+Fulham vs West Ham United,6,0.012276438224865016,python_poisson_baseline,brier
+Manchester City vs Manchester United,6,0.014176320582007795,python_poisson_baseline,brier
+Newcastle United vs Sunderland,2,0.012778899742722172,python_poisson_baseline,brier
+Tottenham Hotspur vs West Ham United,6,0.008516725510579248,python_poisson_baseline,brier
+Arsenal vs Brentford,6,0.013514349276667163,python_poisson_baseline,excess_brier
+Arsenal vs Chelsea,6,0.012861428705238591,python_poisson_baseline,excess_brier
+Arsenal vs Crystal Palace,6,0.013028680848095733,python_poisson_baseline,excess_brier
+Arsenal vs Fulham,6,0.014176155990952875,python_poisson_baseline,excess_brier
+Arsenal vs Tottenham Hotspur,6,0.014441066419524307,python_poisson_baseline,excess_brier
+Arsenal vs West Ham United,6,0.010675015133810018,python_poisson_baseline,excess_brier
+Aston Villa vs Wolverhampton Wanderers,6,0.01851697127666716,python_poisson_baseline,excess_brier
+Brentford vs Chelsea,6,0.009693652276667162,python_poisson_baseline,excess_brier
+Brentford vs Crystal Palace,6,0.011989300990952873,python_poisson_baseline,excess_brier
+Brentford vs Fulham,6,0.008679140419524306,python_poisson_baseline,excess_brier
+Brentford vs Tottenham Hotspur,6,0.012997163562381446,python_poisson_baseline,excess_brier
+Brentford vs West Ham United,6,0.014903891705238592,python_poisson_baseline,excess_brier
+Chelsea vs Crystal Palace,6,0.008525468562381445,python_poisson_baseline,excess_brier
+Chelsea vs Fulham,6,0.014528452990952876,python_poisson_baseline,excess_brier
+Chelsea vs Tottenham Hotspur,6,0.014374335562381445,python_poisson_baseline,excess_brier
+Chelsea vs West Ham United,6,0.019651144419524307,python_poisson_baseline,excess_brier
+Crystal Palace vs Fulham,6,0.0068008072766671595,python_poisson_baseline,excess_brier
+Crystal Palace vs Tottenham Hotspur,6,0.014285925562381448,python_poisson_baseline,excess_brier
+Crystal Palace vs West Ham United,6,0.007883410276667165,python_poisson_baseline,excess_brier
+Everton vs Liverpool,6,0.017116156419524308,python_poisson_baseline,excess_brier
+Fulham vs Tottenham Hotspur,6,0.016510854419524306,python_poisson_baseline,excess_brier
+Fulham vs West Ham United,6,0.012548609705238587,python_poisson_baseline,excess_brier
+Manchester City vs Manchester United,6,0.01458551727666716,python_poisson_baseline,excess_brier
+Newcastle United vs Sunderland,2,0.013050000994921129,python_poisson_baseline,excess_brier
+Tottenham Hotspur vs West Ham United,6,0.00853775570523859,python_poisson_baseline,excess_brier
+Arsenal vs Brentford,6,0.003002567472870754,r_dixon_coles,brier
+Arsenal vs Chelsea,6,0.0036250140670737174,r_dixon_coles,brier
+Arsenal vs Crystal Palace,6,0.010219097545334566,r_dixon_coles,brier
+Arsenal vs Fulham,6,0.0012200423279431494,r_dixon_coles,brier
+Arsenal vs Tottenham Hotspur,6,0.009278409574319912,r_dixon_coles,brier
+Arsenal vs West Ham United,6,0.0004987076177982441,r_dixon_coles,brier
+Aston Villa vs Wolverhampton Wanderers,6,0.004957146023595316,r_dixon_coles,brier
+Brentford vs Chelsea,6,-0.002228345425680067,r_dixon_coles,brier
+Brentford vs Crystal Palace,6,-0.002806964990897498,r_dixon_coles,brier
+Brentford vs Fulham,6,-0.0039416808604625375,r_dixon_coles,brier
+Brentford vs Tottenham Hotspur,6,-0.0005812046285785799,r_dixon_coles,brier
+Brentford vs West Ham United,6,0.0029349413859142137,r_dixon_coles,brier
+Chelsea vs Crystal Palace,6,-0.005386085932926332,r_dixon_coles,brier
+Chelsea vs Fulham,6,-0.002211565353216205,r_dixon_coles,brier
+Chelsea vs Tottenham Hotspur,6,-0.002049740932926203,r_dixon_coles,brier
+Chelsea vs West Ham United,6,0.007830350733740277,r_dixon_coles,brier
+Crystal Palace vs Fulham,6,-0.00705212259959298,r_dixon_coles,brier
+Crystal Palace vs Tottenham Hotspur,6,-0.0006379002082886887,r_dixon_coles,brier
+Crystal Palace vs West Ham United,6,-0.0033136749908974084,r_dixon_coles,brier
+Everton vs Liverpool,6,0.008062423269972196,r_dixon_coles,brier
+Fulham vs Tottenham Hotspur,6,0.0009099845743201218,r_dixon_coles,brier
+Fulham vs West Ham United,6,-0.0008113765851002208,r_dixon_coles,brier
+Manchester City vs Manchester United,6,-0.0020128060778539236,r_dixon_coles,brier
+Tottenham Hotspur vs West Ham United,6,-0.005791261367708911,r_dixon_coles,brier
+Arsenal vs Brentford,6,-0.01835153671842649,r_dixon_coles,excess_brier
+Arsenal vs Chelsea,6,-0.018258817443064176,r_dixon_coles,excess_brier
+Arsenal vs Crystal Palace,6,-0.01267354903726707,r_dixon_coles,excess_brier
+Arsenal vs Fulham,6,-0.021344123240165623,r_dixon_coles,excess_brier
+Arsenal vs Tottenham Hotspur,6,-0.013191156863354033,r_dixon_coles,excess_brier
+Arsenal vs West Ham United,6,-0.025008531790890264,r_dixon_coles,excess_brier
+Aston Villa vs Wolverhampton Wanderers,6,-0.014136582515527948,r_dixon_coles,excess_brier
+Brentford vs Chelsea,6,-0.019340898747411996,r_dixon_coles,excess_brier
+Brentford vs Crystal Palace,6,-0.019889442225672873,r_dixon_coles,excess_brier
+Brentford vs Fulham,6,-0.020960323240165626,r_dixon_coles,excess_brier
+Brentford vs Tottenham Hotspur,6,-0.01805096497929606,r_dixon_coles,excess_brier
+Brentford vs West Ham United,6,-0.014956354109730844,r_dixon_coles,excess_brier
+Chelsea vs Crystal Palace,6,-0.022056379761904752,r_dixon_coles,excess_brier
+Chelsea vs Fulham,6,-0.01915226613871635,r_dixon_coles,excess_brier
+Chelsea vs Tottenham Hotspur,6,-0.01949963179089026,r_dixon_coles,excess_brier
+Chelsea vs West Ham United,6,-0.009546694834368527,r_dixon_coles,excess_brier
+Crystal Palace vs Fulham,6,-0.023800047298136645,r_dixon_coles,excess_brier
+Crystal Palace vs Tottenham Hotspur,6,-0.018199138747411997,r_dixon_coles,excess_brier
+Crystal Palace vs West Ham United,6,-0.020027499906832294,r_dixon_coles,excess_brier
+Everton vs Liverpool,6,-0.014533274399585915,r_dixon_coles,excess_brier
+Fulham vs Tottenham Hotspur,6,-0.016636702515527946,r_dixon_coles,excess_brier
+Fulham vs West Ham United,6,-0.01811710599378881,r_dixon_coles,excess_brier
+Manchester City vs Manchester United,6,-0.023970689616977223,r_dixon_coles,excess_brier
+Tottenham Hotspur vs West Ham United,6,-0.024423252370600404,r_dixon_coles,excess_brier

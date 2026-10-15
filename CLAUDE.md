@@ -61,9 +61,10 @@ python run_pipeline.py                                   # ingest -> clean -> fe
 python -m src.predictions.generate_predictions --fixtures fixtures.csv
 python -m src.evaluation.evaluate_predictions
 python -m src.evaluation.backtest                         # real held-out backtest, Python model (see below)
-Rscript src/models/dixon_coles_model.R                    # also runs its own held-out backtest — separate, manual, not in run_pipeline.py
+Rscript src/models/dixon_coles_model.R                    # also runs its own held-out backtest + walk-forward — separate, manual, not in run_pipeline.py
+python -m src.evaluation.derby_analysis                   # derby research question; run the R script first (reads its walk-forward CSV)
 streamlit run app.py
-pytest                                                    # 60 tests as of last count
+pytest                                                    # 71 tests as of last count
 ```
 
 ## Current state (see docs/PROGRESS.md for full detail)
@@ -119,6 +120,12 @@ the training seasons, never on the holdout. Also: despite their names,
 `season_avg_*` and `*_by_venue` are whole-history expanding means, not
 reset each season.
 
+**Derby question (2026-10-15):** answered as a well-documented null. On
+pooled walk-forward predictions (2023-24..2025-26, ~145 local derbies per
+model), neither model forecasts derbies measurably worse, in raw or in
+excess-over-expected loss. The test can only detect a Brier gap of 0.05-0.08
+— see the 2026-10-17 checklist below and PROGRESS.md item 16.
+
 **Known gaps**
 - R model missing the Dixon-Coles `tau`/`rho` low-score correlation adjustment.
 - Regularization (`poisson_alpha`) is unvalidated and changes which features look useful — see the note under the results table. Most important open methodological issue.
@@ -156,7 +163,14 @@ section) — never a batch — so each change's effect is attributable.
   - [x] Control arm with no player data (`prev_season_goals_per_match`, last season's team goals) and all arms refit on identical rows.
   - [x] Result at alpha=1.0 (n=377): vs. baseline Brier −0.0080 [−0.0129, −0.0030], log loss −0.0112 [−0.0177, −0.0046], accuracy +5.6 pts [+2.4, +9.0], all excluding zero. vs. the control the increment is Brier −0.0027 [−0.0060, +0.0005] (includes 0).
   - [x] Robustness at alpha=0.01: the Brier/log-loss point estimates hold (−0.0092) but the intervals include zero, and the accuracy gain vanishes (shrinkage artifact). See PROGRESS.md items 14–15.
-- [ ] **2026-10-17** — derby/rivalry research: define derby matches **using EPL pairings only** (e.g. Man Utd–Man City, Arsenal–Tottenham, Liverpool–Everton) — the user's example derbies (Milan–Inter, Real Madrid–Atlético) aren't in this dataset, which is EPL-only (`config.yaml -> active.leagues: ["E0"]`); expanding leagues is a separate scope decision, not assumed here. Compare derby vs. non-derby calibration/accuracy, analyze home advantage, test stability, and explicitly document the small-sample caveat (each derby pairing has at most ~8 meetings across the 4 seasons of data).
+- [x] **2026-10-17** — derby/rivalry research, EPL pairings only. (done 2026-10-15) Answer: **no evidence derbies are harder to forecast, and the test is underpowered.** Full detail: PROGRESS.md item 16, METHODOLOGY.md "Derby / rivalry analysis".
+  - [x] Definitions fixed in `config.yaml -> derbies` before any result was computed: primary `local` (same metro area, 25 pairings, 194 matches), sensitivity `classic` (Manchester / North London / Merseyside, 24) and `rivalry` (9 named rivalries incl. between-city, 58). Milan–Inter / Real–Atlético aren't in the data (EPL-only); expanding leagues was not done.
+  - [x] Walk-forward sample (2324 ← 2223, 2425 ← 2223–24, 2526 ← 2223–25) for both models, ~3x one holdout season: Python `walk_forward_poisson`, R section 4 (holdout CSV byte-identical, 2526 fold reproduces the existing holdout exactly).
+  - [x] Derby vs. non-derby, split into raw loss and *excess* loss (observed − the loss the model expects from its own probabilities), so "close matchups" is separated from "model misjudges derbies". Local, pooled: Python Brier +0.013 [−0.022, +0.048], R +0.001 [−0.058, +0.059]; excess Brier Python +0.013, R −0.019, both intervals include 0.
+  - [x] Calibration by outcome: draws, favorite win rate, goal-difference residual; no interval excludes 0 and the favorite effect has opposite signs in the two models.
+  - [x] Home advantage (actual results, all 1,520 matches): local derbies 0.13 home−away goals vs. 0.30 elsewhere, −0.17 [−0.44, +0.10]. About half the usual size by point estimate, not distinguishable from 0.
+  - [x] Stability: other definitions, per season (sign flips), pair-cluster bootstrap, common matches, alpha=0.01, leave-one-pair-out. 4 of 70 intervals exclude 0 (≈3.5 expected by chance), none in the "harder" direction.
+  - [x] Small-sample caveat quantified: minimum detectable Brier difference 0.050 (Python) / 0.084 (R), larger than each model's whole skill over a uniform guess. Even zero skill on derbies would be detected only ~50% of the time.
 - [ ] **2026-10-24** — freeze feature set, final backtest, final model comparison, final derby analysis, graphs/tables, updated README + METHODOLOGY, reproducible/clean repo.
 
 **Blocked, not scheduled before the freeze** (research these only if time allows, don't let them block the plan above):
