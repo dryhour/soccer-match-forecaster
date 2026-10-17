@@ -64,7 +64,7 @@ python -m src.evaluation.backtest                         # real held-out backte
 Rscript src/models/dixon_coles_model.R                    # also runs its own held-out backtest + walk-forward — separate, manual, not in run_pipeline.py
 python -m src.evaluation.derby_analysis                   # derby research question; run the R script first (reads its walk-forward CSV)
 streamlit run app.py
-pytest                                                    # 71 tests as of last count
+pytest                                                    # 72 tests as of last count
 ```
 
 ## Current state (see docs/PROGRESS.md for full detail)
@@ -82,6 +82,7 @@ see `src/evaluation/backtest.py` and the holdout section of
 
 | model / feature set | n | winner acc. | exact score | MAE (H/A) | Brier | log loss |
 |---|---|---|---|---|---|---|
+| *Reference:* base rate — training-season H/D/A frequencies for every match, no team information (2026-10-16) | 374 | 42.5% | 12.3% | 1.00 / 0.91 | 0.656 | 1.085 |
 | Python Poisson — rolling 5-match form (original baseline) | 374 | 44.1% | 12.3% | 1.00 / 0.89 | 0.645 | 1.068 |
 | Python Poisson — team-level venue-split (2026-09-26) | 374 | 45.7% | 12.3% | 0.98 / 0.91 | 0.640 | 1.062 |
 | Python Poisson — SOS-adjusted rolling 5-match form (2026-09-29) | 374 | 44.4% | 12.3% | 0.99 / 0.90 | 0.644 | 1.067 |
@@ -94,6 +95,11 @@ see `src/evaluation/backtest.py` and the holdout section of
 | R Dixon-Coles (whole-history team fixed effects) | 342 (38 skipped — newly promoted teams never seen in training) | 47.7% | 12.0% | 0.94 / 0.86 | 0.618 | 1.028 |
 
 Log loss reference point: a uniform 1/3-1/3-1/3 guess scores ln 3 ≈ 1.099.
+The tougher reference is the base-rate row (its accuracy = always picking
+home). Both models beat it on the proper scoring rules — Python baseline
+Brier −0.0118 [−0.0176, −0.0061], R −0.0383 [−0.0660, −0.0100] on R's
+342 matches — but neither beats it on accuracy beyond noise, and Python's
+whole edge over "know nothing about the teams" is about a third of R's.
 R still leads on all metrics — smaller gap than the old in-sample numbers
 (55% vs 46%) suggested, but the whole-history signal still looks real.
 Python's venue-split team-level features (see 2026-09-26 below) score

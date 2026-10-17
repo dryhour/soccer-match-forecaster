@@ -11,7 +11,7 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from src.evaluation.backtest import run_poisson_backtest, paired_bootstrap
+from src.evaluation.backtest import base_rate_forecast, run_poisson_backtest, paired_bootstrap
 from src.models.poisson_model import build_feature_lists
 
 
@@ -98,3 +98,24 @@ def test_paired_bootstrap_reports_log_loss_diff():
     out = paired_bootstrap(bad, good, n_boot=200)
     assert out["log_loss_diff"]["mean"] < 0
     assert out["log_loss_diff"]["excludes_zero"]
+
+
+def test_base_rate_uses_training_frequencies_on_the_templates_rows():
+    train = pd.DataFrame({
+        "result": ["H", "H", "D", "A"],
+        "home_goals": [1, 1, 1, 0], "away_goals": [0, 0, 1, 1],
+    })
+    template = pd.DataFrame({
+        "match_date": ["2026-01-02", "2026-01-01"], "home_team": ["C", "A"], "away_team": ["D", "B"],
+        "actual_home_goals": [3, 0], "actual_away_goals": [0, 0], "actual_result": ["H", "D"],
+        "home_win_prob": [0.9, 0.2],  # the model's own predictions -- must not carry over
+    })
+    base = base_rate_forecast(template, train)
+    # Same rows in the same order as the template, so it can be paired with that model.
+    assert base[["match_date", "home_team", "away_team"]].equals(template[["match_date", "home_team", "away_team"]])
+    # Every match gets the training frequencies, never the held-out results.
+    assert base["home_win_prob"].tolist() == [0.5, 0.5]
+    assert base["draw_prob"].tolist() == [0.25, 0.25]
+    assert base["away_win_prob"].tolist() == [0.25, 0.25]
+    assert base["expected_home_goals"].iloc[0] == 0.75
+    assert set(base["predicted_score"]) == {"1-0"}  # the most common training scoreline

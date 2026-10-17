@@ -289,7 +289,10 @@ any adjustment.
    `src/evaluation/evaluate_predictions.py`: winner accuracy, exact-score
    accuracy, goal MAE, Brier score, log loss -- on the identical held-out
    matches, with a paired bootstrap (`backtest.paired_bootstrap`) giving a
-   95% interval for every difference. If a challenger can only train on a
+   95% interval for every difference. Report the no-information base rate
+   (`backtest.base_rate_forecast`: training-season H/D/A frequencies for
+   every match, whose accuracy equals always picking home) alongside, so
+   every number has a "knows nothing about the teams" reference. If a challenger can only train on a
    subset of rows, refit the baseline on exactly that subset.
    Hyperparameters (e.g. `poisson_alpha`) must be chosen without looking at
    the holdout season. For a comparison between two disjoint groups of

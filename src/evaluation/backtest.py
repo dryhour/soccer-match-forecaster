@@ -83,6 +83,29 @@ def run_poisson_backtest(df: pd.DataFrame, home_features: list, away_features: l
     return pd.DataFrame(rows)
 
 
+def base_rate_forecast(template: pd.DataFrame, train_matches: pd.DataFrame) -> pd.DataFrame:
+    """
+    The no-information reference forecast: every held-out match gets the
+    same prediction -- the training seasons' H/D/A frequencies, average
+    goals, and most common scoreline. A model that can't beat this has
+    learned nothing about the teams. Built on `template`'s exact rows (a
+    model's held-out predictions) so the two can go into paired_bootstrap.
+    Uses training matches only, so the holdout's own results never leak in.
+    """
+    freq = train_matches["result"].value_counts(normalize=True)
+    scorelines = train_matches["home_goals"].astype(int).astype(str) + "-" + \
+        train_matches["away_goals"].astype(int).astype(str)
+    out = template[["match_date", "home_team", "away_team",
+                    "actual_home_goals", "actual_away_goals", "actual_result"]].copy()
+    out["expected_home_goals"] = round(float(train_matches["home_goals"].mean()), 2)
+    out["expected_away_goals"] = round(float(train_matches["away_goals"].mean()), 2)
+    out["predicted_score"] = scorelines.mode()[0]
+    out["home_win_prob"] = round(float(freq.get("H", 0.0)), 4)
+    out["draw_prob"] = round(float(freq.get("D", 0.0)), 4)
+    out["away_win_prob"] = round(float(freq.get("A", 0.0)), 4)
+    return out
+
+
 def per_match_brier(df: pd.DataFrame) -> np.ndarray:
     onehot = pd.get_dummies(df["actual_result"]).reindex(columns=["H", "D", "A"], fill_value=0).values.astype(float)
     probs = df[["home_win_prob", "draw_prob", "away_win_prob"]].values
@@ -215,7 +238,22 @@ def main():
         feature_sets[f"rolling_form_last{w}"] = build_feature_lists([w])
     print(f"Poisson L2 penalty: alpha={alpha} (config.yaml -> model.poisson_alpha)\n")
     print("=== Experiment 1: form/team-level feature sets ===")
-    compare_feature_sets(df, feature_sets, holdout_season, max_goals, out_dir, alpha=alpha)
+    frames = compare_feature_sets(df, feature_sets, holdout_season, max_goals, out_dir, alpha=alpha)
+
+    # Reference point for every number above: what does a model add over a
+    # forecast that knows nothing about the teams? (2026-10-16)
+    train_matches = df[df["season"] != holdout_season]
+    print("\n=== Reference: no-information base rate (training-season H/D/A frequencies for every match) ===")
+    base = base_rate_forecast(frames["rolling_form_baseline"], train_matches)
+    base.to_csv(out_dir / "base_rate_holdout_backtest.csv", index=False)
+    print(f"  base rate on Experiment 1's matches: {compute_metrics(base)}")
+    print_bootstrap("base_rate", base, "rolling_form_baseline", frames["rolling_form_baseline"])
+    r_path = out_dir / "dixon_coles_holdout_backtest.csv"
+    if r_path.exists():
+        r_df = pd.read_csv(r_path)
+        r_base = base_rate_forecast(r_df, train_matches)
+        print(f"  base rate on R's matches: {compute_metrics(r_base)}")
+        print_bootstrap("base_rate", r_base, "r_dixon_coles", r_df)
 
     # Squad quality (2026-10-10) is undefined for the first season with
     # player data (no previous season to look back at), so its model can

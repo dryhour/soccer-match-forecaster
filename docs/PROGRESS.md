@@ -409,6 +409,31 @@ and models actually work, see [METHODOLOGY.md](METHODOLOGY.md).
   pair-cluster bootstrap, power at the MDE, walk-forward not training on
   later seasons.
 
+**17. Base-rate reference forecast (2026-10-16)**
+- Every result so far was compared against the Python baseline or a
+  uniform 1/3 guess. Neither answers "what does the model know about the
+  teams at all?" Added `base_rate_forecast()` to `src/evaluation/backtest.py`:
+  every held-out match gets the same forecast, the training seasons' H/D/A
+  frequencies (45.1% / 23.0% / 31.9%), average goals, and most common
+  scoreline (1-1). It's built on a model's own held-out rows so the paired
+  bootstrap applies. It uses training seasons only. Measurement-only: no
+  model or feature changed, and every existing CSV re-ran byte-identical.
+- Base rate on the 374 Experiment 1 matches: accuracy 42.5% (= always
+  picking home), Brier 0.6564, log loss 1.0846. Its goal MAE (1.00 / 0.91)
+  is the same as the baseline's, so the baseline's expected goals carry
+  almost no per-match information.
+- Python baseline vs. base rate: Brier **−0.0118 [−0.0176, −0.0061]**, log
+  loss **−0.0168 [−0.0247, −0.0091]**, accuracy +1.6 pts [0.0, +3.5].
+- R vs. base rate (R's 342 matches): Brier **−0.0383 [−0.0660, −0.0100]**,
+  log loss **−0.0561 [−0.0947, −0.0170]**, accuracy +5.3 pts [0.0, +10.5].
+- **Reading:** both models carry real information about the teams. The
+  Python baseline's edge is small, about a third of R's, which fits the
+  heavy alpha=1.0 shrinkage (item 15). Neither beats "always pick home" on
+  accuracy beyond noise; Brier and log loss are the metrics that separate
+  them. Report this row alongside every final result.
+- 1 test added (72 pass): training-only frequencies, template rows and
+  order kept, the model's own probabilities not carried over.
+
 ## Current state / known gaps
 
 - **Player-stats coverage**: 79/80 PL team-seasons parse and are
