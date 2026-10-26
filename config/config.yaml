@@ -63,6 +63,8 @@ paths:
   gold_team_features: "data/gold/team_features"
   gold_prediction_features: "data/gold/prediction_features"
   gold_derby_analysis: "data/gold/derby_analysis"
+  gold_final_evaluation: "data/gold/final_evaluation"
+  figures_dir: "docs/figures"
 
   models_dir: "models"
   predictions_dir: "data/gold/prediction_features"
@@ -81,15 +83,32 @@ features:
 # Modeling
 # -----------------------------------------------------------------------------
 model:
-  baseline: "poisson"
-  candidates: ["poisson", "logistic", "random_forest", "xgboost"]
   max_goals_simulated: 10      # cap for Poisson scoreline probability grid
   # L2 penalty on the Python Poisson regressions. 1.0 is the value every
   # recorded experiment used; it roughly halves the coefficients vs. an
   # unpenalized fit (see docs/PROGRESS.md, 2026-10-05). Set to 0.01 to
-  # reproduce the robustness check. Choosing it properly needs a
-  # validation split INSIDE the training seasons -- never the holdout.
+  # reproduce the robustness check. It stays 1.0 so backtest.py and
+  # derby_analysis.py reproduce the recorded experiments exactly, and the
+  # app's model is trained with it. The final evaluation below chooses the
+  # penalty properly instead.
   poisson_alpha: 1.0
+
+# -----------------------------------------------------------------------------
+# Final evaluation (2026-10-24 freeze) -- src/evaluation/final_evaluation.py
+# -----------------------------------------------------------------------------
+# Fixed before the final run. Every Python feature set is refit with
+# standardized features and its OWN L2 penalty, chosen from alpha_grid by
+# walk-forward validation inside the training seasons (each validation
+# season predicted by a fit on the seasons before it; lowest pooled Brier
+# wins, ties to the larger alpha). The holdout season is then scored once.
+final_evaluation:
+  standardize: true
+  alpha_grid: [0.0, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1.0, 3.0]
+  validation_seasons: [2324, 2425]
+  # Secondary analysis: a nested walk-forward over these test seasons, each
+  # with alpha re-chosen only from validation seasons before it. 2324 can't
+  # be a test season (2223 alone leaves no season to validate on).
+  nested_walk_forward_test_seasons: [2425, 2526]
 
 # -----------------------------------------------------------------------------
 # Evaluation

@@ -114,7 +114,8 @@ def label_derbies(df: pd.DataFrame, derby_cfg: dict) -> pd.DataFrame:
 
 
 def walk_forward_poisson(df: pd.DataFrame, home_features: list, away_features: list,
-                          test_seasons: list, max_goals: int, alpha: float = 1.0) -> pd.DataFrame:
+                          test_seasons: list, max_goals: int, alpha: float = 1.0,
+                          standardize: bool = False, verbose: bool = True) -> pd.DataFrame:
     """
     Out-of-sample predictions for each test season from a model trained only
     on the seasons before it. Later seasons are dropped before each fit, so
@@ -124,7 +125,8 @@ def walk_forward_poisson(df: pd.DataFrame, home_features: list, away_features: l
     frames = []
     for season in test_seasons:
         fold = run_poisson_backtest(df[df["season"] <= season], home_features, away_features,
-                                    season, max_goals, alpha=alpha)
+                                    season, max_goals, alpha=alpha, standardize=standardize,
+                                    verbose=verbose)
         fold.insert(0, "season", season)
         frames.append(fold)
     return pd.concat(frames, ignore_index=True)

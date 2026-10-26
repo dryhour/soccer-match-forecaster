@@ -68,6 +68,11 @@ re-runs only fetch what's missing.
     leaks into its own features).
   - `match_features/match_features.csv`: one row per match with home-team
     and away-team form joined side by side, ready for modeling.
+  - `prediction_features/`: held-out and walk-forward predictions from both
+    models (the recorded alpha=1.0 experiments and R).
+  - `derby_analysis/`, `final_evaluation/`: every interval, metric and
+    per-match score behind the two research questions (see the sections
+    below).
 
 ## Baseline model: Poisson regression
 
@@ -92,6 +97,15 @@ coefficient is directly interpretable (attack/defense strength). It sets the
 bar that more complex models (logistic regression, random forest, XGBoost)
 must clear on held-out data before being adopted — per the project's
 explicit "don't assume more complex = better" principle.
+
+**Penalty and scaling.** `PoissonRegressor` applies an L2 penalty `alpha`.
+Every recorded experiment (`backtest.py`, `derby_analysis.py`, and the app's
+model) uses `config.yaml -> model.poisson_alpha: 1.0` on unstandardized
+features, kept so those results stay reproducible. The final evaluation
+instead standardizes features (`PoissonMatchModel(standardize=True)`, a
+scikit-learn pipeline whose scaler sees the training rows only) and chooses
+alpha per feature set inside the training seasons. It chose alpha=0 (no
+penalty) for every set but one. See "Final evaluation" below.
 
 ## Alternative model: R Dixon-Coles-style GLM
 
@@ -251,19 +265,122 @@ any adjustment.
 - Neither model has a derby term. Given the null result, there's no
   evidence-based reason to add one.
 
-## Known limitations (current stage)
+## Final evaluation (2026-10-24 freeze)
+
+`src/evaluation/final_evaluation.py`. Outputs: `data/gold/final_evaluation/`.
+Results: README.md and `docs/PROGRESS.md` item 18.
+
+**Why it exists.** Every recorded Python experiment used one L2 penalty,
+alpha=1.0, on unstandardized features. That penalty shrank the forecasts
+toward the base rate. It also penalized smooth whole-history features harder
+than noisy short-term form, and a diagnostic run at alpha=0.01 changed
+which features looked useful (PROGRESS.md item 15). Adopting 0.01 because
+it scored well on the holdout would have tuned to the holdout, so the final
+evaluation chooses the penalty without it.
+
+**Procedure** (fixed in `config.yaml -> final_evaluation` before the run):
+
+1. Standardize every feature using the training rows' mean and sd only.
+2. For each feature set separately, choose alpha from {0, 0.001, 0.003,
+   0.01, 0.03, 0.1, 0.3, 1, 3} by walk-forward validation inside the
+   training seasons (`select_alpha`):
+   - 2023-24 is predicted by a fit on 2022-23, and 2024-25 by a fit on
+     2022-24.
+   - The predictions are pooled; the lowest Brier wins, ties going to the
+     larger alpha.
+   - Every season from the test season onward is dropped before this step.
+   - The squad-quality experiment has a single validation fold (2024-25 from
+     2023-24), because its features start in 2023-24.
+3. Refit each set on all training seasons at its own alpha and score the
+   2025-26 holdout once, on the same matches as `backtest.py` (374 for the
+   form sets, 377 for the squad sets).
+4. Run paired bootstraps for:
+   - each challenger vs. its own baseline;
+   - each model vs. the base rate;
+   - R vs. each Python model, on the matches both scored;
+   - each set vs. its own recorded alpha=1.0 run.
+
+**Decision rule** (fixed beforehand). A factor improves out-of-sample
+predictions only if its holdout Brier 95% interval against its own baseline
+excludes zero in the improving direction. Bonferroni intervals for the 8
+challengers (99.375%) are reported alongside. Whether a challenger then
+becomes the frozen Python model follows protocol rule 3 below.
+
+**Replication: nested walk-forward.** For each season in
+`final_evaluation.nested_walk_forward_test_seasons` (2024-25, 2025-26):
+- alpha is re-chosen only from validation seasons strictly before it (for
+  2024-25, from 2023-24 alone);
+- the model is fit on all earlier seasons;
+- the season is predicted.
+
+The script checks on every run that the 2025-26 fold is identical to step 3.
+
+2024-25 is the replication season: no earlier experiment had scored any
+feature set on it. It checks direction; it isn't a second chance to pass
+the rule. What isn't in the replication:
+- 2023-24 can't be a test season: there's no season before 2022-23 to
+  validate on.
+- Squad quality: it has no validation season before 2025-26.
+
+**What it found** (numbers in README.md):
+- **The penalty.**
+  - alpha=0 won validation for 8 of 9 sets; the 6-feature combined-window
+    set chose 0.03.
+  - Validation Brier rises steadily with alpha for every unpenalized set.
+    With 2-6 features and about a thousand training rows, there's little
+    variance to trade for bias.
+  - An unpenalized GLM is invariant to rescaling its features, so
+    standardization only matters for the combined-window set.
+- **Venue-split team averages pass the rule** and replicate on 2024-25. The
+  holdout interval alone doesn't survive Bonferroni. Venue-split
+  (unpenalized) is the frozen Python model.
+- **10-match form** beats 5 in 2024-25 only (suggestive). **3-match form** is
+  worse in 2024-25. **Combined windows, SOS, the control and squad quality**
+  are not established or show no effect.
+- **The recorded "wins" don't survive.** Squad quality and combined windows
+  looked significant at alpha=1.0 but not with the chosen penalty. A heavy
+  penalty shrinks the baseline's forecasts, and any extra strength feature
+  lets some signal back through.
+
+**Fitted effects of the frozen model** (standardized; the multiplier on
+expected goals per +1 sd of each feature):
+
+| Goals model | Feature | Multiplier |
+|---|---|---:|
+| Home goals | Home side's home scoring average | ×1.24 |
+| Home goals | Away side's away conceding average | ×1.14 |
+| Away goals | Away side's away scoring average | ×1.18 |
+| Away goals | Home side's home conceding average | ×1.18 |
+
+At average feature values the model expects 1.59 home goals and 1.35 away
+goals. For comparison, the 5-match-form baseline's multipliers are
+×1.17 / ×1.10 / ×1.14 / ×1.13.
+
+**What it can't fix:**
+- The holdout was reported on throughout development, so it influenced which
+  features were tried. That's why the 2024-25 replication matters.
+- The derby analysis still uses the alpha=1.0 baseline. Its alpha=0.01
+  robustness run is effectively unpenalized and gives the same answer.
+- The app still serves the alpha=1.0 5-match-form model.
+
+## Known limitations (research version)
 
 - Player information enters only through the squad-quality challenger
   (previous-season goals). There is no availability, injury, or lineup data,
   so a team missing key players on the day isn't reflected.
-- The Python model's L2 penalty (`config.yaml -> model.poisson_alpha`,
-  1.0 in every recorded experiment) acts on **unstandardized** features. It
-  roughly halves the coefficients and penalizes smooth, low-variance
-  features (whole-history averages) more than noisy ones (5-match form),
-  which biases feature comparisons against long-horizon features. Setting
-  it to 0.01 changes some conclusions (see PROGRESS.md 2026-10-05). It
-  should be chosen on a validation split inside the training seasons, with
-  features standardized first.
+- Sample size. One season is ~375 matches, enough to resolve a Brier
+  difference of ~0.015 but not the ~0.005 effects most features have. The
+  data covers four seasons, so at most two test seasons with a validation
+  season before them.
+- The 2025-26 holdout was reported on by every development experiment, so it
+  isn't a pristine test of which features to try. The final evaluation
+  leans on the 2024-25 replication for that reason, and 8 challengers share
+  the holdout (Bonferroni reported).
+- Regularization: resolved at the freeze (see "Final evaluation"). The
+  recorded experiments, the derby analysis and the app's model still use the
+  old alpha=1.0 on unstandardized features. That setting shrinks forecasts
+  toward the base rate and biases comparisons against smooth, long-horizon
+  features, so read their numbers with that in mind.
 - The `season_avg_*` and `*_by_venue` columns are expanding means over each
   team's whole history in the data. They are NOT reset each season, despite
   the names.
@@ -271,9 +388,10 @@ any adjustment.
 - Home advantage is only implicit (via separate home/away goal columns), not
   an explicit modeled term yet.
 - Rolling form window is 5 matches (`config.yaml -> features.form_windows`,
-  first entry). 3 and 10 were tested against it on the held-out season
-  (2026-10-05) with no distinguishable difference at either regularization
-  setting.
+  first entry). With the penalty chosen properly, 10 beats 5 and 3 is worse
+  than 5 in 2024-25, with neither difference established on the holdout;
+  combining 3/5/10 does no better than 10 alone. The whole-history
+  venue-split averages beat all of them.
 - Independence assumption between home and away goals is a simplification;
   real matches have some correlation (e.g. game state effects). The R model
   adds team-specific attack/defense parameters but not yet the Dixon-Coles
@@ -295,7 +413,10 @@ any adjustment.
    every number has a "knows nothing about the teams" reference. If a challenger can only train on a
    subset of rows, refit the baseline on exactly that subset.
    Hyperparameters (e.g. `poisson_alpha`) must be chosen without looking at
-   the holdout season. For a comparison between two disjoint groups of
+   the holdout season -- `final_evaluation.select_alpha` does this by
+   walk-forward validation inside the training seasons. When several
+   challengers share one holdout, report a multiple-comparison-corrected
+   interval too (`paired_bootstrap(level=...)`). For a comparison between two disjoint groups of
    matches (e.g. derbies vs. other matches) rather than two models on the
    same matches, use `derby_analysis.compare_groups`, which resamples each
    group independently.

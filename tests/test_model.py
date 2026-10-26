@@ -12,7 +12,8 @@ import pandas as pd
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from src.models.poisson_model import (
-    PoissonMatchModel, build_feature_lists, latest_team_row, predict_from_rows, predict_matchup,
+    PoissonMatchModel, build_combined_window_feature_lists, build_feature_lists, latest_team_row, predict_from_rows,
+    predict_matchup,
 )
 
 
@@ -103,3 +104,31 @@ def test_predict_matchup_uses_each_teams_latest_row():
     pred = predict_matchup(model, history, "Arsenal", "Chelsea")
     assert "predicted_score" in pred
     assert pred["expected_home_goals"] >= 0
+
+
+def test_standardize_is_opt_in_and_changes_nothing_without_a_penalty():
+    df = pd.DataFrame({
+        "home_avg_goals_for_last5": [1.0, 2.0, 1.5, 0.5, 2.5, 1.0],
+        "away_avg_goals_against_last5": [1.0, 1.5, 1.0, 2.0, 0.5, 1.2],
+        "away_avg_goals_for_last5": [1.2, 0.8, 1.5, 2.0, 0.5, 1.0],
+        "home_avg_goals_against_last5": [1.0, 1.5, 0.8, 1.0, 2.0, 1.5],
+        "home_goals": [1, 3, 2, 0, 3, 1],
+        "away_goals": [1, 0, 2, 3, 0, 1],
+    })
+    home_features, away_features = build_feature_lists([5])
+    # Default stays a bare regressor, so models pickled before the flag existed still load and predict.
+    assert type(PoissonMatchModel(home_features, away_features).home_model).__name__ == "PoissonRegressor"
+    raw = PoissonMatchModel(home_features, away_features, alpha=0.0).fit(df)
+    scaled = PoissonMatchModel(home_features, away_features, alpha=0.0, standardize=True).fit(df)
+    # An unpenalized fit doesn't depend on feature scale -- standardizing only matters through the
+    # penalty. (Equal up to the solver's stopping tolerance, ~1e-3 relative on 6 rows.)
+    for _, row in df.iterrows():
+        assert np.allclose(raw.predict_lambdas(row), scaled.predict_lambdas(row), rtol=1e-2)
+
+
+def test_combined_windows_puts_every_window_in_each_sides_model():
+    home_features, away_features = build_combined_window_feature_lists([5, 3, 10])
+    for w in (5, 3, 10):
+        assert f"home_avg_goals_for_last{w}" in home_features and f"away_avg_goals_against_last{w}" in home_features
+        assert f"away_avg_goals_for_last{w}" in away_features and f"home_avg_goals_against_last{w}" in away_features
+    assert len(home_features) == len(away_features) == 6

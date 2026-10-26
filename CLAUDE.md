@@ -46,7 +46,9 @@ deliberately never used as model inputs (would leak sharp-market signal).
 
 **Models** (see METHODOLOGY.md for full detail):
 1. **Python Poisson baseline** (`src/models/poisson_model.py`) — two independent `PoissonRegressor`s (home goals, away goals) from each team's rolling 5-match form. The baseline every other model must beat on held-out data.
-2. **R Dixon-Coles model** (`src/models/dixon_coles_model.R`) — Poisson GLM with fixed team-specific attack/defense parameters fit on full match history. A genuinely different signal (whole-history strength vs. recent form), not a port of the Python model. Not wired into `run_pipeline.py` — run manually.
+2. **R Dixon-Coles model** (`src/models/dixon_coles_model.R`) — Poisson GLM with fixed team-specific attack/defense parameters fit on full match history. A genuinely different signal (whole-history strength vs. recent form), not a port of the Python model. Run manually or via `run_pipeline.py --reproduce`.
+
+**Frozen research result (2026-10-26):** the frozen Python model is **venue-split team averages, unpenalized** (`build_team_level_feature_lists`, alpha=0, standardized) — chosen by `src/evaluation/final_evaluation.py`. It ties R. The app still serves the original 5-match alpha=1.0 model (not switched at the freeze).
 
 **App**: `app.py` (Streamlit) — searchable dropdown over past results, real
 upcoming fixtures, and hypothetical matchups; predicted scores, win/draw/loss
@@ -57,17 +59,45 @@ collapsed into expanders.
 ## Commands
 
 ```bash
-python run_pipeline.py                                   # ingest -> clean -> features -> train (Python model only)
+python run_pipeline.py --reproduce                       # offline: rebuild EVERY research result from committed Bronze (needs R)
+python run_pipeline.py                                   # live: download -> clean -> features -> train (Python model only)
 python -m src.predictions.generate_predictions --fixtures fixtures.csv
 python -m src.evaluation.evaluate_predictions
 python -m src.evaluation.backtest                         # real held-out backtest, Python model (see below)
 Rscript src/models/dixon_coles_model.R                    # also runs its own held-out backtest + walk-forward — separate, manual, not in run_pipeline.py
 python -m src.evaluation.derby_analysis                   # derby research question; run the R script first (reads its walk-forward CSV)
+python -m src.evaluation.final_evaluation                 # FINAL: penalty chosen inside training seasons, holdout scored once (needs backtest + R CSVs)
+python -m src.evaluation.figures                          # docs/figures/*.png from the saved CSVs (no refitting)
 streamlit run app.py
-pytest                                                    # 72 tests as of last count
+pytest                                                    # 80 tests as of last count
 ```
 
 ## Current state (see docs/PROGRESS.md for full detail)
+
+**Research version FROZEN** (2026-10-24 milestone, final run 2026-10-26).
+README.md is now the research writeup (summary, methods, results, failed
+hypotheses, limitations, figures). `python run_pipeline.py --reproduce`
+regenerates every derived file byte-for-byte from committed Bronze
+(verified in a clean copy). Post-freeze work is optional; see PROGRESS.md
+"Suggested next steps".
+
+**Final results (authoritative — `final_evaluation.py`, PROGRESS.md item 18):**
+standardized features, each set's alpha chosen by walk-forward validation
+inside the training seasons (alpha=0 won for 8 of 9 sets; combined windows
+0.03), 2025-26 holdout scored once, 2024-25 replication from a nested
+walk-forward. Brier vs. own baseline, holdout / replication:
+venue-split **−0.0163 [−0.0313, −0.0012] / −0.0257 [−0.0426, −0.0092]**
+(established; not Bonferroni-significant on the holdout alone); 10-match
+−0.0049 / **−0.0142** (suggestive); 3-match +0.0045 / **+0.0104** (worse);
+combined 3+5+10 −0.0056 / −0.0083 (no); SOS null; squad quality −0.0091
+[−0.0201, +0.0023] (not established — its alpha=1.0 win was shrinkage
+relief); control null. Vs. base rate (holdout): R −0.038, venue-split
+−0.036, 5-match −0.019 (−0.012 at alpha=1.0). R vs. venue-split −0.0006
+[−0.0142, +0.0130]: tied.
+
+The table below is the **development record** (alpha=1.0 on unstandardized
+features unless noted) — kept because it's reproducible and documents how
+conclusions changed, but superseded by the final results above.
 
 Working end-to-end: ingestion → cleaning → features → two competing
 forecasting models → evaluation loop → Streamlit app. Player stats (79/80
@@ -115,16 +145,14 @@ doesn't have a natural R-side counterpart; R's numbers above are simply
 reconfirmed unchanged. Re-run both backtests after each change and update
 this table.
 
-**All Python rows use `config.yaml -> model.poisson_alpha: 1.0`**, an L2
-penalty on unstandardized features that roughly halves the coefficients
-and penalizes smooth whole-history features hardest. At 0.01 (diagnostic
-only, see PROGRESS.md item 15) the baseline itself improves (Brier 0.637),
-venue-split significantly beats the baseline (Brier 0.621, diff −0.0161,
-CI [−0.0309, −0.0014]), and the squad result loses significance. Alpha
-hasn't been chosen properly yet: standardize features and pick it inside
-the training seasons, never on the holdout. Also: despite their names,
-`season_avg_*` and `*_by_venue` are whole-history expanding means, not
-reset each season.
+**All Python rows in this table use `config.yaml -> model.poisson_alpha: 1.0`**,
+an L2 penalty on unstandardized features that roughly halves the
+coefficients and penalizes smooth whole-history features hardest. That
+setting stays in config so `backtest.py` / `derby_analysis.py` reproduce
+these numbers; the properly-chosen penalty lives in `config.yaml ->
+final_evaluation` (resolved at the freeze, see above). Also: despite their
+names, `season_avg_*` and `*_by_venue` are whole-history expanding means,
+not reset each season.
 
 **Derby question (2026-10-15):** answered as a well-documented null. On
 pooled walk-forward predictions (2023-24..2025-26, ~145 local derbies per
@@ -134,10 +162,12 @@ excess-over-expected loss. The test can only detect a Brier gap of 0.05-0.08
 
 **Known gaps**
 - R model missing the Dixon-Coles `tau`/`rho` low-score correlation adjustment.
-- Regularization (`poisson_alpha`) is unvalidated and changes which features look useful — see the note under the results table. Most important open methodological issue.
+- Regularization: resolved at the freeze (final_evaluation.py chooses it inside the training seasons). The recorded experiments, the derby analysis and the app's model still use alpha=1.0 on purpose (reproducibility); don't read their Python numbers as the final ones.
+- The app serves the alpha=1.0 5-match model, not the frozen venue-split model.
+- The 2025-26 holdout has been seen by every development experiment; the 2024-25 replication is the cleaner test, 2026-27 would be the first untouched one.
 - Wikipedia player data: 1/80 PL team-seasons unparsed (Wolves 2022-23); Bournemouth 2024-25 (Semenyo missing) and Luton 2023-24 (apps under-reported) are source-level gaps.
 - No injury/lineup data at all — `data/bronze/injuries/` and `data/silver/injuries_clean/` are empty placeholders; no ingestion source identified yet (free real-time injury data is harder to source than match results — most options are paywalled or JS-rendered).
-- `run_pipeline.py` only runs the Python pipeline; Wikipedia ingestion and the R model are separate manual steps.
+- `run_pipeline.py` default (live) mode only runs the Python match pipeline; `--reproduce` runs every research step (incl. R) offline from committed Bronze. Wikipedia *ingestion* remains manual.
 - Fixtures feed only covers the next matchweek or two (source limitation).
 
 ## Research plan & deadlines (set 2026-09-23 — this supersedes the old open-ended roadmap below)
@@ -177,7 +207,14 @@ section) — never a batch — so each change's effect is attributable.
   - [x] Home advantage (actual results, all 1,520 matches): local derbies 0.13 home−away goals vs. 0.30 elsewhere, −0.17 [−0.44, +0.10]. About half the usual size by point estimate, not distinguishable from 0.
   - [x] Stability: other definitions, per season (sign flips), pair-cluster bootstrap, common matches, alpha=0.01, leave-one-pair-out. 4 of 70 intervals exclude 0 (≈3.5 expected by chance), none in the "harder" direction.
   - [x] Small-sample caveat quantified: minimum detectable Brier difference 0.050 (Python) / 0.084 (R), larger than each model's whole skill over a uniform guess. Even zero skill on derbies would be detected only ~50% of the time.
-- [ ] **2026-10-24** — freeze feature set, final backtest, final model comparison, final derby analysis, graphs/tables, updated README + METHODOLOGY, reproducible/clean repo.
+- [x] **2026-10-24** — freeze feature set, final backtest, final model comparison, final derby analysis, graphs/tables, updated README + METHODOLOGY, reproducible/clean repo. (done 2026-10-26) Full detail: PROGRESS.md item 18.
+  - [x] Regularization settled without the holdout: standardized features, alpha per feature set by walk-forward validation inside the training seasons (`config.yaml -> final_evaluation`, `final_evaluation.select_alpha`). alpha=0 for 8 of 9 sets.
+  - [x] Holdout scored once with pre-stated decision rule + Bonferroni; 2024-25 replication via nested walk-forward (alpha re-chosen from 2023-24 only).
+  - [x] README's unchecked 10/03 item "combining windows" run as one more pre-planned challenger (`build_combined_window_feature_lists`): not established.
+  - [x] Frozen Python model: venue-split, unpenalized (wins under protocol rule 3; ties R). App not switched.
+  - [x] Derby analysis finalized as-is (its alpha=0.01 robustness run ≈ unpenalized, same answer); figures added.
+  - [x] Figures (`src/evaluation/figures.py` → `docs/figures/`, light + dark), README rewritten as the writeup, METHODOLOGY "Final evaluation" section.
+  - [x] `run_pipeline.py --reproduce`; clean-copy run regenerated all 47 derived files byte-for-byte. Unused xgboost/jupyter deps and `model.candidates` config removed.
 
 **Blocked, not scheduled before the freeze** (research these only if time allows, don't let them block the plan above):
 - xG/xGA — both free sources evaluated (FBref, Understat) are dead ends; would need a new source found first.

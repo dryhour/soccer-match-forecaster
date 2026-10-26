@@ -31,6 +31,8 @@ import pandas as pd
 import yaml
 from scipy.stats import poisson
 from sklearn.linear_model import PoissonRegressor
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 CONFIG_PATH = PROJECT_ROOT / "config" / "config.yaml"
@@ -45,13 +47,22 @@ class PoissonMatchModel:
     """Two independent Poisson regressors: one for home goals, one for away."""
 
     def __init__(self, feature_cols_home: list, feature_cols_away: list, max_goals: int = 10,
-                 alpha: float = 1.0):
+                 alpha: float = 1.0, standardize: bool = False):
         self.feature_cols_home = feature_cols_home
         self.feature_cols_away = feature_cols_away
         self.max_goals = max_goals
-        # L2 penalty strength (config.yaml -> model.poisson_alpha).
-        self.home_model = PoissonRegressor(alpha=alpha, max_iter=1000)
-        self.away_model = PoissonRegressor(alpha=alpha, max_iter=1000)
+        # L2 penalty strength (config.yaml -> model.poisson_alpha). With
+        # standardize=True each feature is scaled to mean 0 / sd 1 using the
+        # TRAINING rows' statistics only (fit inside the pipeline), so the
+        # penalty treats smooth and noisy features alike -- the setup the
+        # final evaluation uses (src/evaluation/final_evaluation.py).
+        self.home_model = self._regressor(alpha, standardize)
+        self.away_model = self._regressor(alpha, standardize)
+
+    @staticmethod
+    def _regressor(alpha: float, standardize: bool):
+        regressor = PoissonRegressor(alpha=alpha, max_iter=1000)
+        return make_pipeline(StandardScaler(), regressor) if standardize else regressor
 
     def fit(self, df: pd.DataFrame):
         X_home = df[self.feature_cols_home].values
@@ -146,6 +157,21 @@ def build_sos_feature_lists(windows: list):
     w = windows[0]
     home_features = [f"home_avg_sos_goals_for_last{w}", f"away_avg_sos_goals_against_last{w}"]
     away_features = [f"away_avg_sos_goals_for_last{w}", f"home_avg_sos_goals_against_last{w}"]
+    return home_features, away_features
+
+
+def build_combined_window_feature_lists(windows: list):
+    """
+    Challenger feature set (2026-10-03 plan item "does combining windows
+    help?", run at the freeze): every configured form window side by side in
+    one model, so the fit weights short- and long-term form itself instead
+    of committing to one window. Compared head-to-head with
+    build_feature_lists in src/evaluation/backtest.py.
+    """
+    home_features = ([f"home_avg_goals_for_last{w}" for w in windows]
+                     + [f"away_avg_goals_against_last{w}" for w in windows])
+    away_features = ([f"away_avg_goals_for_last{w}" for w in windows]
+                     + [f"home_avg_goals_against_last{w}" for w in windows])
     return home_features, away_features
 
 

@@ -25,9 +25,9 @@ import pandas as pd
 import yaml
 
 from src.evaluation.evaluate_predictions import compute_metrics, per_match_log_loss
-from src.models.poisson_model import (PoissonMatchModel, build_feature_lists, build_prev_season_control_feature_lists,
-                                      build_sos_feature_lists, build_squad_feature_lists,
-                                      build_team_level_feature_lists)
+from src.models.poisson_model import (PoissonMatchModel, build_combined_window_feature_lists, build_feature_lists,
+                                      build_prev_season_control_feature_lists, build_sos_feature_lists,
+                                      build_squad_feature_lists, build_team_level_feature_lists)
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 CONFIG_PATH = PROJECT_ROOT / "config" / "config.yaml"
@@ -40,7 +40,7 @@ def load_config() -> dict:
 
 def run_poisson_backtest(df: pd.DataFrame, home_features: list, away_features: list,
                           holdout_season: int, max_goals: int, eval_match_ids: set = None,
-                          alpha: float = 1.0) -> pd.DataFrame:
+                          alpha: float = 1.0, standardize: bool = False, verbose: bool = True) -> pd.DataFrame:
     """
     eval_match_ids, if given, restricts the SCORED test rows to this exact
     set of match_ids -- used to put multiple feature sets on an identical
@@ -62,10 +62,12 @@ def run_poisson_backtest(df: pd.DataFrame, home_features: list, away_features: l
             f"holdout_season={holdout_season}. Check config.yaml -> evaluation.holdout_season."
         )
 
-    print(f"Training on {len(train_df)} matches (seasons != {holdout_season}), "
-          f"holding out {len(test_df)} matches (season {holdout_season})...")
+    if verbose:
+        print(f"Training on {len(train_df)} matches (seasons != {holdout_season}), "
+              f"holding out {len(test_df)} matches (season {holdout_season})...")
 
-    model = PoissonMatchModel(home_features, away_features, max_goals=max_goals, alpha=alpha)
+    model = PoissonMatchModel(home_features, away_features, max_goals=max_goals, alpha=alpha,
+                              standardize=standardize)
     model.fit(train_df)
 
     rows = []
@@ -119,12 +121,14 @@ def per_match_correct(df: pd.DataFrame) -> np.ndarray:
 
 
 def paired_bootstrap(baseline_df: pd.DataFrame, challenger_df: pd.DataFrame,
-                      n_boot: int = 10000, seed: int = 0) -> dict:
+                      n_boot: int = 10000, seed: int = 0, level: float = 0.95) -> dict:
     """
     Paired bootstrap over matches for (challenger - baseline) differences in
     Brier score, log loss, and winner accuracy. Both frames must cover the identical
     matches in the same order. With one holdout season a gap of a percentage
     point or two is often noise; the 95% interval says whether it is.
+    `level` widens it for a multiple-comparison correction (the result keys
+    keep the name ci95).
     """
     keys = ["match_date", "home_team", "away_team"]
     if not baseline_df[keys].reset_index(drop=True).equals(challenger_df[keys].reset_index(drop=True)):
@@ -142,7 +146,8 @@ def paired_bootstrap(baseline_df: pd.DataFrame, challenger_df: pd.DataFrame,
     out = {"n": n}
     for name, d in diffs.items():
         boot_means = d[idx].mean(axis=1)
-        low, high = np.percentile(boot_means, [2.5, 97.5])
+        tail = round(50 * (1 - level), 10)  # 2.5 exactly at the default level
+        low, high = np.percentile(boot_means, [tail, 100 - tail])
         out[name] = {
             "mean": round(float(d.mean()), 4),
             "ci95": (round(float(low), 4), round(float(high), 4)),
@@ -160,22 +165,57 @@ def print_bootstrap(baseline_name: str, baseline_df: pd.DataFrame, name: str, ch
         print(f"    {key:<14} mean {b['mean']:+.4f}  95% CI [{b['ci95'][0]:+.4f}, {b['ci95'][1]:+.4f}]  ({verdict})")
 
 
+def common_match_ids(df: pd.DataFrame, feature_sets: dict, season: int) -> set:
+    """A fair comparison needs every feature set scored on the SAME matches --
+    the intersection of each set's valid (non-NaN) rows in `season`."""
+    common = None
+    for home_features, away_features in feature_sets.values():
+        valid = df.dropna(subset=home_features + away_features)
+        ids = set(valid.loc[valid["season"] == season, "match_id"])
+        common = ids if common is None else common & ids
+    return common
+
+
+def experiment_1_feature_sets(windows: list) -> dict:
+    """Form / team-level feature sets, baseline first. windows[0] is the
+    baseline window; the other configured windows are challengers
+    (2026-10-03). See docs/PROGRESS.md for the question behind each one."""
+    feature_sets = {
+        "rolling_form_baseline": build_feature_lists(windows),
+        "team_level_venue_split": build_team_level_feature_lists(),
+        "sos_adjusted_form": build_sos_feature_lists(windows),
+    }
+    for w in windows[1:]:
+        feature_sets[f"rolling_form_last{w}"] = build_feature_lists([w])
+    if len(windows) > 1:
+        feature_sets["rolling_form_combined_windows"] = build_combined_window_feature_lists(windows)
+    return feature_sets
+
+
+def experiment_2_feature_sets(windows: list) -> dict:
+    """Squad-quality experiment (2026-10-10), baseline first. Every arm must
+    be fit on the rows where squad quality exists -- see main()."""
+    return {
+        "rolling_form_baseline_squad_rows": build_feature_lists(windows),
+        "prev_season_team_goals_control": build_prev_season_control_feature_lists(windows),
+        "squad_quality": build_squad_feature_lists(windows),
+    }
+
+
 def compare_feature_sets(df: pd.DataFrame, feature_sets: dict, holdout_season: int, max_goals: int,
-                          out_dir: Path, alpha: float = 1.0) -> dict:
+                          out_dir: Path, alpha=1.0, standardize: bool = False,
+                          file_prefix: str = "poisson_holdout_backtest_") -> dict:
     """
     Fits every named feature set on the non-holdout seasons, scores each on
     the identical set of holdout matches, saves each one's predictions,
     prints a metrics table, and prints a paired bootstrap of every
     challenger against the FIRST entry (the baseline). Returns each feature
     set's held-out predictions, for any further paired comparisons.
+
+    alpha is one value for every set, or a {name: alpha} dict when each set
+    has its own (chosen on validation seasons, as in final_evaluation.py).
     """
-    # A fair comparison needs every feature set scored on the SAME matches --
-    # take the intersection of each set's valid (non-NaN) holdout-season rows.
-    common_eval_ids = None
-    for home_features, away_features in feature_sets.values():
-        valid = df.dropna(subset=home_features + away_features)
-        ids = set(valid.loc[valid["season"] == holdout_season, "match_id"])
-        common_eval_ids = ids if common_eval_ids is None else common_eval_ids & ids
+    common_eval_ids = common_match_ids(df, feature_sets, holdout_season)
     print(f"Common evaluation set across all feature sets: {len(common_eval_ids)} matches "
           f"(season {holdout_season}).\n")
 
@@ -183,9 +223,11 @@ def compare_feature_sets(df: pd.DataFrame, feature_sets: dict, holdout_season: i
     results = {}
     backtest_frames = {}
     for name, (home_features, away_features) in feature_sets.items():
+        set_alpha = alpha[name] if isinstance(alpha, dict) else alpha
         backtest_df = run_poisson_backtest(df, home_features, away_features, holdout_season, max_goals,
-                                            eval_match_ids=common_eval_ids, alpha=alpha)
-        out_path = out_dir / f"poisson_holdout_backtest_{name}.csv"
+                                            eval_match_ids=common_eval_ids, alpha=set_alpha,
+                                            standardize=standardize)
+        out_path = out_dir / f"{file_prefix}{name}.csv"
         backtest_df.to_csv(out_path, index=False)
         print(f"Saved {len(backtest_df)} held-out prediction(s) -> {out_path.relative_to(PROJECT_ROOT)}")
         results[name] = compute_metrics(backtest_df)
@@ -226,19 +268,11 @@ def main():
     df = pd.read_csv(match_feat_path, parse_dates=["date"])
 
     # Named candidate feature sets, all scored on the exact same held-out
-    # season so results are directly comparable -- see docs/PROGRESS.md for
-    # the research question behind each one. windows[0] is the baseline
-    # window; the other configured windows are challengers (2026-10-03).
-    feature_sets = {
-        "rolling_form_baseline": build_feature_lists(windows),
-        "team_level_venue_split": build_team_level_feature_lists(),
-        "sos_adjusted_form": build_sos_feature_lists(windows),
-    }
-    for w in windows[1:]:
-        feature_sets[f"rolling_form_last{w}"] = build_feature_lists([w])
+    # season so results are directly comparable.
     print(f"Poisson L2 penalty: alpha={alpha} (config.yaml -> model.poisson_alpha)\n")
     print("=== Experiment 1: form/team-level feature sets ===")
-    frames = compare_feature_sets(df, feature_sets, holdout_season, max_goals, out_dir, alpha=alpha)
+    frames = compare_feature_sets(df, experiment_1_feature_sets(windows), holdout_season, max_goals, out_dir,
+                                  alpha=alpha)
 
     # Reference point for every number above: what does a model add over a
     # forecast that knows nothing about the teams? (2026-10-16)
@@ -264,11 +298,8 @@ def main():
     squad_home, squad_away = build_squad_feature_lists(windows)
     squad_df = df.dropna(subset=squad_home + squad_away)
     print("\n=== Experiment 2: squad quality (all arms trained on the rows where it exists) ===")
-    frames = compare_feature_sets(squad_df, {
-        "rolling_form_baseline_squad_rows": build_feature_lists(windows),
-        "prev_season_team_goals_control": build_prev_season_control_feature_lists(windows),
-        "squad_quality": (squad_home, squad_away),
-    }, holdout_season, max_goals, out_dir, alpha=alpha)
+    frames = compare_feature_sets(squad_df, experiment_2_feature_sets(windows), holdout_season, max_goals,
+                                  out_dir, alpha=alpha)
     print("\nWhat the roster adds beyond last season's team goals:")
     print_bootstrap("prev_season_team_goals_control", frames["prev_season_team_goals_control"],
                     "squad_quality", frames["squad_quality"])

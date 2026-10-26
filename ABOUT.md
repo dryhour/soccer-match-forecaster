@@ -1,5 +1,10 @@
 # About This Project
 
+> This is the project's original vision and roadmap, written before it was
+> scoped down to two research questions. The finished research version
+> (findings, methods, limitations) is in [README.md](README.md); the
+> history is in [docs/PROGRESS.md](docs/PROGRESS.md).
+
 ## Goal
 
 Build a soccer forecasting system that doesn't just spit out a prediction,

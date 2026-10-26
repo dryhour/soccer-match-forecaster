@@ -25,8 +25,10 @@
 #   data/silver/matches_clean/matches.csv
 # Writes:
 #   models/dixon_coles.rds
-#   data/gold/prediction_features/dixon_coles_historical.csv  (backtest predictions)
-#   data/gold/prediction_features/dixon_coles_matchups.csv    (every current-team pairing)
+#   data/gold/prediction_features/dixon_coles_historical.csv       (in-sample, every historical match)
+#   data/gold/prediction_features/dixon_coles_matchups.csv         (every current-team pairing, for the app)
+#   data/gold/prediction_features/dixon_coles_holdout_backtest.csv (section 3: held-out season)
+#   data/gold/prediction_features/dixon_coles_walkforward.csv      (section 4: walk-forward seasons)
 
 project_root <- normalizePath(file.path(dirname(sub("--file=", "", grep("--file=", commandArgs(trailingOnly = FALSE), value = TRUE))), "..", ".."))
 matches_path <- file.path(project_root, "data", "silver", "matches_clean", "matches.csv")

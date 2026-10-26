@@ -434,53 +434,133 @@ and models actually work, see [METHODOLOGY.md](METHODOLOGY.md).
 - 1 test added (72 pass): training-only frequencies, template rows and
   order kept, the model's own probabilities not carried over.
 
+**18. Final evaluation and research freeze (2026-10-26, the 2026-10-24 milestone)**
+- **Regularization settled** (the open issue from item 15) without touching
+  the holdout. `src/evaluation/final_evaluation.py`, with its rules in
+  `config.yaml -> final_evaluation`, fixed before the run:
+  - features are standardized (`PoissonMatchModel(standardize=True)`; the
+    scaler sees training rows only);
+  - each feature set's alpha is chosen from 0..3 by walk-forward validation
+    inside the training seasons (2023-24 from 2022-23, 2024-25 from
+    2022-24; lowest pooled Brier);
+  - the 2025-26 holdout is then scored once.
+
+  Same matches as `backtest.py`; paired bootstraps throughout.
+- **Result: no penalty.** alpha=0 won for 8 of 9 sets (the 6-feature
+  combined-window set chose 0.03). Validation Brier rises steadily with alpha,
+  e.g. for the baseline 0.6125 at 0 vs. 0.6221 at 1.0 vs. 0.6318 at 3.0.
+- **Tuning alone helped every set on the holdout** (tuned − recorded Brier,
+  −0.004 to −0.019). The baseline's edge over the base rate grew from −0.0118
+  to −0.0193 [−0.0317, −0.0072].
+- **Feature results with the chosen penalty, 2025-26 holdout** (Brier vs. the
+  set's own baseline; the replication is 2024-25 from the nested
+  walk-forward, alpha chosen on 2023-24 only):
+  - venue-split: **−0.0163 [−0.0313, −0.0012]**, log loss −0.0208
+    [−0.0410, −0.0004], accuracy −0.3 pts. Replication **−0.0257
+    [−0.0426, −0.0092]**. Bonferroni (8 challengers, 99.375%) on the
+    holdout alone: [−0.0364, +0.0047]. **Passes the pre-stated rule and
+    replicates: the one established improvement.**
+  - 10-match form: −0.0049 [−0.0133, +0.0036]; replication **−0.0142
+    [−0.0240, −0.0045]**. Suggestive.
+  - 3-match form: +0.0045 [−0.0024, +0.0112]; replication **+0.0104
+    [+0.0011, +0.0198]** (worse).
+  - 3+5+10 combined (new: the README's unchecked 10/03 item "test whether
+    combining windows helps", run at the freeze as one more pre-planned
+    challenger): −0.0056 [−0.0135, +0.0021]; replication −0.0083
+    [−0.0169, +0.0005]. At alpha=1.0 it had looked significant (−0.0062
+    [−0.0100, −0.0024]).
+  - SOS: −0.0021 [−0.0055, +0.0013]; replication −0.0002. Null again.
+  - squad quality: −0.0091 [−0.0201, +0.0023], accuracy −1.1 pts (was +5.6
+    at alpha=1.0); vs. control −0.0071 [−0.0146, +0.0005]. Control vs.
+    baseline −0.0020 [−0.0138, +0.0102]. **Not established**: the alpha=1.0
+    result in item 14 was shrinkage relief, as item 15 suspected.
+- **Model comparison** (Brier vs. base rate, holdout / pooled 2024-26):
+  - R: −0.0383 / −0.0412
+  - venue-split: −0.0356 / −0.0461
+  - 5-match form: −0.0193 / −0.0251
+
+  R minus venue-split: −0.0006 [−0.0142, +0.0130] on the holdout and
+  +0.0018 [−0.0083, +0.0124] pooled, i.e. indistinguishable. R minus 5-match
+  form: −0.0182 [−0.0433, +0.0065] / −0.0178 [−0.0358, +0.0009].
+- **Frozen model.** Under protocol rule 3 (wins on Brier, no meaningful
+  accuracy loss) the frozen Python model is **venue-split, unpenalized**.
+  The app is NOT switched (still the alpha=1.0 5-match model); that's a
+  post-freeze engineering task.
+- **Calibration** (pooled 2024-26):
+  - All models are roughly calibrated in 0.2-0.5.
+  - The alpha=1.0 model's P(home) sd is 0.04, against venue-split 0.11 and
+    R 0.18.
+  - R is overconfident above 0.6; venue-split is underconfident at its top
+    bin.
+- **Checks.**
+  - The nested 2025-26 fold reproduces the primary holdout predictions
+    exactly (printed on every run).
+  - `run_pipeline.py --reproduce` was run in a clean copy with every derived
+    file deleted, and regenerated all 47 Silver/Gold/model/figure files
+    byte-for-byte.
+- **Also done at the freeze:**
+  - figures (`src/evaluation/figures.py` → `docs/figures/`, light and
+    dark), drawn only from saved CSVs;
+  - README rewritten as the research writeup, METHODOLOGY "Final
+    evaluation" section;
+  - `run_pipeline.py --reproduce` (offline, from committed Bronze, every
+    research step);
+  - refactored `backtest.py` (`experiment_1/2_feature_sets`,
+    `common_match_ids`) so the final run reuses the exact recorded
+    definitions, and `paired_bootstrap(level=...)` for Bonferroni;
+  - removed the unused `xgboost`/`jupyter` requirements and the unused
+    `model.baseline`/`model.candidates` config keys.
+
+  Every recorded CSV re-ran byte-identical after the refactor.
+- 8 tests added (80 pass):
+  - alpha selection never sees the test season;
+  - validation folds without earlier data are skipped;
+  - the nested walk-forward ignores later seasons;
+  - R/Python match alignment;
+  - per-season base rate;
+  - Bonferroni interval width;
+  - `standardize` is opt-in and a no-op without a penalty;
+  - the combined-window feature list.
+
 ## Current state / known gaps
 
-- **Player-stats coverage**: 79/80 PL team-seasons parse and are
-  validated against match goals (Wolves 2022-23 missing; Bournemouth
-  2024-25 and Luton 2023-24 have source-level gaps). See item 12.
-- **Regularization**: every recorded Python result uses alpha=1.0 on
-  unstandardized features, which changes some conclusions (item 15). Not
-  yet chosen properly. This is the most important open methodological
-  issue before the freeze.
-- **R model**: doesn't yet include the Dixon-Coles low-score correlation
-  (`tau`/`rho`) adjustment from the original paper — just the team
-  attack/defense parameterization.
-- **Held-out backtest now exists** (season 2526) — see item 8 above for real
-  out-of-sample numbers. The feature experiments still use that single
-  holdout season. A walk-forward over 2023-24..2025-26 now exists for the
-  baseline and R (item 16) but is only used by the derby analysis so far. R
-  still can't score newly promoted teams it has zero training history for.
-- **Derby question answered** (item 16): no evidence that derbies are
-  harder to forecast, with a test too small to detect anything short of a
-  very large effect.
-- **Fixtures feed** only covers the next matchweek or two (a limitation of
-  the free source, not something this project controls).
-- **Player stats** feed only the squad-quality challenger (item 14), not the
-  production baseline. No injury/lineup/availability data at all.
-- `run_pipeline.py` covers only the original match pipeline (ingest → clean
-  → features → train). Wikipedia ingestion and the R model are separate,
-  manually-run steps, not wired in.
-- Nothing in this project is committed automatically — ask before
-  committing per the user's standing preference.
+- **Research version frozen.** Both research questions are answered (see
+  README.md), and every result reproduces with `python run_pipeline.py
+  --reproduce`.
+- **Frozen Python model**: venue-split team averages, unpenalized (item 18).
+  R Dixon-Coles is the independent second model and ties it.
+- **The app is behind the research**: it serves the original 5-match-form
+  model at alpha=1.0, plus R's predictions. Not switched at the freeze.
+- **Recorded experiments keep alpha=1.0** (`model.poisson_alpha`), so
+  `backtest.py` and `derby_analysis.py` reproduce their logged numbers. The
+  final evaluation is the place for the properly-penalized comparison.
+- **The holdout season has been seen** by every development experiment. The
+  2024-25 replication is the cleaner test; 2026-27 would be the first
+  untouched one.
+- **Player stats**: 79/80 PL team-seasons (Wolves 2022-23 missing;
+  Bournemouth 2024-25 and Luton 2023-24 have source-level gaps). No injury,
+  lineup or xG data.
+- **R model**: no `tau`/`rho` correction; can't rate promoted teams with no
+  history.
+- **Fixtures feed** covers only the next matchweek or two (source
+  limitation).
+- `run_pipeline.py` (default mode) still covers only the live match pipeline.
+  Wikipedia *ingestion* is a separate manual step; `--reproduce` covers every
+  research step from the committed Bronze.
+- Nothing in this project is committed automatically -- ask first.
 
-## Suggested next steps
+## Suggested next steps (post-freeze, none required)
 
-- **Decide the regularization question before the freeze** (item 15): it
-  changes which features look useful. Defensible version: standardize
-  features, choose alpha by walk-forward validation inside the training
-  seasons only, then re-run every experiment on the holdout once. A
-  decision for the user; nothing has been changed yet.
-- 2026-10-24 freeze: figures for the derby result can be drawn straight
-  from `data/gold/derby_analysis/derby_match_scores.csv` and
-  `derby_comparisons.csv`, with no re-run needed.
-- More evaluation power: one holdout season (n~375) can't resolve effects
-  of ~0.005 Brier. `walk_forward_poisson` (item 16) already produces
-  2023-24..2025-26 out-of-sample predictions, so pointing the feature
-  comparisons at it would roughly triple n. One caveat: squad quality only
-  exists from 2023-24, so its first fold would have no training data.
-- Add the Dixon-Coles `tau`/`rho` low-score adjustment to the R model
-  (post-freeze unless needed).
-- Consider wiring Wikipedia ingestion + the R model into `run_pipeline.py`
-  once both are stable enough to run unattended (not needed for either
-  research question).
+- Score the frozen models on 2026-27 as it's played: the one test no
+  decision has touched. Small (a few hundred matches by season's end), so
+  read it as a check of direction.
+- Market benchmark: bookmaker closing probabilities as an evaluation-only
+  reference (never as a feature), to place the models' skill.
+- Serve the frozen venue-split model in the app. This needs a
+  `predict_from_rows` path for the by-venue features: the latest home-venue
+  value for the home side, the latest away-venue value for the away side.
+- Dixon-Coles `tau`/`rho`; a prior for promoted teams in R.
+- Combine venue-split with longer form windows, as a new experiment tested
+  on its own.
+- More seasons (power for the feature questions); Serie A / La Liga for the
+  derby question.
